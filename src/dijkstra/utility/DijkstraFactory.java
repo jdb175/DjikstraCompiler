@@ -12,7 +12,14 @@
 package dijkstra.utility;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.BaseErrorListener;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.RecognitionException;
+import org.antlr.v4.runtime.Recognizer;
+import org.antlr.v4.runtime.TokenStream;
+
 import dijkstra.lexparse.DijkstraLexer;
+import dijkstra.lexparse.DijkstraParser;
 
 /**
  * The DijkstraFactory is responsible for constructing all, or parts of a Dijkstra
@@ -28,6 +35,44 @@ public class DijkstraFactory
 	 * @return the Dijkstra lexer
 	 */
 	static public DijkstraLexer makeLexer(ANTLRInputStream inputText) {
-		return new DijkstraLexer(inputText);
+		final DijkstraLexer lexer =  new DijkstraLexer(inputText);
+		
+		lexer.removeErrorListeners();
+		lexer.addErrorListener(
+				new BaseErrorListener() {
+					@Override
+					public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol,
+					int line, int charPositionInLine, String msg,
+					RecognitionException e)
+					{
+						throw new RuntimeException("Syntax error at line " + line + "[" + charPositionInLine + "] " + msg);
+					}
+				});
+		
+		return lexer;
+	}
+	
+	/**
+	 * Create a Djikstra parser using the specified input stream
+	 * @param inputText the ANTLRInputStream that contains the program text
+	 * @return the Dijkstra parser
+	 */
+	static public DijkstraParser makeParser(ANTLRInputStream inputText) {
+		final DijkstraLexer lexer = new DijkstraLexer(inputText);
+		final TokenStream tokens = new CommonTokenStream(lexer); 
+		final DijkstraParser parser = new DijkstraParser(tokens);
+		
+		parser.removeErrorListeners();
+		parser.addErrorListener(
+				new BaseErrorListener() {
+					@Override
+					public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol,
+					int line, int charPositionInLine, String msg,
+					RecognitionException e)
+					{
+						throw new RuntimeException("Syntax error at line " + line + "[" + charPositionInLine + "] " + msg);
+					}
+				});
+		return parser;
 	}
 }

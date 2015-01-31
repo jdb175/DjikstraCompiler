@@ -145,6 +145,13 @@ public class DijkstraLexerTest
 		checkNextToken(ID, "world_215");
 	}
 	
+	@Test(expected=RuntimeException.class)
+	public void failOnBadToken()
+	{
+		makeLexer("?");
+		nextToken();
+	}
+	
 	// Helper methods
 		private void makeLexer(String text)
 		{
