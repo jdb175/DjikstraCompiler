@@ -8,12 +8,46 @@
  * Used in CS4533/CS544 at Worcester Polytechnic Institute
  *******************************************************************************/
  /*
-  * This is the grammar for Toy Dijkstra
+  * This is the grammar for Dijkstra with Functions
   */
  grammar Dijkstra;
  
  // Parser rules
- program :		EOF ;
+ djikstraText : 			program EOF;
+ program :					PROGRAM ID declaration+;
+ declaration :				variabledeclaration | arraydeclaration;
+ variabledeclaration :		type idlist separator;
+ arraydeclaration :			type LBRACK expression RBRACK idlist separator;
+ type : 					FLOAT | INT | BOOLEAN;
+ separator :				SEMICOLON?;
+ idlist :					ID | idlist COMMA ID;
+ expression :				logicalorexpression;
+ logicalorexpression :		logicalandexpression 
+ 								| logicalorexpression OR logicalandexpression;
+ logicalandexpression :		equalityexpression 
+ 								| logicalandexpression AND equalityexpression;
+ equalityexpression :		relationalexpression 
+ 								| relationalexpression equalityop relationalexpression;
+ equalityop :				EQ | NEQ;
+ relationalexpression : 	additiveexpression 
+ 								| additiveexpression relationalop additiveexpression;
+ relationalop :				GT | GTE | LT | LTE;
+ additiveexpression :		multiplicativeexpression 
+ 								| additiveexpression additiveop multiplicativeexpression;
+ additiveop :				PLUS | MINUS;
+ multiplicativeexpression :	unaryexpression 
+ 								| multiplicativeexpression multiplicativeop unaryexpression;
+ multiplicativeop :			STAR | SLASH | MOD | DIV;
+ unaryexpression :			primaryexpression 
+ 								| unaryop unaryexpression;
+ unaryop :					TILDE | MINUS;
+ primaryexpression :		INTEGER 
+ 								| floatconstant 
+ 								| TRUE 
+ 								| FALSE 
+ 								| ID
+ 								| LPAR expression RPAR;
+ floatconstant :			INTEGER PERIOD INTEGER;
  
  /** Lexical rules */
  
