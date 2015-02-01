@@ -41,12 +41,18 @@
  unaryexpression :			primaryexpression 
  								| unaryop unaryexpression;
  unaryop :					TILDE | MINUS;
- primaryexpression :		INTEGER 
+ primaryexpression :		 INTEGER 
  								| floatconstant 
  								| TRUE 
  								| FALSE 
  								| ID
- 								| LPAR expression RPAR;
+ 								| LPAR expression RPAR
+ 								| functioncall
+ 								| arrayaccessor;
+ functioncall :				ID LPAR arglist? RPAR;
+ arglist :		 			argument | arglist COMMA argument;
+ argument :					expression;
+ arrayaccessor :			ID LBRACK expression RBRACK;
  floatconstant :			INTEGER PERIOD INTEGER;
  
  /** Lexical rules */

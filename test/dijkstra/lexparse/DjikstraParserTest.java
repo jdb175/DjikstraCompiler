@@ -337,6 +337,83 @@ public class DjikstraParserTest {
 		assertTrue(true);
 	}
 	
+	@Test
+	public void testFunctionCall() {
+		makeParser("foo ()");
+		parser.functioncall();
+		assertTrue(true);
+	}
+	
+	@Test
+	public void testFunctionCallOneArg() {
+		makeParser("bar(5)");
+		parser.functioncall();
+		assertTrue(true);
+	}
+	
+	@Test
+	public void testFunctionCallOneArgExpression() {
+		makeParser("bar(5 + 3)");
+		parser.functioncall();
+		assertTrue(true);
+	}
+	
+	@Test
+	public void testFunctionCall2Arg() {
+		makeParser("bar(4, 5 + 3)");
+		parser.functioncall();
+		assertTrue(true);
+	}
+	
+	@Test
+	public void testFunctionCall3Arg() {
+		makeParser("bar(4, 5 + 3, (11))");
+		parser.functioncall();
+		assertTrue(true);
+	}
+	
+	@Test
+	public void testArrayAccessor() {
+		makeParser("bar[0]");
+		parser.arrayaccessor();
+		assertTrue(true);
+	}
+	
+	@Test
+	public void testArrayAccessorExpression() {
+		makeParser("bar[(0+2)]");
+		parser.arrayaccessor();
+		assertTrue(true);
+	}
+	
+	@Test
+	public void testArrayAccessorFunction() {
+		makeParser("bar[foo()]");
+		parser.arrayaccessor();
+		assertTrue(true);
+	}
+	
+	@Test
+	public void testArrayAccessorNested() {
+		makeParser("bar[foo[1]]");
+		parser.arrayaccessor();
+		assertTrue(true);
+	}
+	
+	@Test
+	public void testArrayAccessorAsExpression() {
+		makeParser("bar[0]");
+		parser.expression();
+		assertTrue(true);
+	}
+	@Test
+	public void testFunctionCallAsExpression() {
+		makeParser("foo()");
+		parser.expression();
+		assertTrue(true);
+	}
+	
+	
 	// Helper methods
 		private void makeParser(String text)
 		{
