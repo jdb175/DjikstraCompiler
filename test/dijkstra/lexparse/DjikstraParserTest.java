@@ -406,11 +406,59 @@ public class DjikstraParserTest {
 		parser.expression();
 		assertTrue(true);
 	}
+	
 	@Test
 	public void testFunctionCallAsExpression() {
 		makeParser("foo()");
 		parser.expression();
 		assertTrue(true);
+	}
+	
+	@Test
+	public void testProcedureCall() {
+		makeParser("foo()");
+		parser.procedurecall();
+		assertTrue(true);
+	}
+	
+	@Test
+	public void testProcedureCallWithArg() {
+		makeParser("foo(6)");
+		parser.procedurecall();
+		assertTrue(true);
+	}
+	
+	@Test
+	public void testProcedureCallWithArgExpr() {
+		makeParser("foo(bar[6])");
+		parser.procedurecall();
+		assertTrue(true);
+	}
+	
+	@Test
+	public void testProcedureCallWithArgList() {
+		makeParser("foo(bar[6], 4)");
+		parser.procedurecall();
+		assertTrue(true);
+	}
+	
+	@Test
+	public void testReturnStatement() {
+		makeParser("return");
+		parser.returnstatement();
+		assertTrue(true);
+	}
+	
+	@Test
+	public void testReturnExpression() {
+		makeParser("return (1+2)");
+		assertEquals(parser.returnstatement().getText(), "return(1+2)");
+	}
+	
+	@Test
+	public void testReturnExpressionList() {
+		makeParser("return (1+2), b");
+		assertEquals(parser.returnstatement().getText(), "return(1+2),b");
 	}
 	
 	

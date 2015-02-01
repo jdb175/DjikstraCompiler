@@ -15,12 +15,19 @@
  // Parser rules
  djikstraText : 			program EOF;
  program :					PROGRAM ID declaration+;
- declaration :				variabledeclaration | arraydeclaration;
+ declaration :				variabledeclaration 
+ 								| arraydeclaration;
  variabledeclaration :		type idlist separator;
  arraydeclaration :			type LBRACK expression RBRACK idlist separator;
  type : 					FLOAT | INT | BOOLEAN;
  separator :				SEMICOLON?;
  idlist :					ID | idlist COMMA ID;
+ expressionlist :			expression | expressionlist COMMA expression;
+ returnstatement :			RETURN expressionlist?;
+ procedurecall :			ID LPAR arglist? RPAR;
+ arglist :		 			argument | arglist COMMA argument;
+ argument :					expression;
+ //Expressions
  expression :				logicalorexpression;
  logicalorexpression :		logicalandexpression 
  								| logicalorexpression OR logicalandexpression;
@@ -50,8 +57,6 @@
  								| functioncall
  								| arrayaccessor;
  functioncall :				ID LPAR arglist? RPAR;
- arglist :		 			argument | arglist COMMA argument;
- argument :					expression;
  arrayaccessor :			ID LBRACK expression RBRACK;
  floatconstant :			INTEGER PERIOD INTEGER;
  
