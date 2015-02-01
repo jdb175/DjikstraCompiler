@@ -22,8 +22,23 @@
  type : 					FLOAT | INT | BOOLEAN;
  separator :				SEMICOLON?;
  idlist :					ID | idlist COMMA ID;
- statement :				returnstatement
- 								| procedurecall;
+ statement :				assignstatement separator
+ 								| inputstatement separator
+ 								| outputstatement separator
+ 								| compoundstatement
+ 								| returnstatement separator
+ 								| procedurecall separator;
+ assignstatement :			varlist ASSIGN expressionlist;
+ var :						ID | arrayaccessor;
+ varlist :					var | varlist COMMA var;
+ inputstatement :			INPUT idlist;
+ outputstatement :			PRINT expression;
+ compoundstatement :		LBRACE compoundbody RBRACE;
+ compoundbody :				compounddeclorstatement
+ 								| compoundbody compounddeclorstatement;
+ compounddeclorstatement:	variabledeclaration
+ 								| arraydeclaration
+ 								| statement;
  guardedstatementlist :		guard | guardedstatementlist guard;
  guard :					expression GUARD statement;
  expressionlist :			expression | expressionlist COMMA expression;

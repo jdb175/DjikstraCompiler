@@ -469,6 +469,13 @@ public class DjikstraParserTest {
 	}
 	
 	@Test
+	public void testBasicGuardSemicolon() {
+		makeParser("x > 3 :: return false;");
+		parser.guard();
+		assertTrue(true);
+	}
+	
+	@Test
 	public void testBasicGuardProcCall() {
 		makeParser("true :: foo()");
 		parser.guard();
@@ -484,11 +491,120 @@ public class DjikstraParserTest {
 	
 	@Test
 	public void testGuardList2() {
-		makeParser("true :: foo() false :: bar()");
-		assertEquals(parser.guardedstatementlist().getText(), "true::foo()false::bar()");
+		makeParser("true :: foo(); false :: bar()");
+		assertEquals(parser.guardedstatementlist().getText(), "true::foo();false::bar()");
 	}
 	
+	@Test
+	public void testInputStatement() {
+		makeParser("input abc");
+		parser.inputstatement();
+		assertTrue(true);
+	}
 	
+	@Test
+	public void testInputStatementList() {
+		makeParser("input abc, cba");
+		assertEquals(parser.inputstatement().getText(), "inputabc,cba");
+	}
+	
+	@Test
+	public void testOutputStatement() {
+		makeParser("print a");
+		parser.outputstatement();
+		assertTrue(true);
+	}
+	
+	@Test
+	public void testOutputStatementExpr() {
+		makeParser("print (3+a)");
+		parser.outputstatement();
+		assertTrue(true);
+	}
+	
+	@Test
+	public void guardPrint() {
+		makeParser("(true) :: print (3+a);");
+		parser.guard();
+		assertTrue(true);
+	}
+	
+	@Test
+	public void guardInput() {
+		makeParser("(true) :: input avariable;");
+		parser.guard();
+		assertTrue(true);
+	}
+	
+	@Test
+	public void assignStatement() {
+		makeParser("a <- 5");
+		parser.assignstatement();
+		assertTrue(true);
+	}
+	
+	@Test
+	public void assignExpr() {
+		makeParser("a <- (1+2)");
+		parser.assignstatement();
+		assertTrue(true);
+	}
+	
+	@Test
+	public void assignArrayAccess() {
+		makeParser("a[2] <- 5");
+		parser.assignstatement();
+		assertTrue(true);
+	}
+	
+	@Test
+	public void multiAssign() {
+		makeParser("a[2], b <- 5, foo()");
+		parser.assignstatement();
+		assertTrue(true);
+	}
+	
+	@Test
+	public void guardAssign() {
+		makeParser("(true) :: a <- 3;");
+		parser.guard();
+		assertTrue(true);
+	}
+	
+	@Test
+	public void compoundStatement() {
+		makeParser("{print 3;}");
+		parser.compoundstatement();
+		assertTrue(true);
+	}
+	
+	@Test
+	public void compoundStatementMultiple() {
+		makeParser("{print 3;input a;return foo(4)}");
+		parser.compoundstatement();
+		assertTrue(true);
+	}
+	
+	@Test
+	public void compoundDeclareVar() {
+		makeParser("{int bar}");
+		parser.compoundstatement();
+		assertTrue(true);
+	}
+	
+	@Test
+	public void compoundDeclareArray() {
+		makeParser("{int[4] bar}");
+		parser.compoundstatement();
+		assertTrue(true);
+	}
+	
+	@Test
+	public void guardCompound() {
+		makeParser("(true) :: {return 4}");
+		parser.guard();
+		assertTrue(true);
+	}
 	// Helper methods
 		private void makeParser(String text)
 		{
