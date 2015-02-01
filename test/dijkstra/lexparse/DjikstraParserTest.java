@@ -461,6 +461,33 @@ public class DjikstraParserTest {
 		assertEquals(parser.returnstatement().getText(), "return(1+2),b");
 	}
 	
+	@Test
+	public void testBasicGuard() {
+		makeParser("x > 3 :: return false");
+		parser.guard();
+		assertTrue(true);
+	}
+	
+	@Test
+	public void testBasicGuardProcCall() {
+		makeParser("true :: foo()");
+		parser.guard();
+		assertTrue(true);
+	}
+	
+	@Test
+	public void testGuardList() {
+		makeParser("true :: foo()");
+		parser.guardedstatementlist();
+		assertTrue(true);
+	}
+	
+	@Test
+	public void testGuardList2() {
+		makeParser("true :: foo() false :: bar()");
+		assertEquals(parser.guardedstatementlist().getText(), "true::foo()false::bar()");
+	}
+	
 	
 	// Helper methods
 		private void makeParser(String text)

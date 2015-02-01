@@ -22,6 +22,10 @@
  type : 					FLOAT | INT | BOOLEAN;
  separator :				SEMICOLON?;
  idlist :					ID | idlist COMMA ID;
+ statement :				returnstatement
+ 								| procedurecall;
+ guardedstatementlist :		guard | guardedstatementlist guard;
+ guard :					expression GUARD statement;
  expressionlist :			expression | expressionlist COMMA expression;
  returnstatement :			RETURN expressionlist?;
  procedurecall :			ID LPAR arglist? RPAR;
