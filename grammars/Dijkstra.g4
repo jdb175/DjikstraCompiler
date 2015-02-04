@@ -15,39 +15,59 @@
  // Parser rules
  // Matching specification as closely as possible for format
  // for easier comparison
- djikstraText : 			program EOF;
- program :					PROGRAM ID declaration+;
+ dijkstraText : 			program EOF;
+ program :					PROGRAM ID (declaration | statement)+;
+ 
+ //Declarations
  declaration :				variabledeclaration 
- 								| arraydeclaration;
+ 								| arraydeclaration
+ 								| proceduredeclaration
+ 								| functiondeclaration;
  variabledeclaration :		type idlist separator;
  arraydeclaration :			type LBRACK expression RBRACK idlist separator;
+ functiondeclaration :		FUN ID LPAR parameterlist? RPAR COLON typelist compoundstatement;
+ proceduredeclaration :		PROC ID LPAR parameterlist? RPAR compoundstatement;
+ 	parameterlist :			parameter | parameterlist COMMA parameter;
+ 	parameter :				ID | type ID;
+ 
+ //Some utils
  type : 					FLOAT | INT | BOOLEAN;
+ typelist :					type | typelist COMMA type;
  separator :				SEMICOLON?;
  idlist :					ID | idlist COMMA ID;
+ expressionlist :			expression | expressionlist COMMA expression;
+ 
+ //Statements
  statement :				assignstatement separator
+ 								| alternativestatement
+ 								| iterativestatement
  								| inputstatement separator
  								| outputstatement separator
  								| compoundstatement
  								| returnstatement separator
  								| procedurecall separator;
+ 								
  assignstatement :			varlist ASSIGN expressionlist;
- var :						ID | arrayaccessor;
- varlist :					var | varlist COMMA var;
+ 	var :					ID | arrayaccessor;
+ 	varlist :				var | varlist COMMA var;
+ 
+ alternativestatement :		IF guard+ FI;
+ iterativestatement :		DO guard+ OD;
+ 	guard :					expression GUARD statement;
+ 
  inputstatement :			INPUT idlist;
  outputstatement :			PRINT expression;
  compoundstatement :		LBRACE compoundbody RBRACE;
- compoundbody :				compounddeclorstatement
- 								| compoundbody compounddeclorstatement;
- compounddeclorstatement:	variabledeclaration
+ 	compoundbody :			cpddeclorstatement
+ 								| compoundbody cpddeclorstatement;
+ 	cpddeclorstatement:		variabledeclaration
  								| arraydeclaration
  								| statement;
- guardedstatementlist :		guard | guardedstatementlist guard;
- guard :					expression GUARD statement;
- expressionlist :			expression | expressionlist COMMA expression;
+ 					
  returnstatement :			RETURN expressionlist?;
  procedurecall :			ID LPAR arglist? RPAR;
- arglist :		 			argument | arglist COMMA argument;
- argument :					expression;
+ arglist :		 			expression | arglist COMMA expression;
+ 
  //Expressions
  expression :				LPAR expression RPAR
  								| (TILDE | MINUS) expression

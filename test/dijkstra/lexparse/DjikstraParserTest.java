@@ -13,56 +13,56 @@ public class DjikstraParserTest {
 	@Test
 	public void testSimpleFloatDeclaration() {
 		makeParser("program test float test_float;");
-		parser.djikstraText();
+		parser.dijkstraText();
 		assertTrue(true);
 	}
 	
 	@Test
 	public void testSimpleIntDeclaration() {
 		makeParser("program test int test_int;");
-		parser.djikstraText();
+		parser.dijkstraText();
 		assertTrue(true);
 	}
 	
 	@Test
 	public void testSimpleBooleanDeclaration() {
 		makeParser("program test boolean test_bool;");
-		parser.djikstraText();
+		parser.dijkstraText();
 		assertTrue(true);
 	}
 	
 	@Test
 	public void testMultipleVariableDeclaration() {
 		makeParser("program test boolean test_bool, test_bool2;");
-		parser.djikstraText();
+		parser.dijkstraText();
 		assertTrue(true);
 	}
 	
 	@Test
 	public void testThreeVariableDeclaration() {
 		makeParser("program test boolean test_bool, test_bool2, test_bool3;");
-		parser.djikstraText();
+		parser.dijkstraText();
 		assertTrue(true);
 	}
 	
 	@Test
 	public void testTwoMultivariableDeclarations() {
 		makeParser("program test boolean test_bool, test_bool2, test_bool3; int test_int, test_int2, test_int3;");
-		parser.djikstraText();
+		parser.dijkstraText();
 		assertTrue(true);
 	}
 	
 	@Test
 	public void testTwoMultivariableDeclarationsNoSemicolon() {
 		makeParser("program test boolean test_bool, test_bool2, test_bool3 int test_int, test_int2, test_int3");
-		parser.djikstraText();
+		parser.dijkstraText();
 		assertTrue(true);
 	}
 	
 	@Test
 	public void testBasicArrayDeclaration() {
 		makeParser("program test boolean [1] tset_arr");
-		parser.djikstraText();
+		parser.dijkstraText();
 		assertTrue(true);
 	}
 	
@@ -483,19 +483,6 @@ public class DjikstraParserTest {
 	}
 	
 	@Test
-	public void testGuardList() {
-		makeParser("true :: foo()");
-		parser.guardedstatementlist();
-		assertTrue(true);
-	}
-	
-	@Test
-	public void testGuardList2() {
-		makeParser("true :: foo(); false :: bar()");
-		assertEquals(parser.guardedstatementlist().getText(), "true::foo();false::bar()");
-	}
-	
-	@Test
 	public void testInputStatement() {
 		makeParser("input abc");
 		parser.inputstatement();
@@ -605,6 +592,97 @@ public class DjikstraParserTest {
 		parser.guard();
 		assertTrue(true);
 	}
+	
+	@Test
+	public void iterativeStatementBasic() {
+		makeParser("do x < 4 :: return 4 od");
+		parser.statement();
+		assertTrue(true);
+	}
+	
+	@Test
+	public void iterativeStatementList () {
+		makeParser("do x < 4 :: x <- 4; x >= 4 :: print 5 od");
+		parser.iterativestatement();
+		assertTrue(true);
+	}
+	
+	@Test
+	public void alternativeStatementBasic() {
+		makeParser("if x < 4 :: print 4 fi");
+		parser.statement();
+		assertTrue(true);
+	}
+	
+	@Test
+	public void alternativeStatementList() {
+		makeParser("if x < 4 :: print 4; x >= 4 :: print 5 fi");
+		parser.alternativestatement();
+		assertTrue(true);
+	}
+	
+	@Test
+	public void functiondeclaration() {
+		makeParser("fun foo () : int { return 5 }");
+		parser.declaration();
+		assertTrue(true);
+	}
+	
+	@Test
+	public void functiondeclaration2line() {
+		makeParser("fun foo () : int { print 4; return 5 }");
+		parser.declaration();
+		assertTrue(true);
+	}
+	
+	@Test
+	public void functiondeclaration2returns() {
+		makeParser("fun foo () : int, boolean { return 5, true }");
+		parser.declaration();
+		assertTrue(true);
+	}
+	
+	@Test
+	public void functiondeclarationparameters() {
+		makeParser("fun foo (a, b) : int, boolean { return 5, true }");
+		parser.declaration();
+		assertTrue(true);
+	}
+	
+	@Test
+	public void functiondeclarationparameterswithtype() {
+		makeParser("fun foo (a, int b) : int, boolean { return 5, true }");
+		parser.declaration();
+		assertTrue(true);
+	}
+	
+	@Test
+	public void proceduredeclaration() {
+		makeParser("proc foo () { print 5 }");
+		parser.declaration();
+		assertTrue(true);
+	}
+	
+	@Test
+	public void proceduredeclarationmultiline() {
+		makeParser("proc foo () { print 5; print 6 }");
+		parser.declaration();
+		assertTrue(true);
+	}
+	
+	@Test
+	public void procdeclarationparameters() {
+		makeParser("proc foo (a, boolean b) { print 5; print true }");
+		parser.declaration();
+		assertTrue(true);
+	}
+	
+	@Test
+	public void programwithstatements() {
+		makeParser("program foo boolean a, b, c; if a = b :: print c fi");
+		parser.dijkstraText();
+	}
+	
 	// Helper methods
 		private void makeParser(String text)
 		{
