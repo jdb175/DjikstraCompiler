@@ -6,3 +6,7 @@
 /DijkstraLexer.tokens
 /DijkstraLexer.java
 /Dijkstra.tokens
+/DijkstraListener.java
+/DijkstraBaseListener.java
+/DijkstraVisitor.java
+/DijkstraBaseVisitor.java

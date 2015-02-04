@@ -13,6 +13,8 @@
  grammar Dijkstra;
  
  // Parser rules
+ // Matching specification as closely as possible for format
+ // for easier comparison
  djikstraText : 			program EOF;
  program :					PROGRAM ID declaration+;
  declaration :				variabledeclaration 
@@ -53,7 +55,7 @@
  logicalandexpression :		equalityexpression 
  								| logicalandexpression AND equalityexpression;
  equalityexpression :		relationalexpression 
- 								| relationalexpression equalityop relationalexpression;
+ 								| relationalexpression equalityop equalityexpression;
  equalityop :				EQ | NEQ;
  relationalexpression : 	additiveexpression 
  								| additiveexpression relationalop additiveexpression;
