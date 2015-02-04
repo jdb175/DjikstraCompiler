@@ -49,32 +49,19 @@
  arglist :		 			argument | arglist COMMA argument;
  argument :					expression;
  //Expressions
- expression :				logicalorexpression;
- logicalorexpression :		logicalandexpression 
- 								| logicalorexpression OR logicalandexpression;
- logicalandexpression :		equalityexpression 
- 								| logicalandexpression AND equalityexpression;
- equalityexpression :		relationalexpression 
- 								| relationalexpression equalityop equalityexpression;
- equalityop :				EQ | NEQ;
- relationalexpression : 	additiveexpression 
- 								| additiveexpression relationalop additiveexpression;
- relationalop :				GT | GTE | LT | LTE;
- additiveexpression :		multiplicativeexpression 
- 								| additiveexpression additiveop multiplicativeexpression;
- additiveop :				PLUS | MINUS;
- multiplicativeexpression :	unaryexpression 
- 								| multiplicativeexpression multiplicativeop unaryexpression;
- multiplicativeop :			STAR | SLASH | MOD | DIV;
- unaryexpression :			primaryexpression 
- 								| unaryop unaryexpression;
- unaryop :					TILDE | MINUS;
- primaryexpression :		 INTEGER 
+ expression :				LPAR expression RPAR
+ 								| (TILDE | MINUS) expression
+ 								| expression (STAR | SLASH | MOD | DIV) expression
+ 								| expression (PLUS | MINUS) expression
+ 								| expression (GT | GTE | LT | LTE) expression
+ 								| expression AND expression
+ 								| <assoc=right>expression (EQ | NEQ) expression
+ 								| expression OR expression
+ 								| INTEGER 
  								| floatconstant 
  								| TRUE 
  								| FALSE 
  								| ID
- 								| LPAR expression RPAR
  								| functioncall
  								| arrayaccessor;
  functioncall :				ID LPAR arglist? RPAR;
