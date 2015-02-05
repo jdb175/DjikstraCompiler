@@ -19,54 +19,54 @@
  program :					PROGRAM ID (declaration | statement)+;
  
  //Declarations
- declaration :				variabledeclaration 
- 								| arraydeclaration
- 								| proceduredeclaration
- 								| functiondeclaration;
- variabledeclaration :		type idlist separator;
- arraydeclaration :			type LBRACK expression RBRACK idlist separator;
- functiondeclaration :		FUN ID LPAR parameterlist? RPAR COLON typelist compoundstatement;
- proceduredeclaration :		PROC ID LPAR parameterlist? RPAR compoundstatement;
- 	parameterlist :			parameter | parameterlist COMMA parameter;
+ declaration :				variableDeclaration 
+ 								| arrayDeclaration
+ 								| procedureDeclaration
+ 								| functionDeclaration;
+ variableDeclaration :		type idList separator;
+ arrayDeclaration :			type LBRACK expression RBRACK idList separator;
+ functionDeclaration :		FUN ID LPAR parameterList? RPAR COLON typeList compoundStatement;
+ procedureDeclaration :		PROC ID LPAR parameterList? RPAR compoundStatement;
+ 	parameterList :			parameter | parameterList COMMA parameter;
  	parameter :				ID | type ID;
  
  //Some utils
  type : 					FLOAT | INT | BOOLEAN;
- typelist :					type | typelist COMMA type;
+ typeList :					type | typeList COMMA type;
  separator :				SEMICOLON?;
- idlist :					ID | idlist COMMA ID;
- expressionlist :			expression | expressionlist COMMA expression;
+ idList :					ID | idList COMMA ID;
+ expressionList :			expression | expressionList COMMA expression;
  
  //Statements
- statement :				assignstatement separator
- 								| alternativestatement
- 								| iterativestatement
- 								| inputstatement separator
- 								| outputstatement separator
- 								| compoundstatement
- 								| returnstatement separator
- 								| procedurecall separator;
+ statement :				assignStatement separator
+ 								| alternativeStatement
+ 								| iterativeStatement
+ 								| inputStatement separator
+ 								| outputStatement separator
+ 								| compoundStatement
+ 								| returnStatement separator
+ 								| procedureCall separator;
  								
- assignstatement :			varlist ASSIGN expressionlist;
- 	var :					ID | arrayaccessor;
- 	varlist :				var | varlist COMMA var;
+ assignStatement :			varList ASSIGN expressionList;
+ 	var :					ID | arrayAccessor;
+ 	varList :				var | varList COMMA var;
  
- alternativestatement :		IF guard+ FI;
- iterativestatement :		DO guard+ OD;
+ alternativeStatement :		IF guard+ FI;
+ iterativeStatement :		DO guard+ OD;
  	guard :					expression GUARD statement;
  
- inputstatement :			INPUT idlist;
- outputstatement :			PRINT expression;
- compoundstatement :		LBRACE compoundbody RBRACE;
- 	compoundbody :			cpddeclorstatement
- 								| compoundbody cpddeclorstatement;
- 	cpddeclorstatement:		variabledeclaration
- 								| arraydeclaration
+ inputStatement :			INPUT idList;
+ outputStatement :			PRINT expression;
+ compoundStatement :		LBRACE compoundBody RBRACE;
+ 	compoundBody :			cpdDeclOrStatement
+ 								| compoundBody cpdDeclOrStatement;
+ 	cpdDeclOrStatement:		variableDeclaration
+ 								| arrayDeclaration
  								| statement;
  					
- returnstatement :			RETURN expressionlist?;
- procedurecall :			ID LPAR arglist? RPAR;
- arglist :		 			expression | arglist COMMA expression;
+ returnStatement :			RETURN expressionList?;
+ procedureCall :			ID LPAR argList? RPAR;
+ argList :		 			expression | argList COMMA expression;
  
  //Expressions
  expression :				LPAR expression RPAR
@@ -78,15 +78,16 @@
  								| <assoc=right>expression (EQ | NEQ) expression
  								| expression OR expression
  								| INTEGER 
- 								| floatconstant 
+ 								| floatConstant 
  								| TRUE 
  								| FALSE 
  								| ID
- 								| functioncall
- 								| arrayaccessor;
- functioncall :				ID LPAR arglist? RPAR;
- arrayaccessor :			ID LBRACK expression RBRACK;
- floatconstant :			INTEGER PERIOD INTEGER;
+ 								| functionCall
+ 								| arrayAccessor;
+ functionCall :				ID LPAR argList? RPAR;
+ arrayAccessor :			ID LBRACK expression RBRACK;
+ floatConstant :			INTEGER PERIOD INTEGER;	
+
  
  /** Lexical rules */
  

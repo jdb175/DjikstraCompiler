@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import dijkstra.utility.DijkstraFactory;
 
-public class DjikstraParserTest {
+public class DijkstraParserTest {
 	private DijkstraParser parser;
 
 	@Test
@@ -99,7 +99,7 @@ public class DjikstraParserTest {
 	@Test
 	public void testFloat() {
 		makeParser("4.0");
-		parser.floatconstant();
+		parser.floatConstant();
 		assertTrue(true);
 	}
 	
@@ -175,7 +175,7 @@ public class DjikstraParserTest {
 	@Test
 	public void testMultiplicativeArrayDeclaration() {
 		makeParser("boolean [1*3.3] test_arr");
-		parser.arraydeclaration();
+		parser.arrayDeclaration();
 		assertTrue(true);
 	}
 	
@@ -209,7 +209,7 @@ public class DjikstraParserTest {
 	@Test
 	public void testAdditiveArrayDeclaration() {
 		makeParser("boolean [1+3] test_arr");
-		parser.arraydeclaration();
+		parser.arrayDeclaration();
 		assertTrue(true);
 	}
 	
@@ -340,63 +340,63 @@ public class DjikstraParserTest {
 	@Test
 	public void testFunctionCall() {
 		makeParser("foo ()");
-		parser.functioncall();
+		parser.functionCall();
 		assertTrue(true);
 	}
 	
 	@Test
 	public void testFunctionCallOneArg() {
 		makeParser("bar(5)");
-		parser.functioncall();
+		parser.functionCall();
 		assertTrue(true);
 	}
 	
 	@Test
 	public void testFunctionCallOneArgExpression() {
 		makeParser("bar(5 + 3)");
-		parser.functioncall();
+		parser.functionCall();
 		assertTrue(true);
 	}
 	
 	@Test
 	public void testFunctionCall2Arg() {
 		makeParser("bar(4, 5 + 3)");
-		parser.functioncall();
+		parser.functionCall();
 		assertTrue(true);
 	}
 	
 	@Test
 	public void testFunctionCall3Arg() {
 		makeParser("bar(4, 5 + 3, (11))");
-		parser.functioncall();
+		parser.functionCall();
 		assertTrue(true);
 	}
 	
 	@Test
 	public void testArrayAccessor() {
 		makeParser("bar[0]");
-		parser.arrayaccessor();
+		parser.arrayAccessor();
 		assertTrue(true);
 	}
 	
 	@Test
 	public void testArrayAccessorExpression() {
 		makeParser("bar[(0+2)]");
-		parser.arrayaccessor();
+		parser.arrayAccessor();
 		assertTrue(true);
 	}
 	
 	@Test
 	public void testArrayAccessorFunction() {
 		makeParser("bar[foo()]");
-		parser.arrayaccessor();
+		parser.arrayAccessor();
 		assertTrue(true);
 	}
 	
 	@Test
 	public void testArrayAccessorNested() {
 		makeParser("bar[foo[1]]");
-		parser.arrayaccessor();
+		parser.arrayAccessor();
 		assertTrue(true);
 	}
 	
@@ -417,48 +417,48 @@ public class DjikstraParserTest {
 	@Test
 	public void testProcedureCall() {
 		makeParser("foo()");
-		parser.procedurecall();
+		parser.procedureCall();
 		assertTrue(true);
 	}
 	
 	@Test
 	public void testProcedureCallWithArg() {
 		makeParser("foo(6)");
-		parser.procedurecall();
+		parser.procedureCall();
 		assertTrue(true);
 	}
 	
 	@Test
 	public void testProcedureCallWithArgExpr() {
 		makeParser("foo(bar[6])");
-		parser.procedurecall();
+		parser.procedureCall();
 		assertTrue(true);
 	}
 	
 	@Test
 	public void testProcedureCallWithArgList() {
 		makeParser("foo(bar[6], 4)");
-		parser.procedurecall();
+		parser.procedureCall();
 		assertTrue(true);
 	}
 	
 	@Test
 	public void testReturnStatement() {
 		makeParser("return");
-		parser.returnstatement();
+		parser.returnStatement();
 		assertTrue(true);
 	}
 	
 	@Test
 	public void testReturnExpression() {
 		makeParser("return (1+2)");
-		assertEquals(parser.returnstatement().getText(), "return(1+2)");
+		assertEquals(parser.returnStatement().getText(), "return(1+2)");
 	}
 	
 	@Test
 	public void testReturnExpressionList() {
 		makeParser("return (1+2), b");
-		assertEquals(parser.returnstatement().getText(), "return(1+2),b");
+		assertEquals(parser.returnStatement().getText(), "return(1+2),b");
 	}
 	
 	@Test
@@ -485,27 +485,27 @@ public class DjikstraParserTest {
 	@Test
 	public void testInputStatement() {
 		makeParser("input abc");
-		parser.inputstatement();
+		parser.inputStatement();
 		assertTrue(true);
 	}
 	
 	@Test
 	public void testInputStatementList() {
 		makeParser("input abc, cba");
-		assertEquals(parser.inputstatement().getText(), "inputabc,cba");
+		assertEquals(parser.inputStatement().getText(), "inputabc,cba");
 	}
 	
 	@Test
 	public void testOutputStatement() {
 		makeParser("print a");
-		parser.outputstatement();
+		parser.outputStatement();
 		assertTrue(true);
 	}
 	
 	@Test
 	public void testOutputStatementExpr() {
 		makeParser("print (3+a)");
-		parser.outputstatement();
+		parser.outputStatement();
 		assertTrue(true);
 	}
 	
@@ -526,28 +526,28 @@ public class DjikstraParserTest {
 	@Test
 	public void assignStatement() {
 		makeParser("a <- 5");
-		parser.assignstatement();
+		parser.assignStatement();
 		assertTrue(true);
 	}
 	
 	@Test
 	public void assignExpr() {
 		makeParser("a <- (1+2)");
-		parser.assignstatement();
+		parser.assignStatement();
 		assertTrue(true);
 	}
 	
 	@Test
 	public void assignArrayAccess() {
 		makeParser("a[2] <- 5");
-		parser.assignstatement();
+		parser.assignStatement();
 		assertTrue(true);
 	}
 	
 	@Test
 	public void multiAssign() {
 		makeParser("a[2], b <- 5, foo()");
-		parser.assignstatement();
+		parser.assignStatement();
 		assertTrue(true);
 	}
 	
@@ -561,28 +561,28 @@ public class DjikstraParserTest {
 	@Test
 	public void compoundStatement() {
 		makeParser("{print 3;}");
-		parser.compoundstatement();
+		parser.compoundStatement();
 		assertTrue(true);
 	}
 	
 	@Test
 	public void compoundStatementMultiple() {
 		makeParser("{print 3;input a;return foo(4)}");
-		parser.compoundstatement();
+		parser.compoundStatement();
 		assertTrue(true);
 	}
 	
 	@Test
 	public void compoundDeclareVar() {
 		makeParser("{int bar}");
-		parser.compoundstatement();
+		parser.compoundStatement();
 		assertTrue(true);
 	}
 	
 	@Test
 	public void compoundDeclareArray() {
 		makeParser("{int[4] bar}");
-		parser.compoundstatement();
+		parser.compoundStatement();
 		assertTrue(true);
 	}
 	
@@ -603,7 +603,7 @@ public class DjikstraParserTest {
 	@Test
 	public void iterativeStatementList () {
 		makeParser("do x < 4 :: x <- 4; x >= 4 :: print 5 od");
-		parser.iterativestatement();
+		parser.iterativeStatement();
 		assertTrue(true);
 	}
 	
@@ -617,7 +617,7 @@ public class DjikstraParserTest {
 	@Test
 	public void alternativeStatementList() {
 		makeParser("if x < 4 :: print 4; x >= 4 :: print 5 fi");
-		parser.alternativestatement();
+		parser.alternativeStatement();
 		assertTrue(true);
 	}
 	
@@ -677,7 +677,13 @@ public class DjikstraParserTest {
 		assertTrue(true);
 	}
 	
-	@Test
+	@Test(expected=RuntimeException.class)
+	public void procdeclarationBad() {
+		makeParser("proc foo ( { print 5; print true }");
+		parser.declaration();
+		assertTrue(true);
+	}
+	
 	public void programwithstatements() {
 		makeParser("program foo boolean a, b, c; if a = b :: print c fi");
 		parser.dijkstraText();
