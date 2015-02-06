@@ -69,21 +69,21 @@
  argList :		 			expression | argList COMMA expression;
  
  //Expressions
- expression :				LPAR expression RPAR
- 								| (TILDE | MINUS) expression
- 								| expression (STAR | SLASH | MOD | DIV) expression
- 								| expression (PLUS | MINUS) expression
- 								| expression (GT | GTE | LT | LTE) expression
- 								| expression AND expression
- 								| <assoc=right>expression (EQ | NEQ) expression
- 								| expression OR expression
- 								| INTEGER 
- 								| floatConstant 
- 								| TRUE 
- 								| FALSE 
- 								| ID
- 								| functionCall
- 								| arrayAccessor;
+ expression :				LPAR expression RPAR #compound
+ 								| (TILDE | MINUS) expression #unary
+ 								| expression (STAR | SLASH | MOD | DIV) expression #mult
+ 								| expression (PLUS | MINUS) expression #add
+ 								| expression (GT | GTE | LT | LTE) expression #relational
+ 								| expression AND expression #and
+ 								| <assoc=right>expression (EQ | NEQ) expression #equal
+ 								| expression OR expression #or
+ 								| INTEGER #integer
+ 								| floatConstant #float
+ 								| TRUE #constant
+ 								| FALSE #constant
+ 								| ID #constant
+ 								| functionCall #fCall
+ 								| arrayAccessor #arrayAccess; 
  functionCall :				ID LPAR argList? RPAR;
  arrayAccessor :			ID LBRACK expression RBRACK;
  floatConstant :			INTEGER PERIOD INTEGER;	
