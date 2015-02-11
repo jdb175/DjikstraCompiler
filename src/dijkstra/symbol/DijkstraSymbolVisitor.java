@@ -81,6 +81,20 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 		return null;
 	}
 	
+	@Override
+	public DijkstraType visitInputStatement(@NotNull DijkstraParser.InputStatementContext ctx) {
+		IdListContext idlist = ctx.idList();
+		while(idlist != null) {
+			String id = idlist.ID().getText();
+			Symbol symbol = stm.add(id);
+		//	symbols.put(ctx, symbol);
+		//	types.put(ctx, t);
+			idlist = idlist.idList();
+		}
+		
+		return null;
+	}
+	
 	@Override 
 	public DijkstraType visitType(TypeContext ctx) 
 	{
