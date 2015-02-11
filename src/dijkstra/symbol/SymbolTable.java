@@ -85,6 +85,42 @@ public class SymbolTable
 	{
 		return parent;
 	}
+	
+	/**
+	 * @return string of the symbols in this table
+	 */
+	public String printLocalScope() 
+	{
+		StringBuilder builder = new StringBuilder();
+		builder.append("Table\n");
+		builder.append("============\n");
+		Iterator it = symbols.entrySet().iterator();
+		while(it.hasNext()) {
+			Map.Entry pair = (Map.Entry)it.next();
+			builder.append(pair.getKey() + " : " + pair.getValue() + "\n");
+		}
+		return builder.toString();
+	}
+	
+	/**
+	 * @return string of the symbols in this table and parents
+	 */
+	public String printTotalScope() 
+	{
+		StringBuilder builder = new StringBuilder();
+		if(parent != null){
+			builder.append("Parent: \n");
+			builder.append(parent);
+		}
+		builder.append(this);
+		return builder.toString();
+	}
+	
+	@Override
+	public String toString() 
+	{
+		return printLocalScope();
+	}
 
 	/*
 	 * @see java.lang.Object#hashCode()
