@@ -11,15 +11,8 @@
 
 package dijkstra.utility;
 
-import org.antlr.v4.runtime.ANTLRInputStream;
-import org.antlr.v4.runtime.BaseErrorListener;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.RecognitionException;
-import org.antlr.v4.runtime.Recognizer;
-import org.antlr.v4.runtime.TokenStream;
-
-import dijkstra.lexparse.DijkstraLexer;
-import dijkstra.lexparse.DijkstraParser;
+import org.antlr.v4.runtime.*;
+import dijkstra.lexparse.*;
 
 /**
  * The DijkstraFactory is responsible for constructing all, or parts of a Dijkstra
