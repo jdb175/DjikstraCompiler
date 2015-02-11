@@ -16,7 +16,8 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 	private SymbolTableManager stm = SymbolTableManager.getInstance();
 	
 	@Override 
-	public DijkstraType visitVariableDeclaration(@NotNull DijkstraParser.VariableDeclarationContext ctx) { 
+	public DijkstraType visitVariableDeclaration(@NotNull DijkstraParser.VariableDeclarationContext ctx) 
+	{ 
 		DijkstraType t;
 		//Get the type
 		TypeContext type = ctx.type();
@@ -26,11 +27,58 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 		while(idlist != null) {
 			String id = idlist.ID().getText();
 			Symbol symbol = stm.add(id, t);
-			symbols.put(ctx, symbol);
-			types.put(ctx, t);
+		//	symbols.put(ctx, symbol);
+		//	types.put(ctx, t);
 			idlist = idlist.idList();
 		}
 		return t;
+	}
+	
+	@Override
+	public DijkstraType visitArrayDeclaration(@NotNull DijkstraParser.ArrayDeclarationContext ctx) 
+	{
+		DijkstraType t;
+		//Get the type
+		TypeContext type = ctx.type();
+		t = type.accept(this);
+		//Now get all of the ids and add them as symbols
+		IdListContext idlist = ctx.idList();
+		while(idlist != null) {
+			String id = idlist.ID().getText();
+			Symbol symbol = stm.add(id, t);
+		//	symbols.put(ctx, symbol);
+		//	types.put(ctx, t);
+			idlist = idlist.idList();
+		}
+		return t;
+	}
+	
+	@Override
+	public DijkstraType visitAssignStatement(@NotNull DijkstraParser.AssignStatementContext ctx)
+	{
+		//iterate over var list and expressionList
+		VarListContext varList = ctx.varList();
+		ExpressionListContext exprList = ctx.expressionList();
+		while(varList != null) {
+			//Get name from var
+			VarContext var = varList.var();
+			//Get type from expression
+			DijkstraType t = exprList.expression().accept(this);
+			//Now get id
+			String id;
+			if(var.ID() != null) {
+				id = var.ID().getText();
+			} else {
+				id = var.arrayAccessor().ID().getText();
+			}
+			Symbol symbol = stm.add(id, t);
+		//	symbols.put(ctx, symbol);
+		//	types.put(ctx, t);
+			varList = varList.varList();
+			exprList = exprList.expressionList();
+		}
+		
+		return null;
 	}
 	
 	@Override 
@@ -46,4 +94,5 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 		}
 		return t;
 	}
+	
 }

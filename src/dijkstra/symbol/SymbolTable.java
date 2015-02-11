@@ -13,6 +13,8 @@ package dijkstra.symbol;
 
 import java.util.*;
 
+import dijkstra.utility.DijkstraType;
+
 /**
  * A Dijkstra compiler symbol table
  * @version Feb 6, 2015

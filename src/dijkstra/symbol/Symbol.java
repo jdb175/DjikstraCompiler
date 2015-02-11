@@ -40,6 +40,9 @@ public class Symbol
 	 */
 	public Symbol(String id, DijkstraType type)
 	{
+		if(type == null) {
+			type = UNDEFINED;
+		}
 		this.id = id;
 		this.type = type;
 		this.value = null;
