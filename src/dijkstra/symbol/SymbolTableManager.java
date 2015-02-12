@@ -121,6 +121,19 @@ public class SymbolTableManager
 	}
 	
 	/**
+	 * Update the symbol with specified key in the current scope, if
+	 * the current type is consistent.
+	 * @param id the desired symbol's ID
+	 * @param symbolType the desired type for the symbol
+	 * @return the updated symbol
+	 */
+	public Symbol updateType(String id, DijkstraType symbolType)
+	{
+		Symbol symbol = currentSymbolTable.updateType(id, symbolType);
+		return symbol;
+	}
+	
+	/**
 	 * @return the current symbol table
 	 */
 	public SymbolTable getCurrentSymbolTable()

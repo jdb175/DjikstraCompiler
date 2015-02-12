@@ -99,7 +99,7 @@ public class DijkstraParserTest {
 	@Test
 	public void testFloat() {
 		makeParser("4.0");
-		parser.floatConstant();
+		parser.expression();
 		assertTrue(true);
 	}
 	

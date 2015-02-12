@@ -78,15 +78,14 @@
  								| <assoc=right>expression (EQ | NEQ) expression #equal
  								| expression OR expression #or
  								| INTEGER #integer
- 								| floatConstant #float
- 								| TRUE #constant
- 								| FALSE #constant
- 								| ID #constant
+ 								| INTEGER PERIOD INTEGER #float
+ 								| TRUE #bool
+ 								| FALSE #bool
+ 								| ID #idexp
  								| functionCall #fCall
  								| arrayAccessor #arrayAccess; 
  functionCall :				ID LPAR argList? RPAR;
  arrayAccessor :			ID LBRACK expression RBRACK;
- floatConstant :			INTEGER PERIOD INTEGER;	
 
  
  /** Lexical rules */

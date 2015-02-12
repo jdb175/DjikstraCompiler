@@ -154,5 +154,37 @@ public class Symbol
 		builder.append("]");
 		return builder.toString();
 	}
-	
+
+	/**
+	 * Updates the type to be newType, if that is consistent. Otherwise
+	 * throws an exception
+	 * @param newType
+	 */
+	public void updateType(DijkstraType newType) {
+		if(newType == BOOLEAN) {
+			if(type == NUM || type == INT || type == FLOAT) {
+				throw new DijkstraSymbolException("Cannot assign updated type "+newType+" to a symbol of type "+type+" ("+id+")");
+			} else {
+				type = newType;
+			}
+		} else if (newType == NUM) {
+			if(type == BOOLEAN) {
+				throw new DijkstraSymbolException("Cannot assign updated type "+newType+" to a symbol of type "+type+" ("+id+")");
+			} else if (type == UNDEFINED) {
+				type = NUM;
+			}
+		} else if (newType == INT) {
+			if(type == BOOLEAN || type == FLOAT) {
+				throw new DijkstraSymbolException("Cannot assign updated type "+newType+" to a symbol of type "+type+" ("+id+")");
+			} else {
+				type = newType;
+			}
+		} else if (newType == FLOAT) {
+			if(type == BOOLEAN) {
+				throw new DijkstraSymbolException("Cannot assign updated type "+newType+" to a symbol of type "+type+" ("+id+")");
+			} else if (type == UNDEFINED || type == NUM){
+				type = FLOAT;
+			}
+		} 
+	}
 }
