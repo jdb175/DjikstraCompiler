@@ -95,6 +95,36 @@ public class SymbolTableManager
 	}
 	
 	/**
+	 * Add a symbol to the current symbol function table with the type specified.
+	 * @param id the symbol name 
+	 * @param symbolType the symbol's type
+	 * @return the added symbol
+	 * @throws DijkstraSymbolException if the symbol already exists in this table
+	 * @see SymbolTable#add(Symbol)
+	 * @see Symbol#Symbol(String, dijkstra.utility.DijkstraType)
+	 */
+	public Symbol addFunction(String id, DijkstraType symbolType)
+	{
+		Symbol symbol = currentSymbolTable.addFunction(new Symbol(id, symbolType));
+		return symbol;
+	}
+	
+	/**
+	 * Add a symbol to the current symbol array table with the type specified.
+	 * @param id the symbol name 
+	 * @param symbolType the symbol's type
+	 * @return the added symbol
+	 * @throws DijkstraSymbolException if the symbol already exists in this table
+	 * @see SymbolTable#add(Symbol)
+	 * @see Symbol#Symbol(String, dijkstra.utility.DijkstraType)
+	 */
+	public Symbol addArray(String id, DijkstraType symbolType)
+	{
+		Symbol symbol = currentSymbolTable.addArray(new Symbol(id, symbolType));
+		return symbol;
+	}
+	
+	/**
 	 * Add a symbol to the current symbol table with the type specified.
 	 * @param id the symbol name 
 	 * @param symbolType the symbol's type
@@ -118,6 +148,28 @@ public class SymbolTableManager
 	public Symbol getSymbol(String id)
 	{
 		return currentSymbolTable.getSymbol(id);
+	}
+	
+	/**
+	 * Get the function symbol with the specified key in the current scope.
+	 * @param id the desired symbol's ID
+	 * @return the symbol referenced or null if it does not exist.
+	 * @see SymbolTable#getSymbol(String)
+	 */
+	public Symbol getFunction(String id)
+	{
+		return currentSymbolTable.getFunction(id);
+	}
+	
+	/**
+	 * Get the array symbol with the specified key in the current scope.
+	 * @param id the desired symbol's ID
+	 * @return the symbol referenced or null if it does not exist.
+	 * @see SymbolTable#getSymbol(String)
+	 */
+	public Symbol getArray(String id)
+	{
+		return currentSymbolTable.getArray(id);
 	}
 	
 	/**

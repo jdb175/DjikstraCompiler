@@ -26,11 +26,23 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 		IdListContext idlist = ctx.idList();
 		while(idlist != null) {
 			String id = idlist.ID().getText();
-			Symbol symbol = stm.add(id, t);
-		//	symbols.put(ctx, symbol);
-		//	types.put(ctx, t);
+			Symbol symbol = stm.add(id, t);			
 			idlist = idlist.idList();
 		}
+		types.put(ctx, t);
+		return t;
+	}
+	
+	@Override
+	public DijkstraType visitParameter(@NotNull DijkstraParser.ParameterContext ctx) {
+		DijkstraType t = UNDEFINED;
+		if(ctx.type() != null) {
+			t = ctx.type().accept(this);
+		}
+		String id = ctx.ID().getText();
+		Symbol symbol = stm.add(id, t);
+		types.put(ctx, t);
+		symbols.put(ctx,  symbol);
 		return t;
 	}
 	
@@ -45,9 +57,7 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 		IdListContext idlist = ctx.idList();
 		while(idlist != null) {
 			String id = idlist.ID().getText();
-			Symbol symbol = stm.add(id, t);
-		//	symbols.put(ctx, symbol);
-		//	types.put(ctx, t);
+			Symbol symbol = stm.addArray(id, t);
 			idlist = idlist.idList();
 		}
 		return t;
@@ -68,18 +78,12 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 			String id;
 			if(var.ID() != null) {
 				id = var.ID().getText();
-			} else {
-				id = var.arrayAccessor().ID().getText();
+				//create the symbol if it is not an accessor
+				Symbol symbol = stm.getSymbol(id);
+				if(symbol == null) {
+					stm.add(id, t);
+				}
 			}
-			//create the symbol if it does not exist
-			Symbol symbol = stm.getSymbol(id);
-			if(symbol == null) {
-				stm.add(id, t);
-			} else {
-				stm.updateType(id, t);
-			}
-		//	symbols.put(ctx, symbol);
-		//	types.put(ctx, t);
 			varList = varList.varList();
 			exprList = exprList.expressionList();
 		}
@@ -93,116 +97,99 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 		while(idlist != null) {
 			String id = idlist.ID().getText();
 			Symbol symbol = stm.add(id);
-		//	symbols.put(ctx, symbol);
-		//	types.put(ctx, t);
 			idlist = idlist.idList();
 		}
 		
 		return null;
 	}
 	
-	/* Complex Expression Types */
+	/* Scope changing declarations */
+	@Override
+	public DijkstraType visitProcedureDeclaration(@NotNull DijkstraParser.ProcedureDeclarationContext ctx) {
+		Symbol symbol = stm.add(ctx.ID().getText(), PROCEDURE);
+		symbols.put(ctx, symbol);
+		stm.enterScope();
+		visitChildren(ctx);
+		symbolTables.put(ctx, stm.getCurrentSymbolTable());
+		stm.exitScope();
+		return null;
+	}
+	
+	/* Scope changing declarations */
+	@Override
+	public DijkstraType visitFunctionDeclaration(@NotNull DijkstraParser.FunctionDeclarationContext ctx) {
+		DijkstraType t = ctx.type().accept(this);
+		Symbol symbol = stm.addFunction(ctx.ID().getText(), t);
+		symbols.put(ctx, symbol);
+		stm.enterScope();
+		visitChildren(ctx);
+		symbolTables.put(ctx, stm.getCurrentSymbolTable());
+		stm.exitScope();
+		return null;
+	}
+	
+	
+	@Override
+	public DijkstraType visitCompoundStatement(@NotNull CompoundStatementContext ctx) {
+		//if the parent is a function or procedure then we are already in the right context
+		if(ctx.getParent() instanceof ProcedureDeclarationContext || ctx.getParent() instanceof FunctionDeclarationContext){
+			visitChildren(ctx);
+			symbolTables.put(ctx, stm.getCurrentSymbolTable());
+		} else {
+			stm.enterScope();
+			visitChildren(ctx);
+			symbolTables.put(ctx, stm.getCurrentSymbolTable());
+			stm.exitScope();
+		}
+		return null;
+	}
+	
+	/* Easy Expression Types */
 	@Override
 	public DijkstraType visitEqual(@NotNull DijkstraParser.EqualContext ctx) {
 		//Figure out types
-		DijkstraType t1 = ctx.expression(0).accept(this);
-		DijkstraType t2 = ctx.expression(1).accept(this);
-		DijkstraType t = UNDEFINED;
-		if(t1 == UNDEFINED) {
-			t1 = t2;
-		} else if(t2 == UNDEFINED) {
-			t2 = t1;
-		}
-		
-		if(t1 == BOOLEAN && (t2 == FLOAT || t2 == NUM || t2 == INT)){
-			throw new DijkstraSymbolException("Attempted to compare two incompatible types with '='");
-		} else if(t2 == BOOLEAN && (t1 == FLOAT || t1 == NUM || t1 == INT)){
-			throw new DijkstraSymbolException("Attempted to compare two incompatible types with '='");
-		}
-
-		
-		if(t1 == FLOAT || t2 == FLOAT || t1 == INT || t2 == INT || t1 == NUM || t2 == NUM) {
-			t = NUM;
-		} else if (t1 == BOOLEAN || t2 == BOOLEAN) {
-			t = BOOLEAN;
-		}
-		
-		//Update symbols
-		Symbol first = symbols.get(ctx.expression(0));
-		Symbol second = symbols.get(ctx.expression(1));
-		if(first != null) 
-			stm.updateType(first.getId(), t);
-		if(second != null) 
-			stm.updateType(second.getId(), t);
+		visitChildren(ctx);
 		return BOOLEAN;
 	}
 	
 	@Override
 	public DijkstraType visitOr(@NotNull DijkstraParser.OrContext ctx) {
-		ctx.expression(0).accept(this);
-		ctx.expression(1).accept(this);
-		Symbol first = symbols.get(ctx.expression(0));
-		if(first != null) {
-			stm.updateType(first.getId(), BOOLEAN);
-		}
-		Symbol second = symbols.get(ctx.expression(1));
-		if(second != null) {
-			stm.updateType(second.getId(), BOOLEAN);
-		}
+		visitChildren(ctx);
 		return BOOLEAN;
 	}
 	
 	@Override
 	public DijkstraType visitAnd(@NotNull DijkstraParser.AndContext ctx) {
-		ctx.expression(0).accept(this);
-		ctx.expression(1).accept(this);
-		Symbol first = symbols.get(ctx.expression(0));
-		if(first != null) {
-			stm.updateType(first.getId(), BOOLEAN);
-		}
-		Symbol second = symbols.get(ctx.expression(1));
-		if(second != null) {
-			stm.updateType(second.getId(), BOOLEAN);
-		}
+		visitChildren(ctx);
 		return BOOLEAN;
 	}
 	
 	@Override
 	public DijkstraType visitMult(@NotNull DijkstraParser.MultContext ctx) {
-		ctx.expression(0).accept(this);
-		ctx.expression(1).accept(this);
-		Symbol first = symbols.get(ctx.expression(0));
-		if(first != null) {
-			stm.updateType(first.getId(), NUM);
-		}
-		Symbol second = symbols.get(ctx.expression(1));
-		if(second != null) {
-			stm.updateType(second.getId(), NUM);
-		}
-		if(first.getType() == FLOAT || second.getType() == FLOAT) {
-			return FLOAT;
-		} else {
-			return NUM;
-		}
+		visitChildren(ctx);
+		return NUM;
 	}
 	
 	@Override
 	public DijkstraType visitAdd(@NotNull DijkstraParser.AddContext ctx) {
-		ctx.expression(0).accept(this);
-		ctx.expression(1).accept(this);
-		Symbol first = symbols.get(ctx.expression(0));
-		if(first != null) {
-			stm.updateType(first.getId(), NUM);
+		visitChildren(ctx);
+		return NUM;
+	}
+	
+	@Override
+	public DijkstraType visitRelational(@NotNull DijkstraParser.RelationalContext ctx) {
+		visitChildren(ctx);
+		return BOOLEAN;
+	}
+	
+	@Override
+	public DijkstraType visitUnary(@NotNull DijkstraParser.UnaryContext ctx) {
+		DijkstraType t = BOOLEAN;
+		if(ctx.getChild(0).getText().equals("-")) {
+			t = NUM;
 		}
-		Symbol second = symbols.get(ctx.expression(1));
-		if(second != null) {
-			stm.updateType(second.getId(), NUM);
-		}
-		if(first.getType() == FLOAT || second.getType() == FLOAT) {
-			return FLOAT;
-		} else {
-			return NUM;
-		}
+		ctx.expression().accept(this);
+		return t;
 	}
 	
 	/* Primary Expression Types */
@@ -226,23 +213,6 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 		Symbol s = stm.getSymbol(ctx.ID().getText());
 		if(s == null){
 			throw new DijkstraSymbolException("Reference to symbol " + ctx.ID().getText() + ", which does not exist.");
-		}
-		symbols.put(ctx, s);
-		return s.getType();
-	}
-	
-	@Override
-	public DijkstraType visitCompound(@NotNull DijkstraParser.CompoundContext ctx) {
-		return ctx.expression().accept(this);
-	}
-	
-	@Override
-	public DijkstraType visitArrayAccessor(@NotNull DijkstraParser.ArrayAccessorContext ctx) {
-		//Return type of the array if it exists
-		//Otherwise it's an error
-		Symbol s = stm.getSymbol(ctx.ID().getText());
-		if(s == null){
-			throw new DijkstraSymbolException("Reference to array " + ctx.ID().getText() + "[], which does not exist.");
 		}
 		symbols.put(ctx, s);
 		return s.getType();

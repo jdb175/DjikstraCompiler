@@ -457,8 +457,8 @@ public class DijkstraParserTest {
 	
 	@Test
 	public void testReturnExpressionList() {
-		makeParser("return (1+2), b");
-		assertEquals(parser.returnStatement().getText(), "return(1+2),b");
+		makeParser("return (1+2)");
+		assertEquals(parser.returnStatement().getText(), "return(1+2)");
 	}
 	
 	@Test
@@ -636,22 +636,15 @@ public class DijkstraParserTest {
 	}
 	
 	@Test
-	public void functiondeclaration2returns() {
-		makeParser("fun foo () : int, boolean { return 5, true }");
-		parser.declaration();
-		assertTrue(true);
-	}
-	
-	@Test
 	public void functiondeclarationparameters() {
-		makeParser("fun foo (a, b) : int, boolean { return 5, true }");
+		makeParser("fun foo (a, b) : int { return 5 }");
 		parser.declaration();
 		assertTrue(true);
 	}
 	
 	@Test
 	public void functiondeclarationparameterswithtype() {
-		makeParser("fun foo (a, int b) : int, boolean { return 5, true }");
+		makeParser("fun foo (a, int b) : int { return 5 }");
 		parser.declaration();
 		assertTrue(true);
 	}

@@ -25,7 +25,7 @@
  								| functionDeclaration;
  variableDeclaration :		type idList separator;
  arrayDeclaration :			type LBRACK expression RBRACK idList separator;
- functionDeclaration :		FUN ID LPAR parameterList? RPAR COLON typeList compoundStatement;
+ functionDeclaration :		FUN ID LPAR parameterList? RPAR COLON type compoundStatement;
  procedureDeclaration :		PROC ID LPAR parameterList? RPAR compoundStatement;
  	parameterList :			parameter | parameterList COMMA parameter;
  	parameter :				ID | type ID;
@@ -64,7 +64,7 @@
  								| arrayDeclaration
  								| statement;
  					
- returnStatement :			RETURN expressionList?;
+ returnStatement :			RETURN expression?;
  procedureCall :			ID LPAR argList? RPAR;
  argList :		 			expression | argList COMMA expression;
  

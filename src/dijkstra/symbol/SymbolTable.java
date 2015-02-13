@@ -23,6 +23,8 @@ public class SymbolTable
 {
 	private final SymbolTable parent;
 	private final Map<String, Symbol> symbols;
+	private final Map<String, Symbol> functions;
+	private final Map<String, Symbol> arrays;
 	
 	/**
 	 * Sole constructor. Creates the symbol table with the specified parent. The parent
@@ -33,6 +35,8 @@ public class SymbolTable
 	{
 		this.parent = parent;
 		symbols = new HashMap<String, Symbol>();
+		functions = new HashMap<String, Symbol>();
+		arrays = new HashMap<String, Symbol>();
 	}
 	
 	/**
@@ -45,6 +49,38 @@ public class SymbolTable
 	{
 		final Symbol s = symbols.put(symbol.getId(), symbol);
 		if (s != null) {	// Symbol was already in the table
+			throw new DijkstraSymbolException(
+					"Attempting to add a duplicate symbol to a symbol table" + s.getId());
+		}
+		return symbol;
+	}
+	
+	/**
+	 * Add the specified Symbol to the current function table.
+	 * @param symbol the symbol to add to the table
+	 * @return the symbol that was added
+	 * @throws DijkstraSymbolException if the symbol already exists in this table
+	 */
+	public Symbol addFunction(Symbol symbol) 
+	{
+		final Symbol s = functions.put(symbol.getId(), symbol);
+		if (symbols.containsKey(symbol.getId()) || arrays.containsKey(symbol.getId()) || s != null) {	// Symbol was already in the table
+			throw new DijkstraSymbolException(
+					"Attempting to add a duplicate symbol to a symbol table" + s.getId());
+		}
+		return symbol;
+	}
+	
+	/**
+	 * Add the specified Symbol to the current array table.
+	 * @param symbol the symbol to add to the table
+	 * @return the symbol that was added
+	 * @throws DijkstraSymbolException if the symbol already exists in this table
+	 */
+	public Symbol addArray(Symbol symbol) 
+	{
+		final Symbol s = arrays.put(symbol.getId(), symbol);
+		if (symbols.containsKey(symbol.getId()) || functions.containsKey(symbol.getId()) || s != null) {	// Symbol was already in the table
 			throw new DijkstraSymbolException(
 					"Attempting to add a duplicate symbol to a symbol table" + s.getId());
 		}
@@ -68,6 +104,36 @@ public class SymbolTable
 	public Symbol getSymbol(String id)
 	{
 		Symbol symbol = symbols.get(id);
+		SymbolTable st = this;
+		if (symbol == null && st.parent != null) {
+			symbol = st.parent.getSymbol(id);
+		}
+		return symbol;
+	}
+	
+	/**
+	 * Get the function symbol with the specified key in the current scope.
+	 * @param id the desired symbol's ID
+	 * @return the symbol referenced or null if it does not exist.
+	 */
+	public Symbol getFunction(String id)
+	{
+		Symbol symbol = functions.get(id);
+		SymbolTable st = this;
+		if (symbol == null && st.parent != null) {
+			symbol = st.parent.getSymbol(id);
+		}
+		return symbol;
+	}
+	
+	/**
+	 * Get the array symbol with the specified key in the current scope.
+	 * @param id the desired symbol's ID
+	 * @return the symbol referenced or null if it does not exist.
+	 */
+	public Symbol getArray(String id)
+	{
+		Symbol symbol = arrays.get(id);
 		SymbolTable st = this;
 		if (symbol == null && st.parent != null) {
 			symbol = st.parent.getSymbol(id);
