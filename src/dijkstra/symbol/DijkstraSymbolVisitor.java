@@ -11,8 +11,9 @@ import static dijkstra.utility.DijkstraType.*;
 
 public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 	public ParseTreeProperty<Symbol> symbols = new ParseTreeProperty<Symbol>();
-	public ParseTreeProperty<DijkstraType> types = new ParseTreeProperty<DijkstraType>();
-	public ParseTreeProperty<SymbolTable> symbolTables = new ParseTreeProperty<SymbolTable>();
+	public ParseTreeProperty<Symbol> functions = new ParseTreeProperty<Symbol>();
+	public ParseTreeProperty<Symbol> arrays = new ParseTreeProperty<Symbol>();
+
 	private SymbolTableManager stm = SymbolTableManager.getInstance();
 	
 	@Override 
@@ -29,7 +30,6 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 			Symbol symbol = stm.add(id, t);			
 			idlist = idlist.idList();
 		}
-		types.put(ctx, t);
 		return t;
 	}
 	
@@ -40,9 +40,7 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 			t = ctx.type().accept(this);
 		}
 		String id = ctx.ID().getText();
-		Symbol symbol = stm.add(id, t);
-		types.put(ctx, t);
-		symbols.put(ctx,  symbol);
+		stm.add(id, t);
 		return t;
 	}
 	
@@ -81,8 +79,11 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 				//create the symbol if it is not an accessor
 				Symbol symbol = stm.getSymbol(id);
 				if(symbol == null) {
-					stm.add(id, t);
+					symbol = stm.add(id, t);
+				} else {
+					symbol.updateType(t);
 				}
+				symbols.put(var, symbol);
 			}
 			varList = varList.varList();
 			exprList = exprList.expressionList();
@@ -110,7 +111,6 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 		symbols.put(ctx, symbol);
 		stm.enterScope();
 		visitChildren(ctx);
-		symbolTables.put(ctx, stm.getCurrentSymbolTable());
 		stm.exitScope();
 		return null;
 	}
@@ -120,10 +120,9 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 	public DijkstraType visitFunctionDeclaration(@NotNull DijkstraParser.FunctionDeclarationContext ctx) {
 		DijkstraType t = ctx.type().accept(this);
 		Symbol symbol = stm.addFunction(ctx.ID().getText(), t);
-		symbols.put(ctx, symbol);
+		functions.put(ctx, symbol);
 		stm.enterScope();
 		visitChildren(ctx);
-		symbolTables.put(ctx, stm.getCurrentSymbolTable());
 		stm.exitScope();
 		return null;
 	}
@@ -134,11 +133,9 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 		//if the parent is a function or procedure then we are already in the right context
 		if(ctx.getParent() instanceof ProcedureDeclarationContext || ctx.getParent() instanceof FunctionDeclarationContext){
 			visitChildren(ctx);
-			symbolTables.put(ctx, stm.getCurrentSymbolTable());
 		} else {
 			stm.enterScope();
 			visitChildren(ctx);
-			symbolTables.put(ctx, stm.getCurrentSymbolTable());
 			stm.exitScope();
 		}
 		return null;
@@ -193,6 +190,26 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 	}
 	
 	/* Primary Expression Types */
+	@Override
+	public DijkstraType visitArrayAccessor(@NotNull DijkstraParser.ArrayAccessorContext ctx) {
+		Symbol arr = stm.getArray(ctx.ID().getText());
+		if(arr == null) {
+			throw new DijkstraSymbolException("No array with name " + ctx.ID().getText() + " has been defined");
+		}
+		arrays.put(ctx, arr);
+		return arr.getType();
+	}
+	
+	@Override
+	public DijkstraType visitFunctionCall(@NotNull DijkstraParser.FunctionCallContext ctx) {
+		Symbol fun = stm.getFunction(ctx.ID().getText());
+		if(fun == null) {
+			throw new DijkstraSymbolException("No function with name " + ctx.ID().getText() + " has been defined");
+		}
+		functions.put(ctx, fun);
+		return fun.getType();
+	}
+	
 	@Override
 	public DijkstraType visitInteger(@NotNull DijkstraParser.IntegerContext ctx) {
 		return INT;

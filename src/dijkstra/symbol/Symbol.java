@@ -159,8 +159,13 @@ public class Symbol
 	 * Updates the type to be newType, if that is consistent. Otherwise
 	 * throws an exception
 	 * @param newType
+	 * @returns whether the smbol was changed
 	 */
-	public void updateType(DijkstraType newType) {
+	public boolean updateType(DijkstraType newType) {
+		DijkstraType old = type;
+		if(type == PROCEDURE) {
+			throw new DijkstraSymbolException("Cannot assign updated type "+newType+" to a procedure (" + id + ")");
+		}
 		if(newType == BOOLEAN) {
 			if(type == NUM || type == INT || type == FLOAT) {
 				throw new DijkstraSymbolException("Cannot assign updated type "+newType+" to a symbol of type "+type+" ("+id+")");
@@ -186,5 +191,6 @@ public class Symbol
 				type = FLOAT;
 			}
 		} 
+		return type != old;
 	}
 }

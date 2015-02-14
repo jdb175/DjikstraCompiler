@@ -235,17 +235,4 @@ public class SymbolTable
 		}
 		return true;
 	}
-
-	/**
-	 * Update the symbol with specified key in the table, if
-	 * the current type is consistent.
-	 * @param id the desired symbol's ID
-	 * @param symbolType the desired type for the symbol
-	 * @return the updated symbol
-	 */
-	public Symbol updateType(String id, DijkstraType symbolType) {
-		Symbol s = getSymbol(id);
-		s.updateType(symbolType);
-		return s;
-	}
 }
