@@ -40,7 +40,8 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 			t = ctx.type().accept(this);
 		}
 		String id = ctx.ID().getText();
-		stm.add(id, t);
+		Symbol s = stm.add(id, t);
+		symbols.put(ctx, s);
 		return t;
 	}
 	
