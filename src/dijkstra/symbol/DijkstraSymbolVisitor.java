@@ -27,7 +27,8 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 		IdListContext idlist = ctx.idList();
 		while(idlist != null) {
 			String id = idlist.ID().getText();
-			Symbol symbol = stm.add(id, t);			
+			Symbol symbol = stm.add(id, t);		
+			symbols.put(idlist, symbol);
 			idlist = idlist.idList();
 		}
 		return t;
@@ -99,6 +100,7 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 		while(idlist != null) {
 			String id = idlist.ID().getText();
 			Symbol symbol = stm.add(id);
+			symbols.put(idlist, symbol);
 			idlist = idlist.idList();
 		}
 		

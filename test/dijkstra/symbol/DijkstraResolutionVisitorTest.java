@@ -265,6 +265,20 @@ public class DijkstraResolutionVisitorTest
 		assertEquals(NUM, s.getType());
 	}
 	
+	@Test
+	public void twoVars() {
+		doSymbolTable("input a, b; a <- 3; b <- 3.0;");
+		Symbol s = stm.getSymbol("a");
+		assertNotNull(s);
+		assertEquals("a", s.getId());
+		assertEquals(INT, s.getType());
+		s = stm.getSymbol("b");
+		assertNotNull(s);
+		assertEquals("b", s.getId());
+		assertEquals(FLOAT, s.getType());
+	}
+	
+	
 	// Helper methods
 	private void makeParser(String inputText)
 	{
