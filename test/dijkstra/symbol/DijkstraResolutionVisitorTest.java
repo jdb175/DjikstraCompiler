@@ -210,6 +210,33 @@ public class DijkstraResolutionVisitorTest
 		assertEquals("c", s.getId());
 		assertEquals(INT, s.getType());
 	}
+	@Test
+	public void inferIntFirst()
+	{
+		doSymbolTable("input x, a, c; int b; y <- x mod c; y <- a / b; z <- y div b");
+		Symbol s = stm.getSymbol("x");
+		assertNotNull(s);
+		assertEquals("x", s.getId());
+		assertEquals(INT, s.getType());
+		s = stm.getSymbol("y");
+		assertNotNull(s);
+		assertEquals("y", s.getId());
+		assertEquals(INT, s.getType());
+		s = stm.getSymbol("a");
+		assertNotNull(s);
+		assertEquals("a", s.getId());
+		assertEquals(FLOAT, s.getType());
+		s = stm.getSymbol("b");
+		assertNotNull(s);
+		assertEquals("b", s.getId());
+		assertEquals(INT, s.getType());
+	}
+	
+	@Test(expected=DijkstraSymbolException.class)
+	public void inferIntSecond()
+	{
+		doSymbolTable("input a, b, c; x <- a / b; y <- x mod c");
+	}
 	
 	@Test
 	public void inferByMod()

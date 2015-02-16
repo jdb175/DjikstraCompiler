@@ -302,10 +302,10 @@ public class DijkstraSymbolVisitorTest
 		assertEquals("a", s.getId());
 		assertEquals(INT, s.getType());
 		
-		s = stm.getSymbol("foo");
+		s = stm.getFunction("foo");
 		assertNotNull(s);
 		assertEquals("foo", s.getId());
-		assertEquals(PROCEDURE, s.getType());
+		assertEquals(UNDEFINED, s.getType());
 		
 		SymbolTable procTable = stm.getSymbolTable(1);
 		s = procTable.getSymbol("a");
@@ -329,6 +329,31 @@ public class DijkstraSymbolVisitorTest
 		assertEquals("a", s.getId());
 		assertEquals(BOOLEAN, s.getType());
 
+	}
+	
+	@Test
+	public void recursiveFunction()
+	{
+		doSymbolTable("fun fib(n): int { if n <= 2 :: return n n > 1 :: return fib(n - 2) + fib(n - 1) fi }");
+		Symbol s = stm.getFunction("fib");
+		assertNotNull(s);
+		assertEquals("fib", s.getId());
+		assertEquals(INT, s.getType());
+	}
+	
+	@Test
+	public void functionAndVar()
+	{
+		doSymbolTable("x <- true; fun x(n): int { return 2 }");
+		Symbol s = stm.getFunction("x");
+		assertNotNull(s);
+		assertEquals("x", s.getId());
+		assertEquals(INT, s.getType());
+		
+		s = stm.getSymbol("x");
+		assertNotNull(s);
+		assertEquals("x", s.getId());
+		assertEquals(BOOLEAN, s.getType());
 	}
 	
 	@Test

@@ -163,9 +163,6 @@ public class Symbol
 	 */
 	public boolean updateType(DijkstraType newType) {
 		DijkstraType old = type;
-		if(type == PROCEDURE) {
-			throw new DijkstraSymbolException("Cannot assign updated type "+newType+" to a procedure (" + id + ")");
-		}
 		if(newType == BOOLEAN) {
 			if(type == NUM || type == INT || type == FLOAT) {
 				throw new DijkstraSymbolException("Cannot assign updated type "+newType+" to a symbol of type "+type+" ("+id+")");

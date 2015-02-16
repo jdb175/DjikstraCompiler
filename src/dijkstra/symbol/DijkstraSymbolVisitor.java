@@ -110,7 +110,7 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 	/* Scope changing declarations */
 	@Override
 	public DijkstraType visitProcedureDeclaration(@NotNull DijkstraParser.ProcedureDeclarationContext ctx) {
-		Symbol symbol = stm.add(ctx.ID().getText(), PROCEDURE);
+		Symbol symbol = stm.addFunction(ctx.ID().getText(), UNDEFINED);
 		symbols.put(ctx, symbol);
 		stm.enterScope();
 		visitChildren(ctx);

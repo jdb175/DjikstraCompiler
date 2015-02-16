@@ -16,5 +16,5 @@ package dijkstra.utility;
  */
 public enum DijkstraType
 {
-	UNDEFINED, NUM, INT, FLOAT, BOOLEAN, PROCEDURE; 
+	UNDEFINED, NUM, INT, FLOAT, BOOLEAN; 
 }

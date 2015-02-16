@@ -67,14 +67,14 @@ public class DijkstraResolutionVisitor extends DijkstraBaseVisitor<DijkstraType>
 		if(t1 == UNDEFINED && first != null) {
 			if(t2 == BOOLEAN){
 				updateType(first, BOOLEAN);
-			} else if(t2 != UNDEFINED && t2 != PROCEDURE){
+			} else if(t2 != UNDEFINED){
 				updateType(first, NUM);
 			}
 		} 
 		if(t2 == UNDEFINED) {
 			if(t1 == BOOLEAN){
 				updateType(second, BOOLEAN);
-			} else if(t1 != UNDEFINED && t1 != PROCEDURE){
+			} else if(t1 != UNDEFINED){
 				updateType(second, NUM);
 			}
 		}

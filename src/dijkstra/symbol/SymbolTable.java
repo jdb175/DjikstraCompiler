@@ -23,7 +23,7 @@ public class SymbolTable
 {
 	private final SymbolTable parent;
 	private final Map<String, Symbol> symbols;
-	private final Map<String, Symbol> functions;
+	private final Map<String, Symbol> functionsAndProcedures;
 	private final Map<String, Symbol> arrays;
 	
 	/**
@@ -35,7 +35,7 @@ public class SymbolTable
 	{
 		this.parent = parent;
 		symbols = new HashMap<String, Symbol>();
-		functions = new HashMap<String, Symbol>();
+		functionsAndProcedures = new HashMap<String, Symbol>();
 		arrays = new HashMap<String, Symbol>();
 	}
 	
@@ -63,8 +63,8 @@ public class SymbolTable
 	 */
 	public Symbol addFunction(Symbol symbol) 
 	{
-		final Symbol s = functions.put(symbol.getId(), symbol);
-		if (symbols.containsKey(symbol.getId()) || arrays.containsKey(symbol.getId()) || s != null) {	// Symbol was already in the table
+		final Symbol s = functionsAndProcedures.put(symbol.getId(), symbol);
+		if (s != null) {	// Symbol was already in the table
 			throw new DijkstraSymbolException(
 					"Attempting to add a duplicate symbol to a symbol table" + s.getId());
 		}
@@ -80,7 +80,7 @@ public class SymbolTable
 	public Symbol addArray(Symbol symbol) 
 	{
 		final Symbol s = arrays.put(symbol.getId(), symbol);
-		if (symbols.containsKey(symbol.getId()) || functions.containsKey(symbol.getId()) || s != null) {	// Symbol was already in the table
+		if (s != null) {	// Symbol was already in the table
 			throw new DijkstraSymbolException(
 					"Attempting to add a duplicate symbol to a symbol table" + s.getId());
 		}
@@ -118,10 +118,10 @@ public class SymbolTable
 	 */
 	public Symbol getFunction(String id)
 	{
-		Symbol symbol = functions.get(id);
+		Symbol symbol = functionsAndProcedures.get(id);
 		SymbolTable st = this;
 		if (symbol == null && st.parent != null) {
-			symbol = st.parent.getSymbol(id);
+			symbol = st.parent.getFunction(id);
 		}
 		return symbol;
 	}
@@ -136,7 +136,7 @@ public class SymbolTable
 		Symbol symbol = arrays.get(id);
 		SymbolTable st = this;
 		if (symbol == null && st.parent != null) {
-			symbol = st.parent.getSymbol(id);
+			symbol = st.parent.getArray(id);
 		}
 		return symbol;
 	}
