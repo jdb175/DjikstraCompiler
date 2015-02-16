@@ -194,6 +194,24 @@ public class DijkstraResolutionVisitorTest
 	}
 	
 	@Test
+	public void inferByDivision()
+	{
+		doSymbolTable("input b, c; a <- b / c");
+		Symbol s = stm.getSymbol("a");
+		assertNotNull(s);
+		assertEquals("a", s.getId());
+		assertEquals(FLOAT, s.getType());
+		s = stm.getSymbol("b");
+		assertNotNull(s);
+		assertEquals("b", s.getId());
+		assertEquals(FLOAT, s.getType());
+		s = stm.getSymbol("c");
+		assertNotNull(s);
+		assertEquals("c", s.getId());
+		assertEquals(FLOAT, s.getType());
+	}
+	
+	@Test
 	public void inferByMultFloats()
 	{
 		doSymbolTable("int b; float c; a <- b * c");
@@ -263,6 +281,16 @@ public class DijkstraResolutionVisitorTest
 		assertNotNull(s);
 		assertEquals("c", s.getId());
 		assertEquals(NUM, s.getType());
+	}
+	
+	@Test
+	public void inferGuard()
+	{
+		doSymbolTable("input a if a :: print a fi");
+		Symbol s = stm.getSymbol("a");
+		assertNotNull(s);
+		assertEquals("a", s.getId());
+		assertEquals(BOOLEAN, s.getType());
 	}
 	
 	@Test

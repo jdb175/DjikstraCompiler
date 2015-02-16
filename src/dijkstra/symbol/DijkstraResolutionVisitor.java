@@ -113,21 +113,42 @@ public class DijkstraResolutionVisitor extends DijkstraBaseVisitor<DijkstraType>
 	
 	@Override
 	public DijkstraType visitMult(@NotNull DijkstraParser.MultContext ctx) {
-		DijkstraType t1 = ctx.expression(0).accept(this);
-		DijkstraType t2 = ctx.expression(1).accept(this);
 		Symbol first = symbols.get(ctx.expression(0));
-		if(first != null) {
-			updateType(first, NUM);
-		}
 		Symbol second = symbols.get(ctx.expression(1));
-		if(second != null) {
-			updateType(second, NUM);
-		}
-		if(t1 == FLOAT || t2 == FLOAT) {
+
+		if(ctx.SLASH() != null) {
+			if(first != null) {
+				updateType(first, FLOAT);
+			}
+			if(second != null) {
+				updateType(second, FLOAT);
+			}
 			return FLOAT;
 		} else {
-			return NUM;
+			DijkstraType t1 = ctx.expression(0).accept(this);
+			DijkstraType t2 = ctx.expression(1).accept(this);
+			if(first != null) {
+				updateType(first, NUM);
+			}
+			if(second != null) {
+				updateType(second, NUM);
+			}
+			if(t1 == FLOAT || t2 == FLOAT) {
+				return FLOAT;
+			} else {
+				return NUM;
+			}
 		}
+	}
+	
+	@Override
+	public DijkstraType visitGuard(@NotNull DijkstraParser.GuardContext ctx) {
+		Symbol first = symbols.get(ctx.expression());
+		if(first != null) {
+			updateType(first, BOOLEAN);
+
+		}
+		return BOOLEAN;
 	}
 	
 	@Override
