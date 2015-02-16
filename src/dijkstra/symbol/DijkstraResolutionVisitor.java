@@ -124,6 +124,14 @@ public class DijkstraResolutionVisitor extends DijkstraBaseVisitor<DijkstraType>
 				updateType(second, FLOAT);
 			}
 			return FLOAT;
+		} else if(ctx.DIV() != null || ctx.MOD() != null) {
+			if(first != null) {
+				updateType(first, INT);
+			}
+			if(second != null) {
+				updateType(second, INT);
+			}
+			return INT;
 		} else {
 			DijkstraType t1 = ctx.expression(0).accept(this);
 			DijkstraType t2 = ctx.expression(1).accept(this);
