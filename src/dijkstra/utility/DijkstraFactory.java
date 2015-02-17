@@ -63,7 +63,7 @@ public class DijkstraFactory
 					int line, int charPositionInLine, String msg,
 					RecognitionException e)
 					{
-						throw new RuntimeException("Syntax error at line " + line + "[" + charPositionInLine + "] " + msg);
+						throw new DijkstraParserException("Syntax error at line " + line + "[" + charPositionInLine + "] " + msg);
 					}
 				});
 		return parser;

@@ -71,6 +71,12 @@ public class DijkstraSymbolVisitorTest
 	}
 	
 	@Test(expected=DijkstraSymbolException.class)
+	public void useArrayAsVar()
+	{
+		doSymbolTable("int [1] b; a <- b");
+	}
+	
+	@Test(expected=DijkstraSymbolException.class)
 	public void referenceNonexistentID()
 	{
 		doSymbolTable("c <- a = b");
