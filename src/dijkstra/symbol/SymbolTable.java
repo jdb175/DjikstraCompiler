@@ -23,7 +23,7 @@ public class SymbolTable
 {
 	private final SymbolTable parent;
 	private final Map<String, Symbol> symbols;
-	private final Map<String, Symbol> functionsAndProcedures;
+	private final Map<String, MethodSymbol> functionsAndProcedures;
 	private final Map<String, Symbol> arrays;
 	
 	/**
@@ -35,7 +35,7 @@ public class SymbolTable
 	{
 		this.parent = parent;
 		symbols = new HashMap<String, Symbol>();
-		functionsAndProcedures = new HashMap<String, Symbol>();
+		functionsAndProcedures = new HashMap<String, MethodSymbol>();
 		arrays = new HashMap<String, Symbol>();
 	}
 	
@@ -61,9 +61,9 @@ public class SymbolTable
 	 * @return the symbol that was added
 	 * @throws DijkstraSymbolException if the symbol already exists in this table
 	 */
-	public Symbol addFunction(Symbol symbol) 
+	public MethodSymbol addMethod(MethodSymbol symbol) 
 	{
-		final Symbol s = functionsAndProcedures.put(symbol.getId(), symbol);
+		final MethodSymbol s = functionsAndProcedures.put(symbol.getId(), symbol);
 		if (s != null) {	// Symbol was already in the table
 			throw new DijkstraSymbolException(
 					"Attempting to add a duplicate symbol to a symbol table" + s.getId());
@@ -116,12 +116,12 @@ public class SymbolTable
 	 * @param id the desired symbol's ID
 	 * @return the symbol referenced or null if it does not exist.
 	 */
-	public Symbol getFunction(String id)
+	public MethodSymbol getMethod(String id)
 	{
-		Symbol symbol = functionsAndProcedures.get(id);
+		MethodSymbol symbol = functionsAndProcedures.get(id);
 		SymbolTable st = this;
 		if (symbol == null && st.parent != null) {
-			symbol = st.parent.getFunction(id);
+			symbol = st.parent.getMethod(id);
 		}
 		return symbol;
 	}

@@ -114,7 +114,7 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 	/* Scope changing declarations */
 	@Override
 	public DijkstraType visitProcedureDeclaration(@NotNull DijkstraParser.ProcedureDeclarationContext ctx) {
-		Symbol symbol = stm.addFunction(ctx.ID().getText(), UNDEFINED);
+		Symbol symbol = stm.addMethod(ctx.ID().getText(), UNDEFINED);
 		symbols.put(ctx, symbol);
 		stm.enterScope();
 		if(ctx.parameterList() != null) {
@@ -129,7 +129,7 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 	@Override
 	public DijkstraType visitFunctionDeclaration(@NotNull DijkstraParser.FunctionDeclarationContext ctx) {
 		DijkstraType t = ctx.type().accept(this);
-		Symbol symbol = stm.addFunction(ctx.ID().getText(), t);
+		MethodSymbol symbol = stm.addMethod(ctx.ID().getText(), t);
 		functions.put(ctx, symbol);
 		stm.enterScope();
 		if(ctx.parameterList() != null) {
@@ -211,7 +211,7 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 	
 	@Override
 	public DijkstraType visitFunctionCall(@NotNull DijkstraParser.FunctionCallContext ctx) {
-		Symbol fun = stm.getFunction(ctx.ID().getText());
+		Symbol fun = stm.getMethod(ctx.ID().getText());
 		if(fun == null) {
 			throw new DijkstraSymbolException("No function with name " + ctx.ID().getText() + " has been defined");
 		}

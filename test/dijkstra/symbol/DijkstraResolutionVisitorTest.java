@@ -370,8 +370,8 @@ public class DijkstraResolutionVisitorTest
 		assertEquals(FLOAT, s.getType());
 	} 
 	
-	@Test
-	public void functionCall() {
+	/*@Test
+	public void functionParametersInfer() {
 		doSymbolTable("input a, b; proc getTypes(a, boolean b) { a <- 1 } getTypes(a,b)");
 		Symbol s = stm.getSymbol("a");
 		assertNotNull(s);
@@ -381,7 +381,7 @@ public class DijkstraResolutionVisitorTest
 		assertNotNull(s);
 		assertEquals("b", s.getId());
 		assertEquals(BOOLEAN, s.getType());
-	} 
+	} */
 	
 	// Helper methods
 	private void makeParser(String inputText)

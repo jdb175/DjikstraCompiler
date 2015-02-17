@@ -103,9 +103,9 @@ public class SymbolTableManager
 	 * @see SymbolTable#add(Symbol)
 	 * @see Symbol#Symbol(String, dijkstra.utility.DijkstraType)
 	 */
-	public Symbol addFunction(String id, DijkstraType symbolType)
+	public MethodSymbol addMethod(String id, DijkstraType symbolType)
 	{
-		Symbol symbol = currentSymbolTable.addFunction(new Symbol(id, symbolType));
+		MethodSymbol symbol = currentSymbolTable.addMethod(new MethodSymbol(id, symbolType));
 		return symbol;
 	}
 
@@ -156,9 +156,9 @@ public class SymbolTableManager
 	 * @return the symbol referenced or null if it does not exist.
 	 * @see SymbolTable#getSymbol(String)
 	 */
-	public Symbol getFunction(String id)
+	public MethodSymbol getMethod(String id)
 	{
-		return currentSymbolTable.getFunction(id);
+		return currentSymbolTable.getMethod(id);
 	}
 	
 	/**

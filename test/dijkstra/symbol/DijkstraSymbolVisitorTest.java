@@ -297,7 +297,7 @@ public class DijkstraSymbolVisitorTest
 		assertEquals("b", s.getId());
 		assertEquals(INT, s.getType());
 		
-		s = stm.getFunction("foo");
+		s = stm.getMethod("foo");
 		assertNotNull(s);
 		assertEquals("foo", s.getId());
 		assertEquals(INT, s.getType());
@@ -319,7 +319,7 @@ public class DijkstraSymbolVisitorTest
 		assertEquals("b", s.getId());
 		assertEquals(INT, s.getType());
 		
-		s = stm.getFunction("foo");
+		s = stm.getMethod("foo");
 		assertNotNull(s);
 		assertEquals("foo", s.getId());
 		assertEquals(INT, s.getType());
@@ -346,7 +346,7 @@ public class DijkstraSymbolVisitorTest
 		assertEquals("b", s.getId());
 		assertEquals(INT, s.getType());
 		
-		s = stm.getFunction("foo");
+		s = stm.getMethod("foo");
 		assertNotNull(s);
 		assertEquals("foo", s.getId());
 		assertEquals(UNDEFINED, s.getType());
@@ -373,7 +373,7 @@ public class DijkstraSymbolVisitorTest
 		assertEquals("a", s.getId());
 		assertEquals(INT, s.getType());
 		
-		s = stm.getFunction("foo");
+		s = stm.getMethod("foo");
 		assertNotNull(s);
 		assertEquals("foo", s.getId());
 		assertEquals(UNDEFINED, s.getType());
@@ -406,7 +406,7 @@ public class DijkstraSymbolVisitorTest
 	public void recursiveFunction()
 	{
 		doSymbolTable("fun fib(n): int { if n <= 2 :: return n n > 1 :: return fib(n - 2) + fib(n - 1) fi }");
-		Symbol s = stm.getFunction("fib");
+		Symbol s = stm.getMethod("fib");
 		assertNotNull(s);
 		assertEquals("fib", s.getId());
 		assertEquals(INT, s.getType());
@@ -416,7 +416,7 @@ public class DijkstraSymbolVisitorTest
 	public void functionAndVar()
 	{
 		doSymbolTable("x <- true; fun x(n): int { return 2 }");
-		Symbol s = stm.getFunction("x");
+		Symbol s = stm.getMethod("x");
 		assertNotNull(s);
 		assertEquals("x", s.getId());
 		assertEquals(INT, s.getType());
