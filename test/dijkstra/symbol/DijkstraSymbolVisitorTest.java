@@ -413,6 +413,16 @@ public class DijkstraSymbolVisitorTest
 	}
 	
 	@Test
+	public void functionParam()
+	{
+		doSymbolTable("fun foo(int a) : int { return 3 }");
+		Symbol s = stm.getSymbolTable(1).getSymbol("a");
+		assertNotNull(s);
+		assertEquals("a", s.getId());
+		assertEquals(INT, s.getType());
+	}
+	
+	@Test
 	public void functionAndVar()
 	{
 		doSymbolTable("x <- true; fun x(n): int { return 2 }");

@@ -114,12 +114,17 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 	/* Scope changing declarations */
 	@Override
 	public DijkstraType visitProcedureDeclaration(@NotNull DijkstraParser.ProcedureDeclarationContext ctx) {
-		Symbol symbol = stm.addMethod(ctx.ID().getText(), UNDEFINED);
+		MethodSymbol symbol = stm.addMethod(ctx.ID().getText(), UNDEFINED);
 		symbols.put(ctx, symbol);
 		stm.enterScope();
-		if(ctx.parameterList() != null) {
-			ctx.parameterList().accept(this);
+		//Handle parameters
+		ParameterListContext param = ctx.parameterList();
+		while(param != null) {
+			DijkstraType p_t = param.parameter().accept(this);
+			symbol.addParameter(p_t);
+			param = param.parameterList();
 		}
+		//Visit body
 		ctx.compoundStatement().accept(this);
 		stm.exitScope();
 		return null;
@@ -132,9 +137,14 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 		MethodSymbol symbol = stm.addMethod(ctx.ID().getText(), t);
 		functions.put(ctx, symbol);
 		stm.enterScope();
-		if(ctx.parameterList() != null) {
-			ctx.parameterList().accept(this);
+		//Handle parameters
+		ParameterListContext param = ctx.parameterList();
+		while(param != null) {
+			DijkstraType p_t = param.parameter().accept(this);
+			symbol.addParameter(p_t);
+			param = param.parameterList();
 		}
+		//Visit body
 		ctx.compoundStatement().accept(this);
 		stm.exitScope();
 		return null;
@@ -216,7 +226,32 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 			throw new DijkstraSymbolException("No function with name " + ctx.ID().getText() + " has been defined");
 		}
 		functions.put(ctx, fun);
+		if(ctx.argList() != null) {
+			ctx.argList().accept(this);
+		}
 		return fun.getType();
+	}
+	
+	@Override
+	public DijkstraType visitProcedureCall(@NotNull DijkstraParser.ProcedureCallContext ctx) {
+		Symbol proc = stm.getMethod(ctx.ID().getText());
+		if(proc == null) {
+			throw new DijkstraSymbolException("No procedure with name " + ctx.ID().getText() + " has been defined");
+		}
+		functions.put(ctx, proc);
+		if(ctx.argList() != null) {
+			ctx.argList().accept(this);
+		}
+		return proc.getType();
+	}
+	
+	@Override
+	public DijkstraType visitArgList(@NotNull ArgListContext ctx) {
+		ctx.expression().accept(this);
+		if(ctx.argList() != null) {
+			ctx.argList().accept(this);
+		}
+		return null;
 	}
 	
 	@Override

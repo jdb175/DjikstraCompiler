@@ -210,7 +210,35 @@ public class DijkstraResolutionVisitor extends DijkstraBaseVisitor<DijkstraType>
 	
 	@Override
 	public DijkstraType visitFunctionCall(@NotNull DijkstraParser.FunctionCallContext ctx) {
-		
+		//iterate over and check parameters
+		ArgListContext args = ctx.argList();
+		MethodSymbol method = (MethodSymbol) functions.get(ctx);
+		int i = 0;
+		while(args != null) {
+			Symbol param = symbols.get(args.expression());
+			if(param != null) {
+				param.updateType(method.getParameter(i));
+			}
+			++i;
+			args = args.argList();
+		}
+		return functions.get(ctx).getType();
+	}
+	
+	@Override
+	public DijkstraType visitProcedureCall(@NotNull DijkstraParser.ProcedureCallContext ctx) {
+		//iterate over and check parameters
+		ArgListContext args = ctx.argList();
+		MethodSymbol method = (MethodSymbol) functions.get(ctx);
+		int i = 0;
+		while(args != null) {
+			Symbol param = symbols.get(args.expression());
+			if(param != null) {
+				param.updateType(method.getParameter(i));
+			}
+			++i;
+			args = args.argList();
+		}
 		return functions.get(ctx).getType();
 	}
 	
