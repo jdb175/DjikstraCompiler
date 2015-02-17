@@ -396,6 +396,17 @@ public class DijkstraResolutionVisitorTest
 		assertEquals(BOOLEAN, s.getType());
 	}
 	
+	@Test(expected=DijkstraSymbolException.class)
+	public void cantCallProcAsFun() {
+		doSymbolTable("proc foo() { print 1 } a <- foo()");	
+	}
+	
+	@Test(expected=DijkstraSymbolException.class)
+	public void cantCallFunAsProc() {
+		doSymbolTable("fun foo() : int { return 1 } foo()");	
+	}
+	
+	
 	// Helper methods
 	private void makeParser(String inputText)
 	{

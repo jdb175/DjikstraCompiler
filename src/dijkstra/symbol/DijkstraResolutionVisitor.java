@@ -210,6 +210,10 @@ public class DijkstraResolutionVisitor extends DijkstraBaseVisitor<DijkstraType>
 	
 	@Override
 	public DijkstraType visitFunctionCall(@NotNull DijkstraParser.FunctionCallContext ctx) {
+		DijkstraType t = functions.get(ctx).getType();
+		if(t == UNDEFINED) {
+			throw new DijkstraSymbolException("Attempted to call procedure " + ctx.ID().getText() + " as a function!");
+		}
 		//iterate over and check parameters
 		ArgListContext args = ctx.argList();
 		MethodSymbol method = (MethodSymbol) functions.get(ctx);
@@ -222,11 +226,15 @@ public class DijkstraResolutionVisitor extends DijkstraBaseVisitor<DijkstraType>
 			++i;
 			args = args.argList();
 		}
-		return functions.get(ctx).getType();
+		return t;
 	}
 	
 	@Override
 	public DijkstraType visitProcedureCall(@NotNull DijkstraParser.ProcedureCallContext ctx) {
+		DijkstraType t = functions.get(ctx).getType();
+		if(t != UNDEFINED) {
+			throw new DijkstraSymbolException("Attempted to call function " + ctx.ID().getText() + " as a procedure!");
+		}
 		//iterate over and check parameters
 		ArgListContext args = ctx.argList();
 		MethodSymbol method = (MethodSymbol) functions.get(ctx);
@@ -239,7 +247,7 @@ public class DijkstraResolutionVisitor extends DijkstraBaseVisitor<DijkstraType>
 			++i;
 			args = args.argList();
 		}
-		return functions.get(ctx).getType();
+		return t;
 	}
 	
 	@Override
