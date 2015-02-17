@@ -172,6 +172,17 @@ public class DijkstraSymbolVisitorTest
 	}
 	
 	@Test
+	public void intThenInput()
+	{
+		doSymbolTable("int a input a");
+		Symbol s = stm.getSymbol("a");
+		assertNotNull(s);
+		assertEquals("a", s.getId());
+		assertEquals(INT, s.getType());
+	}
+	
+	
+	@Test
 	public void orExpr()
 	{
 		doSymbolTable("a <- true | false");
@@ -261,7 +272,7 @@ public class DijkstraSymbolVisitorTest
 		assertEquals("b", s.getId());
 		assertEquals(INT, s.getType());
 		
-		SymbolTable procTable = stm.getSymbolTable(1);
+		SymbolTable procTable = stm.getSymbolTable(2);
 		s = procTable.getSymbol("b");
 		assertNotNull(s);
 		assertEquals("b", s.getId());
@@ -269,6 +280,12 @@ public class DijkstraSymbolVisitorTest
 		
 		s = stm.getSymbol("c");
 		assertNull(s);
+	}
+	
+	@Test(expected=DijkstraSymbolException.class)
+	public void functionAndProcSameName()
+	{
+		doSymbolTable("fun foo () : int { int a } proc foo () { int a }");
 	}
 	
 	@Test
@@ -286,7 +303,61 @@ public class DijkstraSymbolVisitorTest
 		assertEquals(INT, s.getType());
 		
 		
+		SymbolTable procTable = stm.getSymbolTable(2);
+		s = procTable.getSymbol("b");
+		assertNotNull(s);
+		assertEquals("b", s.getId());
+		assertEquals(BOOLEAN, s.getType());
+	}
+	
+	@Test
+	public void changeScopeAtFunctionDeclOverride()
+	{
+		doSymbolTable("int b; fun foo (int b) : int{ boolean b; }");
+		Symbol s = stm.getSymbol("b");
+		assertNotNull(s);
+		assertEquals("b", s.getId());
+		assertEquals(INT, s.getType());
+		
+		s = stm.getFunction("foo");
+		assertNotNull(s);
+		assertEquals("foo", s.getId());
+		assertEquals(INT, s.getType());
+		
 		SymbolTable procTable = stm.getSymbolTable(1);
+		s = procTable.getSymbol("b");
+		assertNotNull(s);
+		assertEquals("b", s.getId());
+		assertEquals(INT, s.getType());
+		
+		procTable = stm.getSymbolTable(2);
+		s = procTable.getSymbol("b");
+		assertNotNull(s);
+		assertEquals("b", s.getId());
+		assertEquals(BOOLEAN, s.getType());
+	}
+	
+	@Test
+	public void changeScopeAtProcDeclOverride()
+	{
+		doSymbolTable("int b; proc foo (int b) { boolean b; }");
+		Symbol s = stm.getSymbol("b");
+		assertNotNull(s);
+		assertEquals("b", s.getId());
+		assertEquals(INT, s.getType());
+		
+		s = stm.getFunction("foo");
+		assertNotNull(s);
+		assertEquals("foo", s.getId());
+		assertEquals(UNDEFINED, s.getType());
+		
+		SymbolTable procTable = stm.getSymbolTable(1);
+		s = procTable.getSymbol("b");
+		assertNotNull(s);
+		assertEquals("b", s.getId());
+		assertEquals(INT, s.getType());
+		
+		procTable = stm.getSymbolTable(2);
 		s = procTable.getSymbol("b");
 		assertNotNull(s);
 		assertEquals("b", s.getId());
@@ -366,12 +437,13 @@ public class DijkstraSymbolVisitorTest
 		assertEquals(INT, s.getType());
 		
 		
-		SymbolTable procTable = stm.getSymbolTable(1);
+		SymbolTable procTable = stm.getSymbolTable(2);
 		s = procTable.getSymbol("b");
 		assertNotNull(s);
 		assertEquals("b", s.getId());
 		assertEquals(UNDEFINED, s.getType());
 		
+		procTable = stm.getSymbolTable(1);
 		s = procTable.getSymbol("a");
 		assertNotNull(s);
 		assertEquals("a", s.getId());

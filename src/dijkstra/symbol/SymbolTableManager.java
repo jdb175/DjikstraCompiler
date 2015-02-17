@@ -108,7 +108,7 @@ public class SymbolTableManager
 		Symbol symbol = currentSymbolTable.addFunction(new Symbol(id, symbolType));
 		return symbol;
 	}
-	
+
 	/**
 	 * Add a symbol to the current symbol array table with the type specified.
 	 * @param id the symbol name 

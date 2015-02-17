@@ -69,7 +69,7 @@ public class DijkstraSymbolFinalizerTest
 	
 	@Test
 	public void convertIntFromNum() {
-		doSymbolTable("input a; b <- a = 2.0");
+		doSymbolTable("input a; b <- a < 2.0");
 		Symbol s = stm.getSymbol("a");
 		assertNotNull(s);
 		assertEquals("a", s.getId());

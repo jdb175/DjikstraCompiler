@@ -64,19 +64,11 @@ public class DijkstraResolutionVisitor extends DijkstraBaseVisitor<DijkstraType>
 		
 		Symbol first = symbols.get(ctx.expression(0));
 		Symbol second = symbols.get(ctx.expression(1));
-		if(t1 == UNDEFINED && first != null) {
-			if(t2 == BOOLEAN){
-				updateType(first, BOOLEAN);
-			} else if(t2 != UNDEFINED){
-				updateType(first, NUM);
-			}
+		if(t2 != UNDEFINED && first != null) {
+			updateType(first, t2);
 		} 
-		if(t2 == UNDEFINED) {
-			if(t1 == BOOLEAN){
-				updateType(second, BOOLEAN);
-			} else if(t1 != UNDEFINED){
-				updateType(second, NUM);
-			}
+		if(t1 != UNDEFINED && second != null) {
+			updateType(second, t1);
 		}
 		return BOOLEAN;
 	}
@@ -168,6 +160,8 @@ public class DijkstraResolutionVisitor extends DijkstraBaseVisitor<DijkstraType>
 		DijkstraType t = NUM;
 		if(t1 == FLOAT || t2 == FLOAT) {
 			t = FLOAT;
+		} else if (t1 == INT && t2 == INT) {
+			t = INT;
 		}
 		if(first != null) {
 			updateType(first, t);
@@ -216,6 +210,7 @@ public class DijkstraResolutionVisitor extends DijkstraBaseVisitor<DijkstraType>
 	
 	@Override
 	public DijkstraType visitFunctionCall(@NotNull DijkstraParser.FunctionCallContext ctx) {
+		
 		return functions.get(ctx).getType();
 	}
 	

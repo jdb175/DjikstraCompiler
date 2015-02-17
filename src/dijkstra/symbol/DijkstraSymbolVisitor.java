@@ -58,6 +58,7 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 		while(idlist != null) {
 			String id = idlist.ID().getText();
 			Symbol symbol = stm.addArray(id, t);
+			symbols.put(idlist, symbol);
 			idlist = idlist.idList();
 		}
 		return t;
@@ -79,6 +80,7 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 			if(var.ID() != null) {
 				id = var.ID().getText();
 				//create the symbol if it is not an accessor
+				//addifNew
 				Symbol symbol = stm.getSymbol(id);
 				if(symbol == null) {
 					symbol = stm.add(id, t);
@@ -99,7 +101,9 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 		IdListContext idlist = ctx.idList();
 		while(idlist != null) {
 			String id = idlist.ID().getText();
-			Symbol symbol = stm.add(id);
+			Symbol symbol = stm.getSymbol(id);
+			if(symbol == null)
+				symbol = stm.add(id);
 			symbols.put(idlist, symbol);
 			idlist = idlist.idList();
 		}
@@ -113,7 +117,10 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 		Symbol symbol = stm.addFunction(ctx.ID().getText(), UNDEFINED);
 		symbols.put(ctx, symbol);
 		stm.enterScope();
-		visitChildren(ctx);
+		if(ctx.parameterList() != null) {
+			ctx.parameterList().accept(this);
+		}
+		ctx.compoundStatement().accept(this);
 		stm.exitScope();
 		return null;
 	}
@@ -125,7 +132,10 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 		Symbol symbol = stm.addFunction(ctx.ID().getText(), t);
 		functions.put(ctx, symbol);
 		stm.enterScope();
-		visitChildren(ctx);
+		if(ctx.parameterList() != null) {
+			ctx.parameterList().accept(this);
+		}
+		ctx.compoundStatement().accept(this);
 		stm.exitScope();
 		return null;
 	}
@@ -134,13 +144,9 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 	@Override
 	public DijkstraType visitCompoundStatement(@NotNull CompoundStatementContext ctx) {
 		//if the parent is a function or procedure then we are already in the right context
-		if(ctx.getParent() instanceof ProcedureDeclarationContext || ctx.getParent() instanceof FunctionDeclarationContext){
-			visitChildren(ctx);
-		} else {
-			stm.enterScope();
-			visitChildren(ctx);
-			stm.exitScope();
-		}
+		stm.enterScope();
+		visitChildren(ctx);
+		stm.exitScope();
 		return null;
 	}
 	

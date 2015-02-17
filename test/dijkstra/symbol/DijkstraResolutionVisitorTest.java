@@ -87,15 +87,15 @@ public class DijkstraResolutionVisitorTest
 	@Test
 	public void equalExpr()
 	{
-		doSymbolTable("input a; int b; c<- a = b");
+		doSymbolTable("float a; input b; c<- a = b");
 		Symbol s = stm.getSymbol("a");
 		assertNotNull(s);
 		assertEquals("a", s.getId());
-		assertEquals(NUM, s.getType());
+		assertEquals(FLOAT, s.getType());
 		s = stm.getSymbol("b");
 		assertNotNull(s);
 		assertEquals("b", s.getId());
-		assertEquals(INT, s.getType());
+		assertEquals(FLOAT, s.getType());
 		s = stm.getSymbol("c");
 		assertNotNull(s);
 		assertEquals("c", s.getId());
@@ -127,7 +127,7 @@ public class DijkstraResolutionVisitorTest
 		Symbol s = stm.getSymbol("a");
 		assertNotNull(s);
 		assertEquals("a", s.getId());
-		assertEquals(NUM, s.getType());
+		assertEquals(INT, s.getType());
 		s = stm.getSymbol("c");
 		assertNotNull(s);
 		assertEquals("c", s.getId());
@@ -156,7 +156,7 @@ public class DijkstraResolutionVisitorTest
 		Symbol s = stm.getSymbol("a");
 		assertNotNull(s);
 		assertEquals("a", s.getId());
-		assertEquals(NUM, s.getType());
+		assertEquals(INT, s.getType());
 		s = stm.getSymbol("c");
 		assertNotNull(s);
 		assertEquals("c", s.getId());
@@ -368,8 +368,20 @@ public class DijkstraResolutionVisitorTest
 		assertNotNull(s);
 		assertEquals("b", s.getId());
 		assertEquals(FLOAT, s.getType());
-	}
+	} 
 	
+	@Test
+	public void functionCall() {
+		doSymbolTable("input a, b; proc getTypes(a, boolean b) { a <- 1 } getTypes(a,b)");
+		Symbol s = stm.getSymbol("a");
+		assertNotNull(s);
+		assertEquals("a", s.getId());
+		assertEquals(INT, s.getType());
+		s = stm.getSymbol("b");
+		assertNotNull(s);
+		assertEquals("b", s.getId());
+		assertEquals(BOOLEAN, s.getType());
+	} 
 	
 	// Helper methods
 	private void makeParser(String inputText)
