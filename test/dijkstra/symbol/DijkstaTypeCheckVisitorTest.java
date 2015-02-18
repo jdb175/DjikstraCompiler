@@ -139,6 +139,7 @@ public class DijkstaTypeCheckVisitorTest {
 	@Test
 	public void goodDiv() {
 		doTypeCheck("int a, b; c <- a div b");
+		doTypeCheck("int a, b; c <- a div (b+a)");
 		doTypeCheck("int a, b; float c; c <- a div b");
 		assertTrue(true);
 	}
@@ -170,7 +171,7 @@ public class DijkstaTypeCheckVisitorTest {
 	@Test
 	public void goodAdd() {
 		doTypeCheck("int a,b,c; a <- c + b");
-		doTypeCheck("float a,b,c; a <- c + b");
+		doTypeCheck("float a,b,c; a <- c + (b + c)");
 		doTypeCheck("int a,b; float c; a <- c + b");
 		doTypeCheck("int a; float b, c; a <- c + b");
 		assertTrue(true);
@@ -186,6 +187,122 @@ public class DijkstaTypeCheckVisitorTest {
 		doTypeCheck("boolean a; float b,c; a <- c + b");
 	}
 	
+	@Test
+	public void goodRelational() {
+		doTypeCheck("int b, c; a <- c < b");
+		doTypeCheck("float b, c; a <- c > b");
+		doTypeCheck("float b; int c; a <- c >= (b + 2)");
+		assertTrue(true);
+	}
+	
+	@Test(expected=DijkstraTypeException.class)
+	public void badRelational() {
+		doTypeCheck("int b; boolean c; a <- c > b");
+	}
+	
+	@Test(expected=DijkstraTypeException.class)
+	public void badRelationalAssign() {
+		doTypeCheck("float a,b,c; a <- c < b");
+	}
+	
+	@Test
+	public void goodAnd() {
+		doTypeCheck("boolean a, b; a <- a & (b & b)");
+		assertTrue(true);
+	}
+	
+	@Test(expected=DijkstraTypeException.class)
+	public void badAnd() {
+		doTypeCheck("boolean a; int b; a <- a & b");
+	}
+	
+	@Test(expected=DijkstraTypeException.class)
+	public void badAndAssign() {
+		doTypeCheck("int a; boolean b; a <- a & b");
+	}
+	
+	@Test
+	public void goodOr() {
+		doTypeCheck("boolean a, b; a <- a | (b | true)");
+		assertTrue(true);
+	}
+	
+	@Test(expected=DijkstraTypeException.class)
+	public void badOr() {
+		doTypeCheck("boolean a; int b; a <- a | b");
+	}
+	
+	@Test(expected=DijkstraTypeException.class)
+	public void badOrAssign() {
+		doTypeCheck("int a; boolean b; a <- a | (b | false)");
+	}
+	
+	@Test
+	public void goodEquals() {
+		doTypeCheck("int a, b; c <- a = b");
+		doTypeCheck("float a, b; c <- a ~= (b + (a + b))");
+		doTypeCheck("boolean a, b; c <- a = (b & a)");
+	}
+	
+	@Test(expected=DijkstraTypeException.class)
+	public void badEquals() {
+		doTypeCheck("int a; float b; c <- a = b");
+	}
+	
+	@Test
+	public void testArrayAccessor() {
+		doTypeCheck("int[1] a; int b; c <- a[0] = b");
+		assertTrue(true);
+	}
+	
+	@Test
+	public void testArrayAccessor2() {
+		doTypeCheck("int[1] a; int b; c <- a[b + 0] = b");
+		assertTrue(true);
+	}
+	
+	@Test
+	public void testArrayAccessorGet() {
+		doTypeCheck("int[1] a; int b; a[0] <- b");
+		assertTrue(true);
+	}
+	
+	@Test
+	public void testArrayAccessorInExpression() {
+		doTypeCheck("int[1] a; int b; c <- (a[0]) + b");
+		assertTrue(true);
+	}
+	
+	@Test(expected=DijkstraTypeException.class)
+	public void testArrayAccessorWrongAccessType() {
+		doTypeCheck("int[1] a; c <- a[true]");
+	}
+	
+	@Test(expected=DijkstraTypeException.class)
+	public void testArrayAccessorWrongAccessTypeExpr() {
+		doTypeCheck("int[1] a; c <- a[(2 < 3)]");
+	}
+	
+	@Test
+	public void testAssignStatement() {
+		doTypeCheck("a,b,c <- 5, 4.0, true");
+		doTypeCheck("boolean[1] d; a,b,c <- 5, 4.0, d[0]");
+		doTypeCheck("fun d() : boolean { return true; } a,b,c <- 5, 4.0, d()");
+		doTypeCheck("int a; float b; boolean c; a,b,c <- 5, 4.0, true");
+		assertTrue(true);
+	}
+	
+	@Test(expected=DijkstraTypeException.class)
+	public void testAssignStatementWrongType() {
+		doTypeCheck("int a; a <- true");
+	}
+	
+	@Test(expected=DijkstraTypeException.class)
+	public void testAssignStatementWrongTypeFunction() {
+		doTypeCheck("fun d() : boolean { return true; } int a; a <- d()");
+	}
+	
+	/*  HELPERS */
 	
 	private void makeParser(String inputText)
 	{
@@ -208,7 +325,6 @@ public class DijkstaTypeCheckVisitorTest {
 	
 	private DijkstraTypeCheckVisitor doTypeCheck(String inputText)
 	{
-		//System.out.println(doParse(inputText));
 		stm.reset();
 		doParse(inputText);
 		DijkstraSymbolVisitor visitor = new DijkstraSymbolVisitor();

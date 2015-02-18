@@ -83,7 +83,7 @@
  								| FALSE #bool
  								| ID #idexp
  								| functionCall #fCall
- 								| arrayAccessor #arrayAccess; 
+ 								| arrayAccessor #arrayAccess;
  functionCall :				ID LPAR argList? RPAR;
  arrayAccessor :			ID LBRACK expression RBRACK;
 

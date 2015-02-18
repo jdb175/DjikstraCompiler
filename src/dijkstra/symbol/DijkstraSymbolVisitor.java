@@ -13,6 +13,7 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 	public ParseTreeProperty<Symbol> symbols = new ParseTreeProperty<Symbol>();
 	public ParseTreeProperty<Symbol> functions = new ParseTreeProperty<Symbol>();
 	public ParseTreeProperty<Symbol> arrays = new ParseTreeProperty<Symbol>();
+	public ParseTreeProperty<DijkstraType> types = new ParseTreeProperty<DijkstraType>();
 
 	private SymbolTableManager stm = SymbolTableManager.getInstance();
 	
@@ -73,6 +74,7 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 		while(varList != null) {
 			//Get name from var
 			VarContext var = varList.var();
+			var.accept(this);
 			//Get type from expression
 			DijkstraType t = exprList.expression().accept(this);
 			//Now get id
@@ -215,7 +217,9 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 		if(arr == null) {
 			throw new DijkstraSymbolException("No array with name " + ctx.ID().getText() + " has been defined");
 		}
+		ctx.expression().accept(this);
 		arrays.put(ctx, arr);
+		types.put(ctx, arr.getType());
 		return arr.getType();
 	}
 	
@@ -229,6 +233,7 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 		if(ctx.argList() != null) {
 			ctx.argList().accept(this);
 		}
+		types.put(ctx, fun.getType());
 		return fun.getType();
 	}
 	
@@ -256,16 +261,19 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 	
 	@Override
 	public DijkstraType visitInteger(@NotNull DijkstraParser.IntegerContext ctx) {
+		types.put(ctx, INT);
 		return INT;
 	}
 	
 	@Override
 	public DijkstraType visitFloat(@NotNull DijkstraParser.FloatContext ctx) {
+		types.put(ctx, FLOAT);
 		return FLOAT;
 	}
 	
 	@Override
 	public DijkstraType visitBool(@NotNull DijkstraParser.BoolContext ctx) {
+		types.put(ctx, BOOLEAN);
 		return BOOLEAN;
 	}
 	
@@ -276,6 +284,7 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 			throw new DijkstraSymbolException("Reference to symbol " + ctx.ID().getText() + ", which does not exist.");
 		}
 		symbols.put(ctx, s);
+		types.put(ctx, s.getType());
 		return s.getType();
 	}
 	

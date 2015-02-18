@@ -50,11 +50,30 @@ public class DijkstraTypeCheckVisitor extends DijkstraBaseVisitor<DijkstraType> 
 	@Override
 	public DijkstraType visitMult(@NotNull MultContext ctx) {
 		if(ctx.DIV() != null || ctx.MOD() != null) {
-			Symbol first = symbols.get(ctx.expression(0));
-			Symbol second = symbols.get(ctx.expression(1));
-			if(first.getType() != INT || second.getType() != INT) {
+			DijkstraType first = types.get(ctx.expression(0));
+			DijkstraType second = types.get(ctx.expression(1));
+			if(first != INT || second != INT) {
 				throw new DijkstraTypeException("Cannot use div or mod with non-integer operands");
 			}
+		}
+		return null;
+	}
+	
+	@Override
+	public DijkstraType visitEqual(@NotNull EqualContext ctx) {
+		DijkstraType first = types.get(ctx.expression(0));
+		DijkstraType second = types.get(ctx.expression(1));
+		if(first != second) {
+			throw new DijkstraTypeException("'=' and '~=' can only be used with operands of the same type");
+		}
+		return null;
+	}
+	
+	@Override
+	public DijkstraType visitArrayAccessor(@NotNull DijkstraParser.ArrayAccessorContext ctx) {
+		DijkstraType aType = types.get(ctx.expression());
+		if(aType != INT) {
+			throw new DijkstraTypeException("Arrays can only be accessed with integer types!");
 		}
 		return null;
 	}

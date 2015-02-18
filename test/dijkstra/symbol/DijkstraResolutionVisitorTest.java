@@ -49,6 +49,16 @@ public class DijkstraResolutionVisitorTest
 	}
 	
 	@Test
+	public void inferredVariableUseInArrayAccessor()
+	{
+		doSymbolTable("input a; int[0] b; c <- b[a];");
+		Symbol s = stm.getSymbol("a");
+		assertNotNull(s);
+		assertEquals("a", s.getId());
+		assertEquals(INT, s.getType());
+	}
+	
+	@Test
 	public void orExpr()
 	{
 		doSymbolTable("input a, b; d <- a | b");

@@ -22,6 +22,7 @@ public class DijkstraResolutionVisitor extends DijkstraBaseVisitor<DijkstraType>
 		symbols = oldVisitor.symbols;
 		functions = oldVisitor.functions;
 		arrays = oldVisitor.arrays;
+		types = oldVisitor.types;
 	}
 	
 	@Override
@@ -109,6 +110,8 @@ public class DijkstraResolutionVisitor extends DijkstraBaseVisitor<DijkstraType>
 	
 	@Override
 	public DijkstraType visitMult(@NotNull DijkstraParser.MultContext ctx) {
+		DijkstraType t1 = ctx.expression(0).accept(this);
+		DijkstraType t2 = ctx.expression(1).accept(this);
 		Symbol first = symbols.get(ctx.expression(0));
 		Symbol second = symbols.get(ctx.expression(1));
 
@@ -131,8 +134,6 @@ public class DijkstraResolutionVisitor extends DijkstraBaseVisitor<DijkstraType>
 			types.put(ctx, INT);
 			return INT;
 		} else {
-			DijkstraType t1 = ctx.expression(0).accept(this);
-			DijkstraType t2 = ctx.expression(1).accept(this);
 			if(first != null) {
 				updateType(first, NUM);
 			}
@@ -216,6 +217,19 @@ public class DijkstraResolutionVisitor extends DijkstraBaseVisitor<DijkstraType>
 	@Override
 	public DijkstraType visitArrayAccessor(@NotNull DijkstraParser.ArrayAccessorContext ctx) {
 		DijkstraType t = arrays.get(ctx).getType();
+		ctx.expression().accept(this);
+		Symbol s = symbols.get(ctx.expression());
+		if(s != null) {
+			s.updateType(INT);
+		}
+		types.put(ctx, t);
+		return t;
+	}
+	
+	/* Primary Expression Types */
+	@Override
+	public DijkstraType visitArrayAccess(@NotNull DijkstraParser.ArrayAccessContext ctx) {
+		DijkstraType t = ctx.arrayAccessor().accept(this);
 		types.put(ctx, t);
 		return t;
 	}
@@ -238,6 +252,13 @@ public class DijkstraResolutionVisitor extends DijkstraBaseVisitor<DijkstraType>
 			++i;
 			args = args.argList();
 		}
+		types.put(ctx, t);
+		return t;
+	}
+	
+	@Override
+	public DijkstraType visitFCall(@NotNull DijkstraParser.FCallContext ctx) {
+		DijkstraType t = ctx.functionCall().accept(this);
 		types.put(ctx, t);
 		return t;
 	}
@@ -284,7 +305,9 @@ public class DijkstraResolutionVisitor extends DijkstraBaseVisitor<DijkstraType>
 	
 	@Override
 	public DijkstraType visitCompound(@NotNull DijkstraParser.CompoundContext ctx) {
-		return ctx.expression().accept(this);
+		DijkstraType t = ctx.expression().accept(this);
+		types.put(ctx, t);
+		return t;
 	}
 	
 	@Override
