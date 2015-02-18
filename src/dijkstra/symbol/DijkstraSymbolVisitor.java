@@ -32,6 +32,7 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 			symbols.put(idlist, symbol);
 			idlist = idlist.idList();
 		}
+		types.put(ctx, t);
 		return t;
 	}
 	
@@ -44,6 +45,7 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 		String id = ctx.ID().getText();
 		Symbol s = stm.add(id, t);
 		symbols.put(ctx, s);
+		types.put(ctx, t);
 		return t;
 	}
 	
@@ -59,9 +61,11 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 		while(idlist != null) {
 			String id = idlist.ID().getText();
 			Symbol symbol = stm.addArray(id, t);
+			arrays.put(ctx, symbol);
 			symbols.put(idlist, symbol);
 			idlist = idlist.idList();
 		}
+		types.put(ctx, t);
 		return t;
 	}
 	

@@ -2,6 +2,7 @@ package dijkstra.symbol;
 
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
+import org.antlr.v4.runtime.tree.RuleNode;
 
 import dijkstra.lexparse.DijkstraBaseVisitor;
 import dijkstra.lexparse.DijkstraParser;
@@ -33,6 +34,14 @@ public class DijkstraResolutionVisitor extends DijkstraBaseVisitor<DijkstraType>
 	}
 	
 	@Override
+	public DijkstraType visitArrayDeclaration(@NotNull DijkstraParser.ArrayDeclarationContext ctx) {
+		DijkstraType t = arrays.get(ctx).getType();
+		ctx.expression().accept(this);
+		updateType(ctx.expression(), INT);
+		return t;
+	}
+	
+	@Override
 	public DijkstraType visitAssignStatement(@NotNull DijkstraParser.AssignStatementContext ctx)
 	{
 		//iterate over var list and expressionList
@@ -45,11 +54,7 @@ public class DijkstraResolutionVisitor extends DijkstraBaseVisitor<DijkstraType>
 			DijkstraType t = exprList.expression().accept(this);
 			//Now get id
 			String id;
-			if(var.ID() != null) {
-				//create the symbol if it is not an accessor
-				Symbol symbol = symbols.get(var);
-				updateType(symbol, t);
-			}
+			updateType(var, t);
 			varList = varList.varList();
 			exprList = exprList.expressionList();
 		}
@@ -64,13 +69,11 @@ public class DijkstraResolutionVisitor extends DijkstraBaseVisitor<DijkstraType>
 		DijkstraType t1 = ctx.expression(0).accept(this);
 		DijkstraType t2 = ctx.expression(1).accept(this);
 		
-		Symbol first = symbols.get(ctx.expression(0));
-		Symbol second = symbols.get(ctx.expression(1));
-		if(t2 != UNDEFINED && first != null) {
-			updateType(first, t2);
+		if(t2 != UNDEFINED) {
+			updateType(ctx.expression(0), t2);
 		} 
-		if(t1 != UNDEFINED && second != null) {
-			updateType(second, t1);
+		if(t1 != UNDEFINED) {
+			updateType(ctx.expression(1), t1);
 		}
 		types.put(ctx, BOOLEAN);
 		return BOOLEAN;
@@ -80,14 +83,8 @@ public class DijkstraResolutionVisitor extends DijkstraBaseVisitor<DijkstraType>
 	public DijkstraType visitOr(@NotNull DijkstraParser.OrContext ctx) {
 		ctx.expression(0).accept(this);
 		ctx.expression(1).accept(this);
-		Symbol first = symbols.get(ctx.expression(0));
-		if(first != null) {
-			updateType(first, BOOLEAN);
-		}
-		Symbol second = symbols.get(ctx.expression(1));
-		if(second != null) {
-			updateType(second, BOOLEAN);
-		}
+		updateType(ctx.expression(0), BOOLEAN);
+		updateType(ctx.expression(1), BOOLEAN);
 		types.put(ctx, BOOLEAN);
 		return BOOLEAN;
 	}
@@ -96,14 +93,8 @@ public class DijkstraResolutionVisitor extends DijkstraBaseVisitor<DijkstraType>
 	public DijkstraType visitAnd(@NotNull DijkstraParser.AndContext ctx) {
 		ctx.expression(0).accept(this);
 		ctx.expression(1).accept(this);
-		Symbol first = symbols.get(ctx.expression(0));
-		if(first != null) {
-			updateType(first, BOOLEAN);
-		}
-		Symbol second = symbols.get(ctx.expression(1));
-		if(second != null) {
-			updateType(second, BOOLEAN);
-		}
+		updateType(ctx.expression(0), BOOLEAN);
+		updateType(ctx.expression(1), BOOLEAN);
 		types.put(ctx, BOOLEAN);
 		return BOOLEAN;
 	}
@@ -112,34 +103,20 @@ public class DijkstraResolutionVisitor extends DijkstraBaseVisitor<DijkstraType>
 	public DijkstraType visitMult(@NotNull DijkstraParser.MultContext ctx) {
 		DijkstraType t1 = ctx.expression(0).accept(this);
 		DijkstraType t2 = ctx.expression(1).accept(this);
-		Symbol first = symbols.get(ctx.expression(0));
-		Symbol second = symbols.get(ctx.expression(1));
 
 		if(ctx.SLASH() != null) {
-			if(first != null) {
-				updateType(first, FLOAT);
-			}
-			if(second != null) {
-				updateType(second, FLOAT);
-			}
+			updateType(ctx.expression(0), FLOAT);
+			updateType(ctx.expression(1), FLOAT);
 			types.put(ctx, FLOAT);
 			return FLOAT;
 		} else if(ctx.DIV() != null || ctx.MOD() != null) {
-			if(first != null) {
-				updateType(first, INT);
-			}
-			if(second != null) {
-				updateType(second, INT);
-			}
+			updateType(ctx.expression(0), INT);
+			updateType(ctx.expression(1), INT);
 			types.put(ctx, INT);
 			return INT;
 		} else {
-			if(first != null) {
-				updateType(first, NUM);
-			}
-			if(second != null) {
-				updateType(second, NUM);
-			}
+			updateType(ctx.expression(0), NUM);
+			updateType(ctx.expression(1), NUM);
 			if(t1 == FLOAT || t2 == FLOAT) {
 				types.put(ctx, FLOAT);
 				return FLOAT;
@@ -152,11 +129,8 @@ public class DijkstraResolutionVisitor extends DijkstraBaseVisitor<DijkstraType>
 	
 	@Override
 	public DijkstraType visitGuard(@NotNull DijkstraParser.GuardContext ctx) {
-		Symbol first = symbols.get(ctx.expression());
-		if(first != null) {
-			updateType(first, BOOLEAN);
-
-		}
+		updateType(ctx.expression(), BOOLEAN);
+		ctx.statement().accept(this);
 		return BOOLEAN;
 	}
 	
@@ -164,20 +138,14 @@ public class DijkstraResolutionVisitor extends DijkstraBaseVisitor<DijkstraType>
 	public DijkstraType visitAdd(@NotNull DijkstraParser.AddContext ctx) {
 		DijkstraType t1 = ctx.expression(0).accept(this);
 		DijkstraType t2 = ctx.expression(1).accept(this);
-		Symbol first = symbols.get(ctx.expression(0));
-		Symbol second = symbols.get(ctx.expression(1));
 		DijkstraType t = NUM;
 		if(t1 == FLOAT || t2 == FLOAT) {
 			t = FLOAT;
 		} else if (t1 == INT && t2 == INT) {
 			t = INT;
 		}
-		if(first != null) {
-			updateType(first, t);
-		}
-		if(second != null) {
-			updateType(second, t);
-		}
+		updateType(ctx.expression(0), t);
+		updateType(ctx.expression(1), t);
 		types.put(ctx, t);
 		return t;
 	}
@@ -186,14 +154,8 @@ public class DijkstraResolutionVisitor extends DijkstraBaseVisitor<DijkstraType>
 	public DijkstraType visitRelational(@NotNull DijkstraParser.RelationalContext ctx) {
 		ctx.expression(0).accept(this);
 		ctx.expression(1).accept(this);
-		Symbol first = symbols.get(ctx.expression(0));
-		if(first != null) {
-			updateType(first, NUM);
-		}
-		Symbol second = symbols.get(ctx.expression(1));
-		if(second != null) {
-			updateType(second, NUM);
-		}
+		updateType(ctx.expression(0), NUM);
+		updateType(ctx.expression(1), NUM);
 		types.put(ctx, BOOLEAN);
 		return BOOLEAN;
 	}
@@ -205,10 +167,7 @@ public class DijkstraResolutionVisitor extends DijkstraBaseVisitor<DijkstraType>
 			t = NUM;
 		}
 		ctx.expression().accept(this);
-		Symbol first = symbols.get(ctx.expression());
-		if(first != null) {
-			updateType(first, t);
-		}
+		updateType(ctx.expression(), t);
 		types.put(ctx, t);
 		return t;
 	}
@@ -245,14 +204,13 @@ public class DijkstraResolutionVisitor extends DijkstraBaseVisitor<DijkstraType>
 		MethodSymbol method = (MethodSymbol) functions.get(ctx);
 		int i = 0;
 		while(args != null) {
-			Symbol param = symbols.get(args.expression());
-			if(param != null) {
-				param.updateType(method.getParameter(i));
-			}
+			args.expression().accept(this);
+			updateType(args.expression(), method.getParameter(i));
 			++i;
 			args = args.argList();
 		}
 		types.put(ctx, t);
+		//Check contents
 		return t;
 	}
 	
@@ -274,10 +232,8 @@ public class DijkstraResolutionVisitor extends DijkstraBaseVisitor<DijkstraType>
 		MethodSymbol method = (MethodSymbol) functions.get(ctx);
 		int i = 0;
 		while(args != null) {
-			Symbol param = symbols.get(args.expression());
-			if(param != null) {
-				param.updateType(method.getParameter(i));
-			}
+			args.expression().accept(this);
+			updateType(args.expression(), method.getParameter(i));
 			++i;
 			args = args.argList();
 		}
@@ -346,8 +302,23 @@ public class DijkstraResolutionVisitor extends DijkstraBaseVisitor<DijkstraType>
 	 * @param symbol symbol to update
 	 * @param t target type
 	 */
-	private void updateType(Symbol symbol, DijkstraType t) {
-		changed = symbol.updateType(t) || changed;
+	private void updateType(RuleNode node, DijkstraType t) {
+		Symbol symbol = symbols.get(node);
+		if(symbol != null) {
+			changed = symbol.updateType(t) || changed;
+		} else {
+			//Handle primitives etc
+			DijkstraType existingType = types.get(node);
+			if(existingType == NUM || existingType == FLOAT || existingType == INT){
+				if(t == BOOLEAN) {
+					throw new DijkstraTypeException("Attempted to use type " + existingType + " for " + t);
+				}
+			} else if (existingType == BOOLEAN) {
+				if(t == NUM || t == FLOAT || t == INT){
+					throw new DijkstraTypeException("Attempted to use type " + existingType + " for " + t);
+				}
+			}
+		}
 	}
 	
 }

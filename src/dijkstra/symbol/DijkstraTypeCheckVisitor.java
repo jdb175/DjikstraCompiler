@@ -11,6 +11,14 @@ import dijkstra.lexparse.DijkstraParser.*;
 import dijkstra.utility.DijkstraType;
 import static dijkstra.utility.DijkstraType.*;
 
+/**
+ * Class for all type checking missed in previous passes. That means cases where operands being checked 
+ * are normally compatible (float & int), which aren't visited during type resolution (return), or
+ * require knowledge of the final type (equals). It would be possible to resolve these inline during
+ * resolution but it would be excessively complicating to that visitor.
+ * @author Jason Whitehouse
+ *
+ */
 public class DijkstraTypeCheckVisitor extends DijkstraBaseVisitor<DijkstraType> {
 	public ParseTreeProperty<Symbol> symbols = new ParseTreeProperty<Symbol>();
 	public ParseTreeProperty<Symbol> functions = new ParseTreeProperty<Symbol>();

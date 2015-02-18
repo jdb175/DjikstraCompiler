@@ -47,7 +47,12 @@ public class DijkstaTypeCheckVisitorTest {
 	
 	@Test(expected=DijkstraTypeException.class)
 	public void functionCallBadParams() {
-		doTypeCheck("int a; fun foo (boolean a) : int { return 4 } a <- foo(a)");
+		doTypeCheck("int a; fun foo (boolean a) : int { return 4 } b <- foo(a)");
+	}
+	
+	@Test(expected=DijkstraTypeException.class)
+	public void functionCallBadParamsPrimitive() {
+		doTypeCheck("fun foo (boolean a) : int { return 4 } b <- foo(4)");
 	}
 	
 	@Test
@@ -63,8 +68,18 @@ public class DijkstaTypeCheckVisitorTest {
 	}
 	
 	@Test(expected=DijkstraTypeException.class)
+	public void procedureCallBadParamsPrimitive() {
+		doTypeCheck("proc foo (boolean a) { return 4 } foo(4)");
+	}
+	
+	@Test(expected=DijkstraTypeException.class)
 	public void badMinus() {
 		doTypeCheck("boolean b; a <- - b");
+	}
+	
+	@Test(expected=DijkstraTypeException.class)
+	public void badMinusPrimitive() {
+		doTypeCheck("boolean b; a <- - true");
 	}
 	
 	@Test
@@ -78,6 +93,11 @@ public class DijkstaTypeCheckVisitorTest {
 	@Test(expected=DijkstraTypeException.class)
 	public void badNot() {
 		doTypeCheck("int b; a <- ~ b");
+	}
+	
+	@Test(expected=DijkstraTypeException.class)
+	public void badNotPrimitive() {
+		doTypeCheck("int b; a <- ~ 3");
 	}
 	
 	@Test
@@ -99,6 +119,11 @@ public class DijkstaTypeCheckVisitorTest {
 	@Test(expected=DijkstraTypeException.class)
 	public void badMult() {
 		doTypeCheck("int a, b; boolean c; a <- c * b");
+	}
+	
+	@Test(expected=DijkstraTypeException.class)
+	public void badMultPrimitive() {
+		doTypeCheck("int a, b; a <- false * b");
 	}
 	
 	@Test(expected=DijkstraTypeException.class)
@@ -150,6 +175,11 @@ public class DijkstaTypeCheckVisitorTest {
 	}
 	
 	@Test(expected=DijkstraTypeException.class)
+	public void badModPrimitive() {
+		doTypeCheck("int a, b; a <- 3.5 mod b");
+	}
+	
+	@Test(expected=DijkstraTypeException.class)
 	public void badModReturn() {
 		doTypeCheck("int a, b; boolean c; c <- a mod b");
 	}
@@ -183,6 +213,11 @@ public class DijkstaTypeCheckVisitorTest {
 	}
 	
 	@Test(expected=DijkstraTypeException.class)
+	public void badAddPrimitive() {
+		doTypeCheck("int a, b; a <- b + true");
+	}
+	
+	@Test(expected=DijkstraTypeException.class)
 	public void badAddAssign() {
 		doTypeCheck("boolean a; float b,c; a <- c + b");
 	}
@@ -201,6 +236,12 @@ public class DijkstaTypeCheckVisitorTest {
 	}
 	
 	@Test(expected=DijkstraTypeException.class)
+	public void badRelationalPrimitive() {
+		doTypeCheck("int b; boolean c; a <- c > true");
+	}
+	
+	
+	@Test(expected=DijkstraTypeException.class)
 	public void badRelationalAssign() {
 		doTypeCheck("float a,b,c; a <- c < b");
 	}
@@ -217,6 +258,11 @@ public class DijkstaTypeCheckVisitorTest {
 	}
 	
 	@Test(expected=DijkstraTypeException.class)
+	public void badAndPrimitive() {
+		doTypeCheck("boolean a; int b; a <- a & 4");
+	}
+	
+	@Test(expected=DijkstraTypeException.class)
 	public void badAndAssign() {
 		doTypeCheck("int a; boolean b; a <- a & b");
 	}
@@ -229,7 +275,7 @@ public class DijkstaTypeCheckVisitorTest {
 	
 	@Test(expected=DijkstraTypeException.class)
 	public void badOr() {
-		doTypeCheck("boolean a; int b; a <- a | b");
+		doTypeCheck("boolean a; a <- a | 5");
 	}
 	
 	@Test(expected=DijkstraTypeException.class)
@@ -239,8 +285,8 @@ public class DijkstaTypeCheckVisitorTest {
 	
 	@Test
 	public void goodEquals() {
-		doTypeCheck("int a, b; c <- a = b");
-		doTypeCheck("float a, b; c <- a ~= (b + (a + b))");
+		doTypeCheck("int a; c <- a = 2");
+		doTypeCheck("float a, b; c <- a ~= (b + (2 + b))");
 		doTypeCheck("boolean a, b; c <- a = (b & a)");
 	}
 	
@@ -248,6 +294,24 @@ public class DijkstaTypeCheckVisitorTest {
 	public void badEquals() {
 		doTypeCheck("int a; float b; c <- a = b");
 	}
+	
+	@Test
+	public void testArrayDeclaration() {
+		doTypeCheck("int[1] a;");
+		assertTrue(true);
+	}
+	
+	@Test(expected=DijkstraTypeException.class)
+	public void testArrayDeclarationBad() {
+		doTypeCheck("int[true] a;");
+	}
+	
+	@Test(expected=DijkstraTypeException.class)
+	public void testArrayDeclarationBadExpr() {
+		doTypeCheck("int[(4 < 5)] a;");
+	}
+	
+	
 	
 	@Test
 	public void testArrayAccessor() {
@@ -300,6 +364,43 @@ public class DijkstaTypeCheckVisitorTest {
 	@Test(expected=DijkstraTypeException.class)
 	public void testAssignStatementWrongTypeFunction() {
 		doTypeCheck("fun d() : boolean { return true; } int a; a <- d()");
+	}
+	
+	@Test(expected=DijkstraTypeException.class)
+	public void testNestedFunctions() {
+		doTypeCheck("fun a (boolean b) : boolean { return b } fun d() : boolean { return a(4.5); }");
+	}
+	
+	@Test(expected=DijkstraTypeException.class)
+	public void testConditional() {
+		doTypeCheck("if 4 :: print 5 fi");
+	}
+	
+	@Test
+	public void testConditionalGood() {
+		doTypeCheck("if false :: print 5 fi");
+		assertTrue(true);
+	}
+	
+	@Test(expected=DijkstraTypeException.class)
+	public void testConditionalInternal() {
+		doTypeCheck("if true :: a <- 4 | true fi");
+	}
+	
+	@Test(expected=DijkstraTypeException.class)
+	public void testIterative() {
+		doTypeCheck("do 4 :: print 5 od");
+	}
+	
+	@Test
+	public void testIterativeGood() {
+		doTypeCheck("do false :: print 5 od");
+		assertTrue(true);
+	}
+	
+	@Test(expected=DijkstraTypeException.class)
+	public void testIterativeInternal() {
+		doTypeCheck("do true :: a <- 4 | true od");
 	}
 	
 	/*  HELPERS */
