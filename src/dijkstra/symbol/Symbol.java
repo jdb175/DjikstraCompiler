@@ -165,25 +165,25 @@ public class Symbol
 		DijkstraType old = type;
 		if(newType == BOOLEAN) {
 			if(type == NUM || type == INT || type == FLOAT) {
-				throw new DijkstraSymbolException("Cannot assign updated type "+newType+" to a symbol of type "+type+" ("+id+")");
+				throw new DijkstraTypeException("Cannot assign updated type "+newType+" to a symbol of type "+type+" ("+id+")");
 			} else {
 				type = newType;
 			}
 		} else if (newType == NUM) {
 			if(type == BOOLEAN) {
-				throw new DijkstraSymbolException("Cannot assign updated type "+newType+" to a symbol of type "+type+" ("+id+")");
+				throw new DijkstraTypeException("Cannot assign updated type "+newType+" to a symbol of type "+type+" ("+id+")");
 			} else if (type == UNDEFINED) {
 				type = NUM;
 			}
 		} else if (newType == INT) {
-			if(type == BOOLEAN || type == FLOAT) {
-				throw new DijkstraSymbolException("Cannot assign updated type "+newType+" to a symbol of type "+type+" ("+id+")");
-			} else {
+			if(type == BOOLEAN) {
+				throw new DijkstraTypeException("Cannot assign updated type "+newType+" to a symbol of type "+type+" ("+id+")");
+			} else if(type == UNDEFINED || type == NUM) {
 				type = newType;
 			}
 		} else if (newType == FLOAT) {
 			if(type == BOOLEAN) {
-				throw new DijkstraSymbolException("Cannot assign updated type "+newType+" to a symbol of type "+type+" ("+id+")");
+				throw new DijkstraTypeException("Cannot assign updated type "+newType+" to a symbol of type "+type+" ("+id+")");
 			} else if (type == UNDEFINED || type == NUM){
 				type = FLOAT;
 			}

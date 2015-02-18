@@ -169,7 +169,7 @@ public class DijkstraResolutionVisitorTest
 		assertEquals(NUM, s.getType());
 	}
 	
-	@Test(expected=DijkstraSymbolException.class)
+	@Test(expected=DijkstraTypeException.class)
 	public void OrExprInts()
 	{
 		doSymbolTable("int a, b; d <- a | b");
@@ -231,13 +231,7 @@ public class DijkstraResolutionVisitorTest
 		assertEquals("b", s.getId());
 		assertEquals(INT, s.getType());
 	}
-	
-	@Test(expected=DijkstraSymbolException.class)
-	public void inferIntSecond()
-	{
-		doSymbolTable("input a, b, c; x <- a / b; y <- x mod c");
-	}
-	
+
 	@Test
 	public void inferByMod()
 	{

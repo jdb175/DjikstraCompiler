@@ -38,7 +38,7 @@ public class DijkstraSymbolVisitorTest
 		stm.reset();
 	}
 	
-	@Test(expected=DijkstraSymbolException.class)
+	@Test(expected=DijkstraTypeException.class)
 	public void assignWrongType()
 	{
 		doSymbolTable("boolean a; a <- 1");

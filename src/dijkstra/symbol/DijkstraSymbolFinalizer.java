@@ -16,12 +16,14 @@ public class DijkstraSymbolFinalizer extends DijkstraBaseVisitor<DijkstraType> {
 	public ParseTreeProperty<Symbol> symbols = new ParseTreeProperty<Symbol>();
 	public ParseTreeProperty<Symbol> functions = new ParseTreeProperty<Symbol>();
 	public ParseTreeProperty<Symbol> arrays = new ParseTreeProperty<Symbol>();
+	public ParseTreeProperty<DijkstraType> types = new ParseTreeProperty<DijkstraType>();
 	
 	public DijkstraSymbolFinalizer(DijkstraResolutionVisitor oldVisitor) {
 		super();
 		symbols = oldVisitor.symbols;
 		functions = oldVisitor.functions;
 		arrays = oldVisitor.arrays;
+		types = oldVisitor.types;
 	}
 	
 	@Override
@@ -33,6 +35,10 @@ public class DijkstraSymbolFinalizer extends DijkstraBaseVisitor<DijkstraType> {
 			} else if (cur.getType() == UNDEFINED) {
 				throw new DijkstraSymbolException("Unable to infer type of identifier " + cur.getId());
 			}
+		}
+		DijkstraType curType = types.get(arg0);
+		if(curType == NUM) {
+			types.put(arg0, INT);
 		}
 		return super.visitChildren(arg0);
 	}

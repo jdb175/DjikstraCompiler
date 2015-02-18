@@ -13,6 +13,7 @@ public class DijkstraResolutionVisitor extends DijkstraBaseVisitor<DijkstraType>
 	public ParseTreeProperty<Symbol> symbols = new ParseTreeProperty<Symbol>();
 	public ParseTreeProperty<Symbol> functions = new ParseTreeProperty<Symbol>();
 	public ParseTreeProperty<Symbol> arrays = new ParseTreeProperty<Symbol>();
+	public ParseTreeProperty<DijkstraType> types = new ParseTreeProperty<DijkstraType>();
 	
 	private boolean changed = true;
 	
@@ -70,6 +71,7 @@ public class DijkstraResolutionVisitor extends DijkstraBaseVisitor<DijkstraType>
 		if(t1 != UNDEFINED && second != null) {
 			updateType(second, t1);
 		}
+		types.put(ctx, BOOLEAN);
 		return BOOLEAN;
 	}
 	
@@ -85,6 +87,7 @@ public class DijkstraResolutionVisitor extends DijkstraBaseVisitor<DijkstraType>
 		if(second != null) {
 			updateType(second, BOOLEAN);
 		}
+		types.put(ctx, BOOLEAN);
 		return BOOLEAN;
 	}
 	
@@ -100,6 +103,7 @@ public class DijkstraResolutionVisitor extends DijkstraBaseVisitor<DijkstraType>
 		if(second != null) {
 			updateType(second, BOOLEAN);
 		}
+		types.put(ctx, BOOLEAN);
 		return BOOLEAN;
 	}
 	
@@ -115,6 +119,7 @@ public class DijkstraResolutionVisitor extends DijkstraBaseVisitor<DijkstraType>
 			if(second != null) {
 				updateType(second, FLOAT);
 			}
+			types.put(ctx, FLOAT);
 			return FLOAT;
 		} else if(ctx.DIV() != null || ctx.MOD() != null) {
 			if(first != null) {
@@ -123,6 +128,7 @@ public class DijkstraResolutionVisitor extends DijkstraBaseVisitor<DijkstraType>
 			if(second != null) {
 				updateType(second, INT);
 			}
+			types.put(ctx, INT);
 			return INT;
 		} else {
 			DijkstraType t1 = ctx.expression(0).accept(this);
@@ -134,8 +140,10 @@ public class DijkstraResolutionVisitor extends DijkstraBaseVisitor<DijkstraType>
 				updateType(second, NUM);
 			}
 			if(t1 == FLOAT || t2 == FLOAT) {
+				types.put(ctx, FLOAT);
 				return FLOAT;
 			} else {
+				types.put(ctx, NUM);
 				return NUM;
 			}
 		}
@@ -169,7 +177,7 @@ public class DijkstraResolutionVisitor extends DijkstraBaseVisitor<DijkstraType>
 		if(second != null) {
 			updateType(second, t);
 		}
-		
+		types.put(ctx, t);
 		return t;
 	}
 	
@@ -185,6 +193,7 @@ public class DijkstraResolutionVisitor extends DijkstraBaseVisitor<DijkstraType>
 		if(second != null) {
 			updateType(second, NUM);
 		}
+		types.put(ctx, BOOLEAN);
 		return BOOLEAN;
 	}
 	
@@ -199,13 +208,16 @@ public class DijkstraResolutionVisitor extends DijkstraBaseVisitor<DijkstraType>
 		if(first != null) {
 			updateType(first, t);
 		}
+		types.put(ctx, t);
 		return t;
 	}
 	
 	/* Primary Expression Types */
 	@Override
 	public DijkstraType visitArrayAccessor(@NotNull DijkstraParser.ArrayAccessorContext ctx) {
-		return arrays.get(ctx).getType();
+		DijkstraType t = arrays.get(ctx).getType();
+		types.put(ctx, t);
+		return t;
 	}
 	
 	@Override
@@ -226,6 +238,7 @@ public class DijkstraResolutionVisitor extends DijkstraBaseVisitor<DijkstraType>
 			++i;
 			args = args.argList();
 		}
+		types.put(ctx, t);
 		return t;
 	}
 	
@@ -247,21 +260,25 @@ public class DijkstraResolutionVisitor extends DijkstraBaseVisitor<DijkstraType>
 			++i;
 			args = args.argList();
 		}
+		types.put(ctx, t);
 		return t;
 	}
 	
 	@Override
 	public DijkstraType visitInteger(@NotNull DijkstraParser.IntegerContext ctx) {
+		types.put(ctx, INT);
 		return INT;
 	}
 	
 	@Override
 	public DijkstraType visitFloat(@NotNull DijkstraParser.FloatContext ctx) {
+		types.put(ctx, FLOAT);
 		return FLOAT;
 	}
 	
 	@Override
 	public DijkstraType visitBool(@NotNull DijkstraParser.BoolContext ctx) {
+		types.put(ctx, BOOLEAN);
 		return BOOLEAN;
 	}
 	
@@ -272,7 +289,9 @@ public class DijkstraResolutionVisitor extends DijkstraBaseVisitor<DijkstraType>
 	
 	@Override
 	public DijkstraType visitIdexp(@NotNull DijkstraParser.IdexpContext ctx) {
-		return symbols.get(ctx).getType();
+		DijkstraType t = symbols.get(ctx).getType();
+		types.put(ctx, t);
+		return t;
 	}
 	
 	/* Type */
