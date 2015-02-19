@@ -325,6 +325,18 @@ public class DijkstaTypeCheckVisitorTest {
 	}
 	
 	@Test
+	public void testArrayAccessorWithSelf() {
+		doTypeCheck("int[2] a; a[1] <- a[0]");
+		assertTrue(true);
+	}
+	
+	@Test(expected=DijkstraSemanticException.class)
+	public void testArrayAccessorWithOther() {
+		doTypeCheck("int[1] a; boolean[1] b; b[0] <- a[0]");
+		assertTrue(true);
+	}
+	
+	@Test
 	public void testArrayAccessor2() {
 		doTypeCheck("int[1] a; int b; c <- a[b + 0] = b");
 		assertTrue(true);

@@ -227,6 +227,14 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 		return arr.getType();
 	}
 	
+	/* Primary Expression Types */
+	@Override
+	public DijkstraType visitArrayAccess(@NotNull DijkstraParser.ArrayAccessContext ctx) {
+		DijkstraType t = ctx.arrayAccessor().accept(this);
+		types.put(ctx, t);
+		return t;
+	}
+	
 	@Override
 	public DijkstraType visitFunctionCall(@NotNull DijkstraParser.FunctionCallContext ctx) {
 		Symbol fun = stm.getMethod(ctx.ID().getText());

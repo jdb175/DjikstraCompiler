@@ -54,6 +54,7 @@ public class DjikstraTypeResolutionVisitor extends DijkstraBaseVisitor<DijkstraT
 		while(varList != null) {
 			//Get name from var
 			VarContext var = varList.var();
+			var.accept(this);
 			//Get type from expression
 			DijkstraType t = exprList.expression().accept(this);
 			//Now get id
@@ -63,6 +64,21 @@ public class DjikstraTypeResolutionVisitor extends DijkstraBaseVisitor<DijkstraT
 		}
 		
 		return null;
+	}
+	
+	@Override
+	public DijkstraType visitVar(@NotNull VarContext ctx) {
+		DijkstraType t;
+		if(ctx.ID()!=null) {
+			t = ctx.ID().accept(this);
+		} else {
+			t = ctx.arrayAccessor().accept(this);
+		}
+		if(t != types.get(ctx)) {
+			types.put(ctx, t);
+			changed = true;
+		}
+		return t;
 	}
 
 	/* Complex Expression Types */
@@ -321,6 +337,7 @@ public class DjikstraTypeResolutionVisitor extends DijkstraBaseVisitor<DijkstraT
 					throw new DijkstraSemanticException("Attempted to use type " + existingType + " for " + t);
 				}
 			}
+			
 		}
 	}
 	
