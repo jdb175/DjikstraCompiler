@@ -1,4 +1,4 @@
-package dijkstra.symbol;
+package djikstra.semantic;
 
 import static org.junit.Assert.*;
 
@@ -7,14 +7,19 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.junit.Test;
 
 import dijkstra.lexparse.DijkstraParser;
+import dijkstra.symbol.DijkstraSymbolVisitor;
+import dijkstra.symbol.SymbolTableManager;
 import dijkstra.utility.DijkstraFactory;
+import djikstra.semantic.DijkstraTypeCheckVisitor;
+import djikstra.semantic.DijkstraSemanticException;
+import djikstra.semantic.DjikstraTypeResolutionVisitor;
 
 public class DijkstaTypeCheckVisitorTest {
 	private DijkstraParser parser;
 	private ParserRuleContext tree;
 	private SymbolTableManager stm = SymbolTableManager.getInstance();
 	
-	@Test(expected=DijkstraTypeException.class)
+	@Test(expected=DijkstraSemanticException.class)
 	public void returnWrongType() {
 		doTypeCheck("fun foo () : int { return true }");
 	}
@@ -45,12 +50,12 @@ public class DijkstaTypeCheckVisitorTest {
 		assertTrue(true);
 	}
 	
-	@Test(expected=DijkstraTypeException.class)
+	@Test(expected=DijkstraSemanticException.class)
 	public void functionCallBadParams() {
 		doTypeCheck("int a; fun foo (boolean a) : int { return 4 } b <- foo(a)");
 	}
 	
-	@Test(expected=DijkstraTypeException.class)
+	@Test(expected=DijkstraSemanticException.class)
 	public void functionCallBadParamsPrimitive() {
 		doTypeCheck("fun foo (boolean a) : int { return 4 } b <- foo(4)");
 	}
@@ -62,22 +67,22 @@ public class DijkstaTypeCheckVisitorTest {
 		assertTrue(true);
 	}
 	
-	@Test(expected=DijkstraTypeException.class)
+	@Test(expected=DijkstraSemanticException.class)
 	public void procedureCallBadParams() {
 		doTypeCheck("int a; proc foo (boolean a) { return 4 } foo(a)");
 	}
 	
-	@Test(expected=DijkstraTypeException.class)
+	@Test(expected=DijkstraSemanticException.class)
 	public void procedureCallBadParamsPrimitive() {
 		doTypeCheck("proc foo (boolean a) { return 4 } foo(4)");
 	}
 	
-	@Test(expected=DijkstraTypeException.class)
+	@Test(expected=DijkstraSemanticException.class)
 	public void badMinus() {
 		doTypeCheck("boolean b; a <- - b");
 	}
 	
-	@Test(expected=DijkstraTypeException.class)
+	@Test(expected=DijkstraSemanticException.class)
 	public void badMinusPrimitive() {
 		doTypeCheck("boolean b; a <- - true");
 	}
@@ -90,12 +95,12 @@ public class DijkstaTypeCheckVisitorTest {
 	}
 	
 	
-	@Test(expected=DijkstraTypeException.class)
+	@Test(expected=DijkstraSemanticException.class)
 	public void badNot() {
 		doTypeCheck("int b; a <- ~ b");
 	}
 	
-	@Test(expected=DijkstraTypeException.class)
+	@Test(expected=DijkstraSemanticException.class)
 	public void badNotPrimitive() {
 		doTypeCheck("int b; a <- ~ 3");
 	}
@@ -116,17 +121,17 @@ public class DijkstaTypeCheckVisitorTest {
 		assertTrue(true);
 	}
 	
-	@Test(expected=DijkstraTypeException.class)
+	@Test(expected=DijkstraSemanticException.class)
 	public void badMult() {
 		doTypeCheck("int a, b; boolean c; a <- c * b");
 	}
 	
-	@Test(expected=DijkstraTypeException.class)
+	@Test(expected=DijkstraSemanticException.class)
 	public void badMultPrimitive() {
 		doTypeCheck("int a, b; a <- false * b");
 	}
 	
-	@Test(expected=DijkstraTypeException.class)
+	@Test(expected=DijkstraSemanticException.class)
 	public void badMultAssign() {
 		doTypeCheck("boolean a; float b,c; a <- c * b");
 	}
@@ -140,23 +145,23 @@ public class DijkstaTypeCheckVisitorTest {
 		assertTrue(true);
 	}
 	
-	@Test(expected=DijkstraTypeException.class)
+	@Test(expected=DijkstraSemanticException.class)
 	public void badDivide() {
 		doTypeCheck("int a, b; boolean c; a <- c / b");
 	}
 	
-	@Test(expected=DijkstraTypeException.class)
+	@Test(expected=DijkstraSemanticException.class)
 	public void badDivideAssign() {
 		doTypeCheck("boolean a; float b,c; a <- c / b");
 	}
 	
 	
-	@Test(expected=DijkstraTypeException.class)
+	@Test(expected=DijkstraSemanticException.class)
 	public void badDiv() {
 		doTypeCheck("int a, b; float c; a <- c div b");
 	}
 	
-	@Test(expected=DijkstraTypeException.class)
+	@Test(expected=DijkstraSemanticException.class)
 	public void badDivReturn() {
 		doTypeCheck("int a, b; boolean c; c <- a div b");
 	}
@@ -169,17 +174,17 @@ public class DijkstaTypeCheckVisitorTest {
 		assertTrue(true);
 	}
 	
-	@Test(expected=DijkstraTypeException.class)
+	@Test(expected=DijkstraSemanticException.class)
 	public void badMod() {
 		doTypeCheck("int a, b; float c; a <- c mod b");
 	}
 	
-	@Test(expected=DijkstraTypeException.class)
+	@Test(expected=DijkstraSemanticException.class)
 	public void badModPrimitive() {
 		doTypeCheck("int a, b; a <- 3.5 mod b");
 	}
 	
-	@Test(expected=DijkstraTypeException.class)
+	@Test(expected=DijkstraSemanticException.class)
 	public void badModReturn() {
 		doTypeCheck("int a, b; boolean c; c <- a mod b");
 	}
@@ -192,7 +197,7 @@ public class DijkstaTypeCheckVisitorTest {
 	}
 	
 	/*from class*/	
-	@Test(expected=DijkstraTypeException.class)
+	@Test(expected=DijkstraSemanticException.class)
 	public void inferIntSecond()
 	{
 		doTypeCheck("input a, b, c; x <- a / b; y <- x mod c");
@@ -207,17 +212,17 @@ public class DijkstaTypeCheckVisitorTest {
 		assertTrue(true);
 	}
 	
-	@Test(expected=DijkstraTypeException.class)
+	@Test(expected=DijkstraSemanticException.class)
 	public void badAdd() {
 		doTypeCheck("int a, b; boolean c; a <- c + b");
 	}
 	
-	@Test(expected=DijkstraTypeException.class)
+	@Test(expected=DijkstraSemanticException.class)
 	public void badAddPrimitive() {
 		doTypeCheck("int a, b; a <- b + true");
 	}
 	
-	@Test(expected=DijkstraTypeException.class)
+	@Test(expected=DijkstraSemanticException.class)
 	public void badAddAssign() {
 		doTypeCheck("boolean a; float b,c; a <- c + b");
 	}
@@ -230,18 +235,18 @@ public class DijkstaTypeCheckVisitorTest {
 		assertTrue(true);
 	}
 	
-	@Test(expected=DijkstraTypeException.class)
+	@Test(expected=DijkstraSemanticException.class)
 	public void badRelational() {
 		doTypeCheck("int b; boolean c; a <- c > b");
 	}
 	
-	@Test(expected=DijkstraTypeException.class)
+	@Test(expected=DijkstraSemanticException.class)
 	public void badRelationalPrimitive() {
 		doTypeCheck("int b; boolean c; a <- c > true");
 	}
 	
 	
-	@Test(expected=DijkstraTypeException.class)
+	@Test(expected=DijkstraSemanticException.class)
 	public void badRelationalAssign() {
 		doTypeCheck("float a,b,c; a <- c < b");
 	}
@@ -252,17 +257,17 @@ public class DijkstaTypeCheckVisitorTest {
 		assertTrue(true);
 	}
 	
-	@Test(expected=DijkstraTypeException.class)
+	@Test(expected=DijkstraSemanticException.class)
 	public void badAnd() {
 		doTypeCheck("boolean a; int b; a <- a & b");
 	}
 	
-	@Test(expected=DijkstraTypeException.class)
+	@Test(expected=DijkstraSemanticException.class)
 	public void badAndPrimitive() {
 		doTypeCheck("boolean a; int b; a <- a & 4");
 	}
 	
-	@Test(expected=DijkstraTypeException.class)
+	@Test(expected=DijkstraSemanticException.class)
 	public void badAndAssign() {
 		doTypeCheck("int a; boolean b; a <- a & b");
 	}
@@ -273,12 +278,12 @@ public class DijkstaTypeCheckVisitorTest {
 		assertTrue(true);
 	}
 	
-	@Test(expected=DijkstraTypeException.class)
+	@Test(expected=DijkstraSemanticException.class)
 	public void badOr() {
 		doTypeCheck("boolean a; a <- a | 5");
 	}
 	
-	@Test(expected=DijkstraTypeException.class)
+	@Test(expected=DijkstraSemanticException.class)
 	public void badOrAssign() {
 		doTypeCheck("int a; boolean b; a <- a | (b | false)");
 	}
@@ -290,7 +295,7 @@ public class DijkstaTypeCheckVisitorTest {
 		doTypeCheck("boolean a, b; c <- a = (b & a)");
 	}
 	
-	@Test(expected=DijkstraTypeException.class)
+	@Test(expected=DijkstraSemanticException.class)
 	public void badEquals() {
 		doTypeCheck("int a; float b; c <- a = b");
 	}
@@ -301,12 +306,12 @@ public class DijkstaTypeCheckVisitorTest {
 		assertTrue(true);
 	}
 	
-	@Test(expected=DijkstraTypeException.class)
+	@Test(expected=DijkstraSemanticException.class)
 	public void testArrayDeclarationBad() {
 		doTypeCheck("int[true] a;");
 	}
 	
-	@Test(expected=DijkstraTypeException.class)
+	@Test(expected=DijkstraSemanticException.class)
 	public void testArrayDeclarationBadExpr() {
 		doTypeCheck("int[(4 < 5)] a;");
 	}
@@ -337,12 +342,12 @@ public class DijkstaTypeCheckVisitorTest {
 		assertTrue(true);
 	}
 	
-	@Test(expected=DijkstraTypeException.class)
+	@Test(expected=DijkstraSemanticException.class)
 	public void testArrayAccessorWrongAccessType() {
 		doTypeCheck("int[1] a; c <- a[true]");
 	}
 	
-	@Test(expected=DijkstraTypeException.class)
+	@Test(expected=DijkstraSemanticException.class)
 	public void testArrayAccessorWrongAccessTypeExpr() {
 		doTypeCheck("int[1] a; c <- a[(2 < 3)]");
 	}
@@ -356,22 +361,22 @@ public class DijkstaTypeCheckVisitorTest {
 		assertTrue(true);
 	}
 	
-	@Test(expected=DijkstraTypeException.class)
+	@Test(expected=DijkstraSemanticException.class)
 	public void testAssignStatementWrongType() {
 		doTypeCheck("int a; a <- true");
 	}
 	
-	@Test(expected=DijkstraTypeException.class)
+	@Test(expected=DijkstraSemanticException.class)
 	public void testAssignStatementWrongTypeFunction() {
 		doTypeCheck("fun d() : boolean { return true; } int a; a <- d()");
 	}
 	
-	@Test(expected=DijkstraTypeException.class)
+	@Test(expected=DijkstraSemanticException.class)
 	public void testNestedFunctions() {
 		doTypeCheck("fun a (boolean b) : boolean { return b } fun d() : boolean { return a(4.5); }");
 	}
 	
-	@Test(expected=DijkstraTypeException.class)
+	@Test(expected=DijkstraSemanticException.class)
 	public void testConditional() {
 		doTypeCheck("if 4 :: print 5 fi");
 	}
@@ -382,12 +387,12 @@ public class DijkstaTypeCheckVisitorTest {
 		assertTrue(true);
 	}
 	
-	@Test(expected=DijkstraTypeException.class)
+	@Test(expected=DijkstraSemanticException.class)
 	public void testConditionalInternal() {
 		doTypeCheck("if true :: a <- 4 | true fi");
 	}
 	
-	@Test(expected=DijkstraTypeException.class)
+	@Test(expected=DijkstraSemanticException.class)
 	public void testIterative() {
 		doTypeCheck("do 4 :: print 5 od");
 	}
@@ -398,7 +403,7 @@ public class DijkstaTypeCheckVisitorTest {
 		assertTrue(true);
 	}
 	
-	@Test(expected=DijkstraTypeException.class)
+	@Test(expected=DijkstraSemanticException.class)
 	public void testIterativeInternal() {
 		doTypeCheck("do true :: a <- 4 | true od");
 	}
@@ -430,7 +435,7 @@ public class DijkstaTypeCheckVisitorTest {
 		doParse(inputText);
 		DijkstraSymbolVisitor visitor = new DijkstraSymbolVisitor();
 		tree.accept(visitor);
-		DijkstraResolutionVisitor resolver = new DijkstraResolutionVisitor(visitor);
+		DjikstraTypeResolutionVisitor resolver = new DjikstraTypeResolutionVisitor(visitor);
 		while(!resolver.isComplete()) {
 			tree.accept(resolver);
 		}

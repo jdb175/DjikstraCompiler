@@ -20,6 +20,7 @@ import org.junit.*;
 import dijkstra.lexparse.*;
 import dijkstra.lexparse.DijkstraParser.*;
 import dijkstra.utility.*;
+import djikstra.semantic.DijkstraSemanticException;
 import static dijkstra.utility.DijkstraType.*;
 
 /**
@@ -38,7 +39,7 @@ public class DijkstraSymbolVisitorTest
 		stm.reset();
 	}
 	
-	@Test(expected=DijkstraTypeException.class)
+	@Test(expected=DijkstraSemanticException.class)
 	public void assignWrongType()
 	{
 		doSymbolTable("boolean a; a <- 1");

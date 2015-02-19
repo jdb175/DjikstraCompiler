@@ -9,7 +9,7 @@
  * Used in CS4533/CS544 at Worcester Polytechnic Institute
  *******************************************************************************/
 
-package dijkstra.symbol;
+package djikstra.semantic;
 
 /**
  * This class is used for any exceptions thrown from the Dijkstra type check
@@ -17,13 +17,13 @@ package dijkstra.symbol;
  * 
  * @version Feb 7, 2015
  */
-public class DijkstraTypeException extends RuntimeException
+public class DijkstraSemanticException extends RuntimeException
 {
 	/**
 	 * Sole constructor
 	 * @param msg the message describing the error
 	 */
-	public DijkstraTypeException(String msg)
+	public DijkstraSemanticException(String msg)
 	{
 		super(msg);
 	}

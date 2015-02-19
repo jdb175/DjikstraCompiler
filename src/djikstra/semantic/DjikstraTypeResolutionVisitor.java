@@ -1,4 +1,4 @@
-package dijkstra.symbol;
+package djikstra.semantic;
 
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
@@ -7,10 +7,14 @@ import org.antlr.v4.runtime.tree.RuleNode;
 import dijkstra.lexparse.DijkstraBaseVisitor;
 import dijkstra.lexparse.DijkstraParser;
 import dijkstra.lexparse.DijkstraParser.*;
+import dijkstra.symbol.DijkstraSymbolException;
+import dijkstra.symbol.DijkstraSymbolVisitor;
+import dijkstra.symbol.MethodSymbol;
+import dijkstra.symbol.Symbol;
 import dijkstra.utility.DijkstraType;
 import static dijkstra.utility.DijkstraType.*;
 
-public class DijkstraResolutionVisitor extends DijkstraBaseVisitor<DijkstraType> {
+public class DjikstraTypeResolutionVisitor extends DijkstraBaseVisitor<DijkstraType> {
 	public ParseTreeProperty<Symbol> symbols = new ParseTreeProperty<Symbol>();
 	public ParseTreeProperty<Symbol> functions = new ParseTreeProperty<Symbol>();
 	public ParseTreeProperty<Symbol> arrays = new ParseTreeProperty<Symbol>();
@@ -18,7 +22,7 @@ public class DijkstraResolutionVisitor extends DijkstraBaseVisitor<DijkstraType>
 	
 	private boolean changed = true;
 	
-	public DijkstraResolutionVisitor(DijkstraSymbolVisitor oldVisitor) {
+	public DjikstraTypeResolutionVisitor(DijkstraSymbolVisitor oldVisitor) {
 		super();
 		symbols = oldVisitor.symbols;
 		functions = oldVisitor.functions;
@@ -53,7 +57,6 @@ public class DijkstraResolutionVisitor extends DijkstraBaseVisitor<DijkstraType>
 			//Get type from expression
 			DijkstraType t = exprList.expression().accept(this);
 			//Now get id
-			String id;
 			updateType(var, t);
 			varList = varList.varList();
 			exprList = exprList.expressionList();
@@ -311,11 +314,11 @@ public class DijkstraResolutionVisitor extends DijkstraBaseVisitor<DijkstraType>
 			DijkstraType existingType = types.get(node);
 			if(existingType == NUM || existingType == FLOAT || existingType == INT){
 				if(t == BOOLEAN) {
-					throw new DijkstraTypeException("Attempted to use type " + existingType + " for " + t);
+					throw new DijkstraSemanticException("Attempted to use type " + existingType + " for " + t);
 				}
 			} else if (existingType == BOOLEAN) {
 				if(t == NUM || t == FLOAT || t == INT){
-					throw new DijkstraTypeException("Attempted to use type " + existingType + " for " + t);
+					throw new DijkstraSemanticException("Attempted to use type " + existingType + " for " + t);
 				}
 			}
 		}

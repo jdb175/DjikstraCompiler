@@ -9,7 +9,7 @@
  * Used in CS4533/CS544 at Worcester Polytechnic Institute
  *******************************************************************************/
 
-package dijkstra.symbol;
+package djikstra.semantic;
 
 import static org.junit.Assert.*;
 
@@ -19,14 +19,21 @@ import org.junit.*;
 
 import dijkstra.lexparse.*;
 import dijkstra.lexparse.DijkstraParser.*;
+import dijkstra.symbol.DijkstraSymbolException;
+import dijkstra.symbol.DijkstraSymbolVisitor;
+import dijkstra.symbol.Symbol;
+import dijkstra.symbol.SymbolTable;
+import dijkstra.symbol.SymbolTableManager;
 import dijkstra.utility.*;
+import djikstra.semantic.DjikstraTypeFinalizerVisitor;
+import djikstra.semantic.DjikstraTypeResolutionVisitor;
 import static dijkstra.utility.DijkstraType.*;
 
 /**
  * Description
  * @version Feb 7, 2015
  */
-public class DijkstraSymbolFinalizerTest
+public class DijkstraTypeFinalizationTest
 {
 	private DijkstraParser parser;
 	private ParserRuleContext tree;
@@ -40,17 +47,17 @@ public class DijkstraSymbolFinalizerTest
 	
 	@Test(expected=DijkstraSymbolException.class)
 	public void basicInput() {
-		doSymbolTable("input a");
+		doTypeFinalization("input a");
 	}
 	
 	@Test(expected=DijkstraSymbolException.class)
 	public void basicInputMulti() {
-		doSymbolTable("input a, b");
+		doTypeFinalization("input a, b");
 	}
 	
 	@Test
 	public void basicDef() {
-		doSymbolTable("int a, b");
+		doTypeFinalization("int a, b");
 		Symbol s = stm.getSymbol("a");
 		assertNotNull(s);
 		assertEquals("a", s.getId());
@@ -64,12 +71,12 @@ public class DijkstraSymbolFinalizerTest
 	@Test(expected=DijkstraSymbolException.class)
 	public void inferUnsureGuard()
 	{
-		doSymbolTable("input a, b if a ~= b :: print a; a = b :: print b;  fi");
+		doTypeFinalization("input a, b if a ~= b :: print a; a = b :: print b;  fi");
 	}
 	
 	@Test
 	public void convertIntFromNum() {
-		doSymbolTable("input a; b <- a < 2.0");
+		doTypeFinalization("input a; b <- a < 2.0");
 		Symbol s = stm.getSymbol("a");
 		assertNotNull(s);
 		assertEquals("a", s.getId());
@@ -96,18 +103,18 @@ public class DijkstraSymbolFinalizerTest
 		return tree.toStringTree(parser);
 	}
 	
-	private DijkstraSymbolFinalizer doSymbolTable(String inputText)
+	private DjikstraTypeFinalizerVisitor doTypeFinalization (String inputText)
 	{
 		//System.out.println(doParse(inputText));
 		stm.reset();
 		doParse(inputText);
 		DijkstraSymbolVisitor visitor = new DijkstraSymbolVisitor();
 		tree.accept(visitor);
-		DijkstraResolutionVisitor resolver = new DijkstraResolutionVisitor(visitor);
+		DjikstraTypeResolutionVisitor resolver = new DjikstraTypeResolutionVisitor(visitor);
 		while(!resolver.isComplete()) {
 			tree.accept(resolver);
 		}
-		DijkstraSymbolFinalizer finalizer = new DijkstraSymbolFinalizer(resolver);
+		DjikstraTypeFinalizerVisitor finalizer = new DjikstraTypeFinalizerVisitor(resolver);
 		tree.accept(finalizer);
 		return finalizer;
 	}

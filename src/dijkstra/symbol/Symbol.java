@@ -12,6 +12,7 @@ package dijkstra.symbol;
 
 import static dijkstra.utility.DijkstraType.*;
 import dijkstra.utility.DijkstraType;
+import djikstra.semantic.DijkstraSemanticException;
 
 /**
  * This class defines a Symbol object that gets stored in a symbol table and is
@@ -165,25 +166,25 @@ public class Symbol
 		DijkstraType old = type;
 		if(newType == BOOLEAN) {
 			if(type == NUM || type == INT || type == FLOAT) {
-				throw new DijkstraTypeException("Cannot assign updated type "+newType+" to a symbol of type "+type+" ("+id+")");
+				throw new DijkstraSemanticException("Cannot assign updated type "+newType+" to a symbol of type "+type+" ("+id+")");
 			} else {
 				type = newType;
 			}
 		} else if (newType == NUM) {
 			if(type == BOOLEAN) {
-				throw new DijkstraTypeException("Cannot assign updated type "+newType+" to a symbol of type "+type+" ("+id+")");
+				throw new DijkstraSemanticException("Cannot assign updated type "+newType+" to a symbol of type "+type+" ("+id+")");
 			} else if (type == UNDEFINED) {
 				type = NUM;
 			}
 		} else if (newType == INT) {
 			if(type == BOOLEAN) {
-				throw new DijkstraTypeException("Cannot assign updated type "+newType+" to a symbol of type "+type+" ("+id+")");
+				throw new DijkstraSemanticException("Cannot assign updated type "+newType+" to a symbol of type "+type+" ("+id+")");
 			} else if(type == UNDEFINED || type == NUM) {
 				type = newType;
 			}
 		} else if (newType == FLOAT) {
 			if(type == BOOLEAN) {
-				throw new DijkstraTypeException("Cannot assign updated type "+newType+" to a symbol of type "+type+" ("+id+")");
+				throw new DijkstraSemanticException("Cannot assign updated type "+newType+" to a symbol of type "+type+" ("+id+")");
 			} else if (type == UNDEFINED || type == NUM){
 				type = FLOAT;
 			}

@@ -1,4 +1,4 @@
-package dijkstra.symbol;
+package djikstra.semantic;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.misc.NotNull;
@@ -9,16 +9,18 @@ import dijkstra.lexparse.DijkstraBaseVisitor;
 import dijkstra.lexparse.DijkstraParser;
 import dijkstra.lexparse.DijkstraParser.*;
 import static dijkstra.utility.DijkstraType.*;
+import dijkstra.symbol.DijkstraSymbolException;
+import dijkstra.symbol.Symbol;
 import dijkstra.utility.DijkstraType;
 
 //This class sets all NUM symbols to INT, and throws an error if there are any undefined symbols
-public class DijkstraSymbolFinalizer extends DijkstraBaseVisitor<DijkstraType> {
+public class DjikstraTypeFinalizerVisitor extends DijkstraBaseVisitor<DijkstraType> {
 	public ParseTreeProperty<Symbol> symbols = new ParseTreeProperty<Symbol>();
 	public ParseTreeProperty<Symbol> functions = new ParseTreeProperty<Symbol>();
 	public ParseTreeProperty<Symbol> arrays = new ParseTreeProperty<Symbol>();
 	public ParseTreeProperty<DijkstraType> types = new ParseTreeProperty<DijkstraType>();
 	
-	public DijkstraSymbolFinalizer(DijkstraResolutionVisitor oldVisitor) {
+	public DjikstraTypeFinalizerVisitor(DjikstraTypeResolutionVisitor oldVisitor) {
 		super();
 		symbols = oldVisitor.symbols;
 		functions = oldVisitor.functions;

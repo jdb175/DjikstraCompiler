@@ -9,7 +9,7 @@
  * Used in CS4533/CS544 at Worcester Polytechnic Institute
  *******************************************************************************/
 
-package dijkstra.symbol;
+package djikstra.semantic;
 
 import static org.junit.Assert.*;
 
@@ -19,14 +19,21 @@ import org.junit.*;
 
 import dijkstra.lexparse.*;
 import dijkstra.lexparse.DijkstraParser.*;
+import dijkstra.symbol.DijkstraSymbolException;
+import dijkstra.symbol.DijkstraSymbolVisitor;
+import dijkstra.symbol.Symbol;
+import dijkstra.symbol.SymbolTable;
+import dijkstra.symbol.SymbolTableManager;
 import dijkstra.utility.*;
+import djikstra.semantic.DijkstraSemanticException;
+import djikstra.semantic.DjikstraTypeResolutionVisitor;
 import static dijkstra.utility.DijkstraType.*;
 
 /**
  * Description
  * @version Feb 7, 2015
  */
-public class DijkstraResolutionVisitorTest
+public class DijkstraTypeResolutionVisitorTest
 {
 	private DijkstraParser parser;
 	private ParserRuleContext tree;
@@ -179,7 +186,7 @@ public class DijkstraResolutionVisitorTest
 		assertEquals(NUM, s.getType());
 	}
 	
-	@Test(expected=DijkstraTypeException.class)
+	@Test(expected=DijkstraSemanticException.class)
 	public void OrExprInts()
 	{
 		doSymbolTable("int a, b; d <- a | b");
@@ -438,7 +445,7 @@ public class DijkstraResolutionVisitorTest
 		doParse(inputText);
 		DijkstraSymbolVisitor visitor = new DijkstraSymbolVisitor();
 		tree.accept(visitor);
-		DijkstraResolutionVisitor resolver = new DijkstraResolutionVisitor(visitor);
+		DjikstraTypeResolutionVisitor resolver = new DjikstraTypeResolutionVisitor(visitor);
 		while(!resolver.isComplete()) {
 			tree.accept(resolver);
 		}
