@@ -215,7 +215,7 @@ public class DjikstraTypeResolutionVisitor extends DijkstraBaseVisitor<DijkstraT
 	@Override
 	public DijkstraType visitFunctionCall(@NotNull DijkstraParser.FunctionCallContext ctx) {
 		DijkstraType t = functions.get(ctx).getType();
-		if(t == UNDEFINED) {
+		if(t == PROCEDURE) {
 			throw new DijkstraSymbolException("Attempted to call procedure " + ctx.ID().getText() + " as a function!");
 		}
 		//iterate over and check parameters
@@ -243,7 +243,7 @@ public class DjikstraTypeResolutionVisitor extends DijkstraBaseVisitor<DijkstraT
 	@Override
 	public DijkstraType visitProcedureCall(@NotNull DijkstraParser.ProcedureCallContext ctx) {
 		DijkstraType t = functions.get(ctx).getType();
-		if(t != UNDEFINED) {
+		if(t != PROCEDURE) {
 			throw new DijkstraSymbolException("Attempted to call function " + ctx.ID().getText() + " as a procedure!");
 		}
 		//iterate over and check parameters

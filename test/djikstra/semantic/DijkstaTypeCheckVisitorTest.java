@@ -4,12 +4,14 @@ import static org.junit.Assert.*;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.junit.Before;
 import org.junit.Test;
 
 import dijkstra.lexparse.DijkstraParser;
 import dijkstra.symbol.DijkstraSymbolVisitor;
 import dijkstra.symbol.SymbolTableManager;
 import dijkstra.utility.DijkstraFactory;
+import dijkstra.utility.TypeCheckRunner;
 import djikstra.semantic.DijkstraTypeCheckVisitor;
 import djikstra.semantic.DijkstraSemanticException;
 import djikstra.semantic.DjikstraTypeResolutionVisitor;
@@ -18,6 +20,11 @@ public class DijkstaTypeCheckVisitorTest {
 	private DijkstraParser parser;
 	private ParserRuleContext tree;
 	private SymbolTableManager stm = SymbolTableManager.getInstance();
+	
+	@Before
+	public void setup() {
+		stm.reset();
+	}
 	
 	@Test(expected=DijkstraSemanticException.class)
 	public void returnWrongType() {
@@ -82,6 +89,12 @@ public class DijkstaTypeCheckVisitorTest {
 		doTypeCheck("boolean b; a <- - b");
 	}
 	
+	
+	@Test(expected=DijkstraSemanticException.class)
+	public void badUnaryChain() {
+		doTypeCheck("boolean b; a <- - - ~ 2");
+	}
+	
 	@Test(expected=DijkstraSemanticException.class)
 	public void badMinusPrimitive() {
 		doTypeCheck("boolean b; a <- - true");
@@ -90,7 +103,8 @@ public class DijkstaTypeCheckVisitorTest {
 	@Test
 	public void goodMinus() {
 		doTypeCheck("input b; a <- - b");
-		doTypeCheck("int b; a <- - b");
+		doTypeCheck("a <- - 2");
+		doTypeCheck("int b; a <- - - - b");
 		assertTrue(true);
 	}
 	
@@ -335,7 +349,7 @@ public class DijkstaTypeCheckVisitorTest {
 		doTypeCheck("int[1] a; boolean[1] b; b[0] <- a[0]");
 		assertTrue(true);
 	}
-	
+
 	@Test
 	public void testArrayAccessor2() {
 		doTypeCheck("int[1] a; int b; c <- a[b + 0] = b");
@@ -417,7 +431,7 @@ public class DijkstaTypeCheckVisitorTest {
 	
 	@Test(expected=DijkstraSemanticException.class)
 	public void testIterativeInternal() {
-		doTypeCheck("do true :: a <- 4 | true od");
+		TypeCheckRunner.Check("program test do true :: a <- 4 | true od");
 	}
 	
 	/*  HELPERS */
@@ -451,6 +465,8 @@ public class DijkstaTypeCheckVisitorTest {
 		while(!resolver.isComplete()) {
 			tree.accept(resolver);
 		}
+		DjikstraTypeFinalizerVisitor finalizer = new DjikstraTypeFinalizerVisitor(resolver);
+		tree.accept(finalizer);
 		DijkstraTypeCheckVisitor checker = new DijkstraTypeCheckVisitor(resolver);
 		tree.accept(checker);
 		return checker;

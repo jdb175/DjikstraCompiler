@@ -356,7 +356,7 @@ public class DijkstraSymbolVisitorTest
 		s = stm.getMethod("foo");
 		assertNotNull(s);
 		assertEquals("foo", s.getId());
-		assertEquals(UNDEFINED, s.getType());
+		assertEquals(PROCEDURE, s.getType());
 		
 		SymbolTable procTable = stm.getSymbolTable(1);
 		s = procTable.getSymbol("b");
@@ -383,7 +383,7 @@ public class DijkstraSymbolVisitorTest
 		s = stm.getMethod("foo");
 		assertNotNull(s);
 		assertEquals("foo", s.getId());
-		assertEquals(UNDEFINED, s.getType());
+		assertEquals(PROCEDURE, s.getType());
 		
 		SymbolTable procTable = stm.getSymbolTable(1);
 		s = procTable.getSymbol("a");

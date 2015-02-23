@@ -24,7 +24,7 @@ public class SymbolTableManager
 	private static SymbolTableManager instance =  null;
 	private SymbolTable currentSymbolTable;
 	private final ArrayList<SymbolTable> tables;
-	private final Map<Integer, Symbol> symbols;
+	public final Map<Integer, Symbol> symbols;
 	
 	/**
 	 * Constructor that sets up the initial (global) symbol table.
