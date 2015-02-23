@@ -21,7 +21,7 @@ public class TypeCheckRunner {
 		return tree;
 	}
 	
-	public static void Check(String programText) {
+	public static void check(String programText) {
 		SymbolTableManager.getInstance().reset();
 		ParserRuleContext tree = doParse(programText);
 		DijkstraSymbolVisitor visitor = new DijkstraSymbolVisitor();

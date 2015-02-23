@@ -431,7 +431,7 @@ public class DijkstaTypeCheckVisitorTest {
 	
 	@Test(expected=DijkstraSemanticException.class)
 	public void testIterativeInternal() {
-		TypeCheckRunner.Check("program test do true :: a <- 4 | true od");
+		TypeCheckRunner.check("program test do true :: a <- 4 | true od");
 	}
 	
 	/*  HELPERS */
