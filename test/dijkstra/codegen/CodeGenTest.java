@@ -15,7 +15,7 @@ import dijkstra.utility.DijkstraFactory;
 import djikstra.semantic.DjikstraTypeFinalizerVisitor;
 import djikstra.semantic.DjikstraTypeResolutionVisitor;
 
-public class CodeGenerationTest extends ClassLoader {
+public class CodeGenTest extends ClassLoader {
 	private DijkstraParser parser;
 	private ParserRuleContext tree;
 	private SymbolTableManager stm = SymbolTableManager.getInstance();
@@ -93,7 +93,7 @@ public class CodeGenerationTest extends ClassLoader {
 	private void runCode(String inputText) throws Exception
 	{
 		doCodeGen(inputText);
-		CodeGenerationTest loader = new CodeGenerationTest();
+		CodeGenTest loader = new CodeGenTest();
 		Class<?> testClass = loader.defineClass("djkcode.Test", code, 0, code.length);
 
 		// Run the dynamically generated class's main method.
