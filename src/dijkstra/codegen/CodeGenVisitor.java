@@ -28,8 +28,8 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 	
 	private final String DEFAULT_PACKAGE = "djkcode";
 	private String classPackage;
-	//private boolean needValue;		// used to indicate whether we need an ID value or address
 	final private Stack<Label> guardLabelStack;
+	final private Stack<DijkstraType> typeNeeded;
 	
 	
 	public CodeGenVisitor(DjikstraTypeFinalizerVisitor oldTree)
@@ -40,6 +40,7 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 		this.functions = oldTree.functions;
 		classPackage = DEFAULT_PACKAGE;
 		guardLabelStack = new Stack<Label>();
+		typeNeeded = new Stack<DijkstraType>();
 	}
 	
 	@Override
@@ -110,18 +111,44 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 			VarContext var = varList.var();
 			Symbol curSymbol = symbols.get(var);
 			if(curSymbol != null) {
+				typeNeeded.push(curSymbol.getType());
 				exprList.expression().accept(this);	// TOS = expression value
 				if(curSymbol.getType() == DijkstraType.FLOAT) {
 					mv.visitVarInsn(FSTORE, curSymbol.getAddress());
 				} else {
 					mv.visitVarInsn(ISTORE, curSymbol.getAddress());
 				}
-
+				typeNeeded.pop();
 			}
 			varList = varList.varList();
 			exprList = exprList.expressionList();
 		}
 				
+		return null;
+	}
+	
+	@Override
+	public byte[] visitInputStatement(InputStatementContext ctx) {
+		IdListContext idlist = ctx.idList();
+		while(idlist != null) {
+			//input for this
+			Symbol curSymbol = symbols.get(idlist.ID());
+			mv.visitLdcInsn(curSymbol.getId());	// Name of the variable
+			if(curSymbol.getType() == DijkstraType.INT) {
+				mv.visitMethodInsn(INVOKESTATIC, "dijkstra/runtime/DijkstraRuntime", "inputInt", 
+						"(Ljava/lang/String;)I", false);
+				mv.visitVarInsn(ISTORE, curSymbol.getAddress());
+			} else if(curSymbol.getType() == DijkstraType.FLOAT) {
+				mv.visitMethodInsn(INVOKESTATIC, "dijkstra/runtime/DijkstraRuntime", "inputFloat", 
+						"(Ljava/lang/String;)F", false);
+				mv.visitVarInsn(FSTORE, curSymbol.getAddress());
+			} else {
+				mv.visitMethodInsn(INVOKESTATIC, "dijkstra/runtime/DijkstraRuntime", "inputBoolean", 
+						"(Ljava/lang/String;)Z", false);
+				mv.visitVarInsn(ISTORE, curSymbol.getAddress());
+			}
+			idlist = idlist.idList();
+		}
 		return null;
 	}
 	
@@ -133,6 +160,7 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 		} else {
 			mv.visitVarInsn(ILOAD, symbol.getAddress());
 		}
+		cast(symbol.getType());
 		return null;
 	}
 	
@@ -150,6 +178,7 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 	public byte[] visitInteger(IntegerContext ctx) {
 		int i = Integer.parseInt(ctx.INTEGER().getText());
 		mv.visitLdcInsn(i);
+		cast(DijkstraType.INT);
 		return null;
 	}
 	
@@ -157,6 +186,16 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 	public byte[] visitFloat(FloatContext ctx) {
 		float f = Float.parseFloat(ctx.getText());
 		mv.visitLdcInsn(f);
+		cast(DijkstraType.FLOAT);
 		return null;
+	}
+	
+	public void cast(DijkstraType from) {
+		DijkstraType t = typeNeeded.isEmpty() ? null : typeNeeded.peek();
+		if(from == DijkstraType.INT && t == DijkstraType.FLOAT) {
+			mv.visitInsn(I2F);
+		} else if(from == DijkstraType.FLOAT && t == DijkstraType.INT) {
+			mv.visitInsn(F2I);
+		}
 	}
 }

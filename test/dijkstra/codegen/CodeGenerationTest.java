@@ -53,6 +53,31 @@ public class CodeGenerationTest extends ClassLoader {
 		assertEquals("i=2", DijkstraRuntime.getLastMessage());
 	}
 	
+	@Test
+	public void testPrintAssignedI2F() throws Exception {
+		runCode("int a; a <- 1.5; print a;");
+		assertEquals("i=1", DijkstraRuntime.getLastMessage());
+	}
+	
+	@Test
+	public void testPrintAssigneF2I() throws Exception {
+		runCode("float a; a <- 1; print a;");
+		assertEquals("f=1.0", DijkstraRuntime.getLastMessage());
+	}
+	
+	@Test
+	public void testPrintAssignedVarI2F() throws Exception {
+		runCode("int a; float b; b <- 1.5; a <- b; print a;");
+		assertEquals("i=1", DijkstraRuntime.getLastMessage());
+	}
+	
+	@Test
+	public void testInputInt() throws Exception {
+		DijkstraRuntime.setInputs(new String[] {"41"});
+		runCode("int a; input a; print a;");
+		assertEquals("i=41", DijkstraRuntime.getLastMessage());
+	}
+	
 	/*@Test(expected=DijkstraException.class)
 	public void testWrongNumberofAssigns() throws Exception {
 		runCode("int a, b; a <- 1, 2; print b;");

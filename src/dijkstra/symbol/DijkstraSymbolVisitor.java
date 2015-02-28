@@ -110,7 +110,7 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 			Symbol symbol = stm.getSymbol(id);
 			if(symbol == null)
 				symbol = stm.add(id);
-			symbols.put(idlist, symbol);
+			symbols.put(idlist.ID(), symbol);
 			idlist = idlist.idList();
 		}
 		
