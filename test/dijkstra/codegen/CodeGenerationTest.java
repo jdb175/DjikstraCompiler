@@ -78,6 +78,21 @@ public class CodeGenerationTest extends ClassLoader {
 		assertEquals("i=41", DijkstraRuntime.getLastMessage());
 	}
 	
+	@Test
+	public void testInputBool() throws Exception {
+		DijkstraRuntime.setInputs(new String[] {"true"});
+		runCode("boolean a; input a; print a;");
+		assertEquals("b=true", DijkstraRuntime.getLastMessage());
+	}
+	
+	@Test
+	public void testInputFloat() throws Exception {
+		DijkstraRuntime.setInputs(new String[] {"41"});
+		runCode("float a; input a; print a;");
+		assertEquals("f=41.0", DijkstraRuntime.getLastMessage());
+	}
+	
+	
 	/*@Test(expected=DijkstraException.class)
 	public void testWrongNumberofAssigns() throws Exception {
 		runCode("int a, b; a <- 1, 2; print b;");
