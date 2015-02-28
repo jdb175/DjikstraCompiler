@@ -420,12 +420,12 @@ public class DijkstaTypeCheckVisitorTest {
 	
 	@Test(expected=DijkstraSemanticException.class)
 	public void testIterative() {
-		doTypeCheck("do 4 :: print 5 od");
+		TypeCheckRunner.check("program test do 4 :: print 5 od");
 	}
 	
 	@Test
 	public void testIterativeGood() {
-		doTypeCheck("do false :: print 5 od");
+		TypeCheckRunner.check("program test do false :: print 5 od");
 		assertTrue(true);
 	}
 	

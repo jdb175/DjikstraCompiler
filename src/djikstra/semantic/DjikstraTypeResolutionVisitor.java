@@ -147,6 +147,13 @@ public class DjikstraTypeResolutionVisitor extends DijkstraBaseVisitor<DijkstraT
 	}
 	
 	@Override
+	public DijkstraType visitOutputStatement(@NotNull OutputStatementContext ctx) {
+		DijkstraType t = ctx.expression().accept(this);
+		types.put(ctx,  t);
+		return t;
+	}
+	
+	@Override
 	public DijkstraType visitGuard(@NotNull DijkstraParser.GuardContext ctx) {
 		updateType(ctx.expression(), BOOLEAN);
 		ctx.statement().accept(this);

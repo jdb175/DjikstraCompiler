@@ -11,6 +11,7 @@
 package dijkstra.symbol;
 
 import static dijkstra.utility.DijkstraType.*;
+import dijkstra.codegen.JVMInfo;
 import dijkstra.utility.DijkstraType;
 import djikstra.semantic.DijkstraSemanticException;
 
@@ -24,6 +25,9 @@ public class Symbol
 	private final String id;
 	private DijkstraType type;
 	private String value;
+	private int address;
+	public static final int NO_ADDRESS = Integer.MIN_VALUE	;
+
 	
 	/**
 	 * Constructor that creates the Symbol with the name, and an UNDEFINED type.
@@ -44,6 +48,7 @@ public class Symbol
 		if(type == null) {
 			type = UNDEFINED;
 		}
+		this.address = NO_ADDRESS;
 		this.id = id;
 		this.type = type;
 		this.value = null;
@@ -88,6 +93,18 @@ public class Symbol
 	{
 		return id;
 	}
+	
+	/**
+	 * @return the address
+	 */
+	public int getAddress()
+	{
+		if(address == NO_ADDRESS) {
+			address = JVMInfo.getNextAddress();
+		}
+		return address;
+	}
+
 
 	/*
 	 * @see java.lang.Object#hashCode()
