@@ -7,6 +7,7 @@ import dijkstra.lexparse.DijkstraBaseVisitor;
 import dijkstra.lexparse.DijkstraParser;
 import dijkstra.lexparse.DijkstraParser.*;
 import dijkstra.utility.DijkstraType;
+import djikstra.semantic.DijkstraSemanticException;
 import static dijkstra.utility.DijkstraType.*;
 
 public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
@@ -80,6 +81,9 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 			VarContext var = varList.var();
 			var.accept(this);
 			//Get type from expression
+			if(exprList == null) {
+				throw new DijkstraSemanticException("Too few expressions in assign statement [" + ctx.getStart().getLine() + "]");
+			}
 			DijkstraType t = exprList.expression().accept(this);
 			//Now get id
 			String id;
@@ -97,6 +101,10 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 			}
 			varList = varList.varList();
 			exprList = exprList.expressionList();
+		}
+		
+		if(exprList != null) {
+			throw new DijkstraSemanticException("Too many expressions in assign statement [" + ctx.getStart().getLine() + "]");
 		}
 		
 		return null;

@@ -40,6 +40,16 @@ public class DijkstraSymbolVisitorTest
 	}
 	
 	@Test(expected=DijkstraSemanticException.class)
+	public void testWrongNumberofAssigns() throws Exception {
+		doSymbolTable("int a, b; a <- 1, 2; print b;");
+	}
+	
+	@Test(expected=DijkstraSemanticException.class)
+	public void testWrongNumberofAssignsOtherWay() throws Exception {
+		doSymbolTable("int a, b; a, b <- 1; print b;");
+	}
+	
+	@Test(expected=DijkstraSemanticException.class)
 	public void assignWrongType()
 	{
 		doSymbolTable("boolean a; a <- 1");

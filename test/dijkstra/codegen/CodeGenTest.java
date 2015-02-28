@@ -52,11 +52,6 @@ public class CodeGenTest extends ClassLoader {
 		runCode("int a, b; a, b <- 1, 2; print b;");
 		assertEquals("i=2", DijkstraRuntime.getLastMessage());
 	}
-	
-	/*@Test(expected=DijkstraException.class)
-	public void testWrongNumberofAssigns() throws Exception {
-		runCode("int a, b; a <- 1, 2; print b;");
-	}*/
 
 	/** Utiity **/
 	private void makeParser(String inputText)
