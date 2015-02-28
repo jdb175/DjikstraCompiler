@@ -70,6 +70,13 @@ public class CodeGenTest extends ClassLoader {
 		runCode("int a, b; a, b <- 1, 2; print b;");
 		assertEquals("i=2", DijkstraRuntime.getLastMessage());
 	}
+	
+	@Test
+	public void testBasicInput() throws Exception {
+		DijkstraRuntime.setInputs(new String[] {"true", "false"});
+		runCode("boolean b, c; input b, c; print b;");
+		assertEquals("b=true", DijkstraRuntime.getLastMessage());
+	}
 
 	/** Utiity **/
 	private void makeParser(String inputText)

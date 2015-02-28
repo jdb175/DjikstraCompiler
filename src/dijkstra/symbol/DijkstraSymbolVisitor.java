@@ -121,7 +121,6 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 			symbols.put(idlist, symbol);
 			idlist = idlist.idList();
 		}
-		
 		return null;
 	}
 	

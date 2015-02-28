@@ -1,5 +1,6 @@
 package dijkstra.codegen;
 
+import static dijkstra.utility.DijkstraType.INT;
 import static org.objectweb.asm.Opcodes.*;
 
 import java.util.Stack;
@@ -125,6 +126,33 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 			exprList = exprList.expressionList();
 		}
 				
+		return null;
+	}
+	
+	@Override
+	public byte[] visitInputStatement(InputStatementContext ctx) {
+		IdListContext idlist = ctx.idList();
+		Stack<IdListContext> ids = new Stack<IdListContext>();
+		while(idlist != null) {
+			ids.push(idlist);
+			idlist = idlist.idList();
+		}
+		while(!ids.isEmpty()) {
+			idlist = ids.pop();
+			Symbol s = symbols.get(idlist);
+			mv.visitLdcInsn(s.getId());	// Name of the variable
+			if (s.getType() == INT) {
+				mv.visitMethodInsn(INVOKESTATIC, "dijkstra/runtime/DijkstraRuntime", "inputInt", 
+						"(Ljava/lang/String;)I", false);
+			} else if (s.getType() == DijkstraType.FLOAT) {
+				mv.visitMethodInsn(INVOKESTATIC, "dijkstra/runtime/DijkstraRuntime", "inputFloat", 
+						"(Ljava/lang/String;)F", false);
+			} else {
+				mv.visitMethodInsn(INVOKESTATIC, "dijkstra/runtime/DijkstraRuntime", "inputBoolean", 
+						"(Ljava/lang/String;)Z", false);
+			}
+			mv.visitVarInsn(ISTORE, s.getAddress());
+		}
 		return null;
 	}
 	

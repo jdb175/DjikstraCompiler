@@ -65,6 +65,27 @@ public class DijkstraRuntime
 		value = Integer.parseInt(input.trim());
 		return value;
 	}
+	
+	public static float inputFloat(String varName)
+	{
+		float value = 0;
+		String input;
+		if (inputs == null) {
+			BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+			System.out.print("float " + varName + " = ");
+			System.out.flush();
+			try {
+				input = in.readLine();
+			} catch (IOException e) {
+				throw new RuntimeException(
+						"I/O exception on reading from standard input.", e);
+			}
+		} else {
+			input = inputs[inputIndex++];
+		}
+		value = Float.parseFloat(input.trim());
+		return value;
+	}
 
 	public static boolean inputBoolean(String varName)
 	{
