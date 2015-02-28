@@ -144,14 +144,16 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 			if (s.getType() == INT) {
 				mv.visitMethodInsn(INVOKESTATIC, "dijkstra/runtime/DijkstraRuntime", "inputInt", 
 						"(Ljava/lang/String;)I", false);
+				mv.visitVarInsn(ISTORE, s.getAddress());
 			} else if (s.getType() == DijkstraType.FLOAT) {
 				mv.visitMethodInsn(INVOKESTATIC, "dijkstra/runtime/DijkstraRuntime", "inputFloat", 
 						"(Ljava/lang/String;)F", false);
+				mv.visitVarInsn(FSTORE, s.getAddress());
 			} else {
 				mv.visitMethodInsn(INVOKESTATIC, "dijkstra/runtime/DijkstraRuntime", "inputBoolean", 
 						"(Ljava/lang/String;)Z", false);
+				mv.visitVarInsn(ISTORE, s.getAddress());
 			}
-			mv.visitVarInsn(ISTORE, s.getAddress());
 		}
 		return null;
 	}

@@ -76,6 +76,12 @@ public class CodeGenTest extends ClassLoader {
 		DijkstraRuntime.setInputs(new String[] {"true", "false"});
 		runCode("boolean b, c; input b, c; print b;");
 		assertEquals("b=true", DijkstraRuntime.getLastMessage());
+		DijkstraRuntime.setInputs(new String[] {"1"});
+		runCode("int b; input b; print b;");
+		assertEquals("i=1", DijkstraRuntime.getLastMessage());
+		DijkstraRuntime.setInputs(new String[] {"1"});
+		runCode("float b; input b; print b;");
+		assertEquals("f=1.0", DijkstraRuntime.getLastMessage());
 	}
 
 	/** Utiity **/
