@@ -42,6 +42,24 @@ public class CodeGenTest extends ClassLoader {
 	}
 	
 	@Test
+	public void testAssignF2I() throws Exception {
+		runCode("int a; a <- 1.4; print a;");
+		assertEquals("i=1", DijkstraRuntime.getLastMessage());
+	}
+	
+	@Test
+	public void testAssignI2F() throws Exception {
+		runCode("float a; a <- 1; print a;");
+		assertEquals("f=1.0", DijkstraRuntime.getLastMessage());
+	}
+	
+	@Test
+	public void testCastVar() throws Exception {
+		runCode("float a; int b; b <- 1; a <- b; print a;");
+		assertEquals("f=1.0", DijkstraRuntime.getLastMessage());
+	}
+	
+	@Test
 	public void testPrintAssignedVar() throws Exception {
 		runCode("a <- 1.5; b <- 2; print a;");
 		assertEquals("f=1.5", DijkstraRuntime.getLastMessage());

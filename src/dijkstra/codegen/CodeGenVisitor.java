@@ -30,6 +30,7 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 	private String classPackage;
 	//private boolean needValue;		// used to indicate whether we need an ID value or address
 	final private Stack<Label> guardLabelStack;
+	final private Stack<DijkstraType> typeNeeded;
 	
 	
 	public CodeGenVisitor(DjikstraTypeFinalizerVisitor oldTree)
@@ -40,6 +41,7 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 		this.functions = oldTree.functions;
 		classPackage = DEFAULT_PACKAGE;
 		guardLabelStack = new Stack<Label>();
+		typeNeeded = new Stack<DijkstraType>();
 	}
 	
 	@Override
@@ -110,13 +112,14 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 			VarContext var = varList.var();
 			Symbol curSymbol = symbols.get(var);
 			if(curSymbol != null) {
+				typeNeeded.push(curSymbol.getType());
 				exprList.expression().accept(this);	// TOS = expression value
 				if(curSymbol.getType() == DijkstraType.FLOAT) {
 					mv.visitVarInsn(FSTORE, curSymbol.getAddress());
 				} else {
 					mv.visitVarInsn(ISTORE, curSymbol.getAddress());
 				}
-
+				typeNeeded.pop();
 			}
 			varList = varList.varList();
 			exprList = exprList.expressionList();
@@ -133,6 +136,7 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 		} else {
 			mv.visitVarInsn(ILOAD, symbol.getAddress());
 		}
+		cast(symbol.getType());
 		return null;
 	}
 	
@@ -150,6 +154,7 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 	public byte[] visitInteger(IntegerContext ctx) {
 		int i = Integer.parseInt(ctx.INTEGER().getText());
 		mv.visitLdcInsn(i);
+		cast(DijkstraType.INT);
 		return null;
 	}
 	
@@ -157,6 +162,16 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 	public byte[] visitFloat(FloatContext ctx) {
 		float f = Float.parseFloat(ctx.getText());
 		mv.visitLdcInsn(f);
+		cast(DijkstraType.FLOAT);
 		return null;
+	}
+	
+	public void cast(DijkstraType from) {
+		DijkstraType to = typeNeeded.isEmpty() ? null : typeNeeded.peek();
+		if(from == DijkstraType.INT && to == DijkstraType.FLOAT) {
+			mv.visitInsn(I2F);
+		} else if (from == DijkstraType.FLOAT && to == DijkstraType.INT){
+			mv.visitInsn(F2I);
+		}
 	}
 }
