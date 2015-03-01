@@ -7,6 +7,6 @@ public class funnin {
 		float a, b;
 		b = 1.0f;
 		a = 2.0f;
-		boolean c = a == b;
+		boolean c = a <= b;
 	}
 }

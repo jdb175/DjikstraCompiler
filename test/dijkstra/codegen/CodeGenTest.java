@@ -214,8 +214,63 @@ public class CodeGenTest extends ClassLoader {
 		assertEquals("b=true", DijkstraRuntime.getLastMessage());
 	}
 
+	@Test
+	public void testRelationalInt() throws Exception {
+		runCode("a, b <- 1, 2; print a < b;");
+		assertEquals("b=true", DijkstraRuntime.getLastMessage());
+		runCode("a, b <- 1, 2; print a > b;");
+		assertEquals("b=false", DijkstraRuntime.getLastMessage());
+		runCode("a, b <- 1, 2; print b > a;");
+		assertEquals("b=true", DijkstraRuntime.getLastMessage());
+		runCode("a, b <- 1, 2; print b < a;");
+		assertEquals("b=false", DijkstraRuntime.getLastMessage());
+	}
+	
+	@Test
+	public void testRelationalIntEquals() throws Exception {
+		runCode("a, b <- 1, 2; print a <= b;");
+		assertEquals("b=true", DijkstraRuntime.getLastMessage());
+		runCode("a, b <- 1, 2; print a >= b;");
+		assertEquals("b=false", DijkstraRuntime.getLastMessage());
+		runCode("a, b <- 1, 2; print b >= a;");
+		assertEquals("b=true", DijkstraRuntime.getLastMessage());
+		runCode("a, b <- 1, 2; print b <= a;");
+		assertEquals("b=false", DijkstraRuntime.getLastMessage());
+		runCode("a, b <- 1, 1; print b >= a;");
+		assertEquals("b=true", DijkstraRuntime.getLastMessage());
+		runCode("a, b <- 1, 1; print b <= a;");
+		assertEquals("b=true", DijkstraRuntime.getLastMessage());
+	}
+	
+	@Test
+	public void testRelationalFloat() throws Exception {
+		runCode("a, b <- 1.0, 2.0; print a < b;");
+		assertEquals("b=true", DijkstraRuntime.getLastMessage());
+		runCode("a, b <- 1, 2.0; print a > b;");
+		assertEquals("b=false", DijkstraRuntime.getLastMessage());
+		runCode("a, b <- 1.0, 2; print b > a;");
+		assertEquals("b=true", DijkstraRuntime.getLastMessage());
+		runCode("a, b <- 1.0, 2.0; print b < a;");
+		assertEquals("b=false", DijkstraRuntime.getLastMessage());
+	}
+	
+	@Test
+	public void testRelationalFloatEquals() throws Exception {
+		runCode("a, b <- 1, 2.0; print a <= b;");
+		assertEquals("b=true", DijkstraRuntime.getLastMessage());
+		runCode("a, b <- 1.0, 2; print a >= b;");
+		assertEquals("b=false", DijkstraRuntime.getLastMessage());
+		runCode("a, b <- 1.0, 2.0; print b >= a;");
+		assertEquals("b=true", DijkstraRuntime.getLastMessage());
+		runCode("a, b <- 1.0, 2.0; print b <= a;");
+		assertEquals("b=false", DijkstraRuntime.getLastMessage());
+		runCode("a, b <- 1.0, 1.0; print b >= a;");
+		assertEquals("b=true", DijkstraRuntime.getLastMessage());
+		runCode("a, b <- 1.0, 1.0; print b <= a;");
+		assertEquals("b=true", DijkstraRuntime.getLastMessage());
+	}
 
-	/** Utiity **/
+	/** Utility **/
 	private void makeParser(String inputText)
 	{
 		parser = DijkstraFactory.makeParser(new ANTLRInputStream(inputText));

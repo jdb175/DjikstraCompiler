@@ -291,6 +291,103 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 	}
 	
 	@Override
+	public byte[] visitRelational(RelationalContext ctx) {
+		boolean isFloat = false;
+		if(types.get(ctx.expression(0)) == DijkstraType.FLOAT || types.get(ctx.expression(1)) == DijkstraType.FLOAT){
+			isFloat = true;
+			typeNeeded.push(DijkstraType.FLOAT);
+		}
+		ctx.expression(0).accept(this);
+		ctx.expression(1).accept(this);
+		if(isFloat) {
+			typeNeeded.pop();
+		}
+		Label lab1, lab2;
+		if(isFloat) {
+			if(ctx.LT() != null) {
+				mv.visitInsn(FCMPG);
+				Label l3 = new Label();
+				mv.visitJumpInsn(IFGE, l3);
+				mv.visitInsn(ICONST_1);
+				Label l4 = new Label();
+				mv.visitJumpInsn(GOTO, l4);
+				mv.visitLabel(l3);
+				mv.visitInsn(ICONST_0);
+				mv.visitLabel(l4);
+			} else if (ctx.GT() != null) {
+				mv.visitInsn(FCMPL);
+				Label l3 = new Label();
+				mv.visitJumpInsn(IFLE, l3);
+				mv.visitInsn(ICONST_1);
+				Label l4 = new Label();
+				mv.visitJumpInsn(GOTO, l4);
+				mv.visitLabel(l3);
+				mv.visitInsn(ICONST_0);
+				mv.visitLabel(l4);
+			} else if (ctx.LTE() != null) {
+				mv.visitInsn(FCMPG);
+				Label l3 = new Label();
+				mv.visitJumpInsn(IFGT, l3);
+				mv.visitInsn(ICONST_1);
+				Label l4 = new Label();
+				mv.visitJumpInsn(GOTO, l4);
+				mv.visitLabel(l3);
+				mv.visitInsn(ICONST_0);
+				mv.visitLabel(l4);
+			} else if(ctx.GTE() != null) {
+				mv.visitInsn(FCMPL);
+				Label l3 = new Label();
+				mv.visitJumpInsn(IFLT, l3);
+				mv.visitInsn(ICONST_1);
+				Label l4 = new Label();
+				mv.visitJumpInsn(GOTO, l4);
+				mv.visitLabel(l3);
+				mv.visitInsn(ICONST_0);
+				mv.visitLabel(l4);
+			}
+		} else {
+			if(ctx.LT() != null) {
+				lab1 =  new Label();
+				mv.visitJumpInsn(IF_ICMPGE, lab1);
+				mv.visitInsn(ICONST_1);		// left < right
+				lab2 = new Label();
+				mv.visitJumpInsn(GOTO, lab2);
+				mv.visitLabel(lab1);
+				mv.visitInsn(ICONST_0);		// right >= left
+				mv.visitLabel(lab2);
+			} else if (ctx.GT() != null) {
+				lab1 =  new Label();
+				mv.visitJumpInsn(IF_ICMPLE, lab1);
+				mv.visitInsn(ICONST_1);		// left > right
+				lab2 = new Label();
+				mv.visitJumpInsn(GOTO, lab2);
+				mv.visitLabel(lab1);
+				mv.visitInsn(ICONST_0);		// right <= left
+				mv.visitLabel(lab2);
+			} else if(ctx.LTE() != null) {
+				lab1 =  new Label();
+				mv.visitJumpInsn(IF_ICMPGT, lab1);
+				mv.visitInsn(ICONST_1);		// left < right
+				lab2 = new Label();
+				mv.visitJumpInsn(GOTO, lab2);
+				mv.visitLabel(lab1);
+				mv.visitInsn(ICONST_0);		// right >= left
+				mv.visitLabel(lab2);
+			} else if (ctx.GTE() != null) {
+				lab1 =  new Label();
+				mv.visitJumpInsn(IF_ICMPLT, lab1);
+				mv.visitInsn(ICONST_1);		// left > right
+				lab2 = new Label();
+				mv.visitJumpInsn(GOTO, lab2);
+				mv.visitLabel(lab1);
+				mv.visitInsn(ICONST_0);		// right <= left
+				mv.visitLabel(lab2);
+			}
+		}
+		return null;
+	}
+	
+	@Override
 	public byte[] visitCompound(CompoundContext ctx) {
 		return ctx.expression().accept(this);
 	}
