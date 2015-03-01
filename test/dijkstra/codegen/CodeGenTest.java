@@ -2,6 +2,8 @@ package dijkstra.codegen;
 
 import static org.junit.Assert.*;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.junit.Test;
@@ -43,7 +45,7 @@ public class CodeGenTest extends ClassLoader {
 	
 	@Test
 	public void testAssignF2I() throws Exception {
-		runCode("int a; a <- 1.4; print a;");
+		runCode("int a; a <- 1.9; print a;");
 		assertEquals("i=1", DijkstraRuntime.getLastMessage());
 	}
 	
@@ -342,6 +344,52 @@ public class CodeGenTest extends ClassLoader {
 	public void testArrayAccessBoolean() throws Exception {
 		runCode("boolean[1] a; a[0] <- false; print a[0]");
 		assertEquals("b=false", DijkstraRuntime.getLastMessage());
+	}
+	
+	@Test
+	public void basicAlternative() throws Exception
+	{
+		runCode("b <- true a <- 1\n"
+				+ "if\n"
+				+ "  b :: a <- -5\n"
+				+ "fi\n"
+				+ "print a");
+		assertEquals("i=-5", DijkstraRuntime.getLastMessage());
+	}
+	
+	@Test
+	public void secondAlternative() throws Exception
+	{
+		runCode("b <- true a <- 1\n"
+				+ "if\n"
+				+ "  ~b :: a <- 2\n"
+				+ "  b :: a <- -5\n"
+				+ "fi\n"
+				+ "print a");
+		assertEquals("i=-5", DijkstraRuntime.getLastMessage());
+	}
+	
+	@Test
+	public void nestedAlternative() throws Exception
+	{
+		runCode("b <- true a <- 1\n"
+				+ "if\n"
+				+ "  ~b :: a <- 2\n"
+				+ "  b :: if b :: a <- -5 fi\n"
+				+ "fi\n"
+				+ "print a");
+		assertEquals("i=-5", DijkstraRuntime.getLastMessage());
+	}
+	
+	@Test(expected=InvocationTargetException.class)
+	public void basicAlternativeFail() throws Exception
+	{
+		runCode("b <- false a <- 1\n"
+				+ "if\n"
+				+ "  b :: a <- -5\n"
+				+ "  b & true :: a <- -5\n"
+				+ "fi\n"
+				+ "print a");
 	}
 
 	/** Utility **/

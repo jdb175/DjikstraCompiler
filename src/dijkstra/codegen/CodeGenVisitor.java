@@ -174,6 +174,30 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 	}
 	
 	@Override
+	public byte[] visitAlternativeStatement (AlternativeStatementContext ctx) {
+		final Label endLabel = new Label();
+		guardLabelStack.push(endLabel);
+		visitChildren(ctx);
+		guardLabelStack.pop();
+		mv.visitIntInsn(BIPUSH, ctx.getStart().getLine());
+		mv.visitMethodInsn(INVOKESTATIC, "dijkstra/runtime/DijkstraRuntime", 
+				"abortNoAlternative", "(I)V", false);
+		mv.visitLabel(endLabel);
+		return null;
+	}
+	
+	@Override
+	public byte[] visitGuard (GuardContext ctx) {
+		final Label failLabel = new Label();
+		ctx.expression().accept(this);
+		mv.visitJumpInsn(IFEQ, failLabel);
+		ctx.statement().accept(this);
+		mv.visitJumpInsn(GOTO, guardLabelStack.peek());
+		mv.visitLabel(failLabel);
+		return null;
+	}
+	
+	@Override
 	public byte[] visitArrayDeclaration (ArrayDeclarationContext ctx) {
 		IdListContext idlist = ctx.idList();
 		while(idlist != null) {
