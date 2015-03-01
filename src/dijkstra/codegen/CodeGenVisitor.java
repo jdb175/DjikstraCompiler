@@ -177,6 +177,7 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 			mv.visitInsn(ICONST_1);		// false -> true
 			mv.visitLabel(l2);
 		}
+		cast(types.get(ctx));
 		return null;
 	}
 	
@@ -195,7 +196,13 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 			typeNeeded.pop();
 			mv.visitInsn(FMUL);
 		}
+		cast(types.get(ctx));
 		return null;
+	}
+	
+	@Override
+	public byte[] visitCompound(CompoundContext ctx) {
+		return ctx.expression().accept(this);
 	}
 	
 	@Override

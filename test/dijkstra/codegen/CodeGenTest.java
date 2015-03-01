@@ -110,8 +110,14 @@ public class CodeGenTest extends ClassLoader {
 	
 	@Test
 	public void testMultMix() throws Exception {
-		runCode("a, b <- 3, 2.0; c <- a * b; print c;");
-		assertEquals("f=6.0", DijkstraRuntime.getLastMessage());
+		runCode("a, b <- 3, 2.0; c <- a * b * 3 * 2; print c;");
+		assertEquals("f=36.0", DijkstraRuntime.getLastMessage());
+	}
+	
+	@Test
+	public void testMultMixCompound() throws Exception {
+		runCode("a, b <- 3, 2.0; c <- a * b * (3 * -2); print c;");
+		assertEquals("f=-36.0", DijkstraRuntime.getLastMessage());
 	}
 
 	/** Utiity **/
