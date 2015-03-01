@@ -167,6 +167,7 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 			} else {
 				mv.visitInsn(FNEG);
 			}
+			cast(types.get(ctx));
 		} else {
 			final Label l1 = new Label();
 			final Label l2 = new Label();
@@ -177,7 +178,6 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 			mv.visitInsn(ICONST_1);		// false -> true
 			mv.visitLabel(l2);
 		}
-		cast(types.get(ctx));
 		return null;
 	}
 	
@@ -207,13 +207,21 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 			ctx.expression(0).accept(this);
 			ctx.expression(1).accept(this);
 			typeNeeded.pop();
-			mv.visitInsn(IADD);
+			if(ctx.PLUS() != null) {
+				mv.visitInsn(IADD);
+			} else {
+				mv.visitInsn(ISUB);
+			}
 		} else {
 			typeNeeded.push(DijkstraType.FLOAT);
 			ctx.expression(0).accept(this);
 			ctx.expression(1).accept(this);
 			typeNeeded.pop();
-			mv.visitInsn(FADD);
+			if(ctx.PLUS() != null) {
+				mv.visitInsn(FADD);
+			} else {
+				mv.visitInsn(FSUB);
+			}
 		}
 		cast(types.get(ctx));
 		return null;

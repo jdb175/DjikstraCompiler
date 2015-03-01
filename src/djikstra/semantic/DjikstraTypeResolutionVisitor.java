@@ -190,9 +190,12 @@ public class DjikstraTypeResolutionVisitor extends DijkstraBaseVisitor<DijkstraT
 	public DijkstraType visitUnary(@NotNull DijkstraParser.UnaryContext ctx) {
 		DijkstraType t = BOOLEAN;
 		if(ctx.getChild(0).getText().equals("-")) {
-			t = NUM;
+			t = ctx.expression().accept(this);
+			if(t == UNDEFINED) {
+				t = NUM;
+			}
 		}
-		ctx.expression().accept(this);
+
 		updateType(ctx.expression(), t);
 		types.put(ctx, t);
 		return t;

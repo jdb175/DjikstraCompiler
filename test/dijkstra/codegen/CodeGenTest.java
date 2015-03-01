@@ -91,6 +91,12 @@ public class CodeGenTest extends ClassLoader {
 	}
 	
 	@Test
+	public void testUnaryMinusFloat() throws Exception {
+		runCode("float c; c <- - 1.0; print c;");
+		assertEquals("f=-1.0", DijkstraRuntime.getLastMessage());
+	}
+	
+	@Test
 	public void testUnaryNot() throws Exception {
 		runCode("boolean c; c <- ~true; print c;");
 		assertEquals("b=false", DijkstraRuntime.getLastMessage());
@@ -124,6 +130,12 @@ public class CodeGenTest extends ClassLoader {
 	public void testAddInt() throws Exception {
 		runCode("a, b <- 3, 2; c <- a + b; print c;");
 		assertEquals("i=5", DijkstraRuntime.getLastMessage());
+	}
+	
+	@Test
+	public void testSubtractInt() throws Exception {
+		runCode("a, b <- 3, 2; c <- a - b; print c;");
+		assertEquals("i=1", DijkstraRuntime.getLastMessage());
 	}
 	
 	@Test
@@ -268,6 +280,12 @@ public class CodeGenTest extends ClassLoader {
 		assertEquals("b=true", DijkstraRuntime.getLastMessage());
 		runCode("a, b <- 1.0, 1.0; print b <= a;");
 		assertEquals("b=true", DijkstraRuntime.getLastMessage());
+	}
+	
+	@Test
+	public void testNestedExprs() throws Exception {
+		runCode("a <- 2.0; print -a < (2*4 + -100);");
+		assertEquals("b=false", DijkstraRuntime.getLastMessage());
 	}
 
 	/** Utility **/
