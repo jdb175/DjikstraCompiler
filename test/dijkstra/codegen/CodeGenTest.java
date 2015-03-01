@@ -95,6 +95,24 @@ public class CodeGenTest extends ClassLoader {
 		runCode("boolean c; c <- ~true; print c;");
 		assertEquals("b=false", DijkstraRuntime.getLastMessage());
 	}
+	
+	@Test
+	public void testMultInt() throws Exception {
+		runCode("a, b <- 3, 2; c <- a * b; print c;");
+		assertEquals("i=6", DijkstraRuntime.getLastMessage());
+	}
+	
+	@Test
+	public void testMultFloat() throws Exception {
+		runCode("a, b <- 3.0, 2.0; c <- a * b; print c;");
+		assertEquals("f=6.0", DijkstraRuntime.getLastMessage());
+	}
+	
+	@Test
+	public void testMultMix() throws Exception {
+		runCode("a, b <- 3, 2.0; c <- a * b; print c;");
+		assertEquals("f=6.0", DijkstraRuntime.getLastMessage());
+	}
 
 	/** Utiity **/
 	private void makeParser(String inputText)
