@@ -4,7 +4,9 @@ public class funnin {
 	int a;
 	
 	public void fun () {
-		float f = 4.6f;
-		a = (int) f;
+		boolean a, b;
+		b = true;
+		a = false;
+		a = a && b;
 	}
 }

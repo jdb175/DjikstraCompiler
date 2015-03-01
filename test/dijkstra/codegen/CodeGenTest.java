@@ -137,6 +137,42 @@ public class CodeGenTest extends ClassLoader {
 		runCode("a, b <- 3, 2.0; c <- a + (b + 3); print c;");
 		assertEquals("f=8.0", DijkstraRuntime.getLastMessage());
 	}
+	
+	@Test
+	public void testAnd() throws Exception {
+		runCode("a <- false & true; print a;");
+		assertEquals("b=false", DijkstraRuntime.getLastMessage());
+	}
+	
+	@Test
+	public void testAndTrue() throws Exception {
+		runCode("a <- true & true; print a;");
+		assertEquals("b=true", DijkstraRuntime.getLastMessage());
+	}
+	
+	@Test
+	public void testAndFalses() throws Exception {
+		runCode("a <- false & false; print a;");
+		assertEquals("b=false", DijkstraRuntime.getLastMessage());
+	}
+	
+	@Test
+	public void testOr() throws Exception {
+		runCode("a <- true | false; print a;");
+		assertEquals("b=true", DijkstraRuntime.getLastMessage());
+	}
+	
+	@Test
+	public void testOrFalses() throws Exception {
+		runCode("a <- false | false; print a;");
+		assertEquals("b=false", DijkstraRuntime.getLastMessage());
+	}
+	
+	@Test
+	public void testOrTrues() throws Exception {
+		runCode("a <- true | true; print a;");
+		assertEquals("b=true", DijkstraRuntime.getLastMessage());
+	}
 
 	/** Utiity **/
 	private void makeParser(String inputText)

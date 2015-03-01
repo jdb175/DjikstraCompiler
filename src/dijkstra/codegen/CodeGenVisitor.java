@@ -220,6 +220,22 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 	}
 	
 	@Override
+	public byte[] visitAnd(AndContext ctx) {
+		ctx.expression(0).accept(this);
+		ctx.expression(1).accept(this);
+		mv.visitInsn(IAND);
+		return null;
+	}
+	
+	@Override
+	public byte[] visitOr(OrContext ctx) {
+		ctx.expression(0).accept(this);
+		ctx.expression(1).accept(this);
+		mv.visitInsn(IOR);
+		return null;
+	}
+	
+	@Override
 	public byte[] visitCompound(CompoundContext ctx) {
 		return ctx.expression().accept(this);
 	}
