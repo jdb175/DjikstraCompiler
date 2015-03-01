@@ -173,6 +173,47 @@ public class CodeGenTest extends ClassLoader {
 		runCode("a <- true | true; print a;");
 		assertEquals("b=true", DijkstraRuntime.getLastMessage());
 	}
+	
+	@Test
+	public void testEqualityBoolean() throws Exception {
+		runCode("a <- true = true; print a;");
+		assertEquals("b=true", DijkstraRuntime.getLastMessage());
+		runCode("a <- false = true; print a;");
+		assertEquals("b=false", DijkstraRuntime.getLastMessage());
+		runCode("a <- false = false; print a;");
+		assertEquals("b=true", DijkstraRuntime.getLastMessage());
+		runCode("a <- true ~= true; print a;");
+		assertEquals("b=false", DijkstraRuntime.getLastMessage());
+		runCode("a <- false ~= true; print a;");
+		assertEquals("b=true", DijkstraRuntime.getLastMessage());
+		runCode("a <- false ~= false; print a;");
+		assertEquals("b=false", DijkstraRuntime.getLastMessage());
+	}
+	
+	@Test
+	public void testEqualityInt() throws Exception {
+		runCode("a <- 1 = 1; print a;");
+		assertEquals("b=true", DijkstraRuntime.getLastMessage());
+		runCode("a <- 1 = 2; print a;");
+		assertEquals("b=false", DijkstraRuntime.getLastMessage());
+		runCode("a <- 1 ~= 1; print a;");
+		assertEquals("b=false", DijkstraRuntime.getLastMessage());
+		runCode("a <- 1 ~= 2; print a;");
+		assertEquals("b=true", DijkstraRuntime.getLastMessage());
+	}
+	
+	@Test
+	public void testEqualityFloat() throws Exception {
+		runCode("a <- 1.0 = 1.0; print a;");
+		assertEquals("b=true", DijkstraRuntime.getLastMessage());
+		runCode("a <- 1.0 = 2.0; print a;");
+		assertEquals("b=false", DijkstraRuntime.getLastMessage());
+		runCode("a <- 1.0 ~= 1.0; print a;");
+		assertEquals("b=false", DijkstraRuntime.getLastMessage());
+		runCode("a <- 1.0 ~= 2.0; print a;");
+		assertEquals("b=true", DijkstraRuntime.getLastMessage());
+	}
+
 
 	/** Utiity **/
 	private void makeParser(String inputText)

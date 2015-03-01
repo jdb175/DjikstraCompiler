@@ -236,6 +236,61 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 	}
 	
 	@Override
+	public byte[] visitEqual(EqualContext ctx) {
+		boolean isFloat = false;
+		if(types.get(ctx.expression(0)) == DijkstraType.FLOAT || types.get(ctx.expression(1)) == DijkstraType.FLOAT){
+			isFloat = true;
+		}
+		ctx.expression(0).accept(this);
+		ctx.expression(1).accept(this);
+		Label lab1, lab2;
+		if(isFloat) {
+			if(ctx.EQ() != null) {
+				mv.visitInsn(FCMPL);
+				Label l3 = new Label();
+				mv.visitJumpInsn(IFNE, l3);
+				mv.visitInsn(ICONST_1);
+				Label l4 = new Label();
+				mv.visitJumpInsn(GOTO, l4);
+				mv.visitLabel(l3);
+				mv.visitInsn(ICONST_0);
+				mv.visitLabel(l4);
+			} else {
+				mv.visitInsn(FCMPL);
+				Label l3 = new Label();
+				mv.visitJumpInsn(IFEQ, l3);
+				mv.visitInsn(ICONST_1);
+				Label l4 = new Label();
+				mv.visitJumpInsn(GOTO, l4);
+				mv.visitLabel(l3);
+				mv.visitInsn(ICONST_0);					
+				mv.visitLabel(l4);
+			}
+		} else {
+			if(ctx.EQ() != null) {
+				lab1 =  new Label();
+				mv.visitJumpInsn(IF_ICMPNE, lab1);
+				mv.visitInsn(ICONST_1);		// left = right
+				lab2 = new Label();
+				mv.visitJumpInsn(GOTO, lab2);
+				mv.visitLabel(lab1);
+				mv.visitInsn(ICONST_0);		// left ~= right
+				mv.visitLabel(lab2);
+			} else {
+				lab1 =  new Label();
+				mv.visitJumpInsn(IF_ICMPEQ, lab1);
+				mv.visitInsn(ICONST_1);		// left = right
+				lab2 = new Label();
+				mv.visitJumpInsn(GOTO, lab2);
+				mv.visitLabel(lab1);
+				mv.visitInsn(ICONST_0);		// left ~= right
+				mv.visitLabel(lab2);
+			}
+		}
+		return null;
+	}
+	
+	@Override
 	public byte[] visitCompound(CompoundContext ctx) {
 		return ctx.expression().accept(this);
 	}
