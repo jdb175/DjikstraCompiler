@@ -183,18 +183,38 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 	
 	@Override
 	public byte[] visitMult(MultContext ctx) {
-		if(types.get(ctx) == DijkstraType.INT) {
-			typeNeeded.push(DijkstraType.INT);
-			ctx.expression(0).accept(this);
-			ctx.expression(1).accept(this);
-			typeNeeded.pop();
-			mv.visitInsn(IMUL);
-		} else {
+		if(ctx.STAR() != null) {
+			if(types.get(ctx) == DijkstraType.INT) {
+				typeNeeded.push(DijkstraType.INT);
+				ctx.expression(0).accept(this);
+				ctx.expression(1).accept(this);
+				typeNeeded.pop();
+				mv.visitInsn(IMUL);
+			} else {
+				typeNeeded.push(DijkstraType.FLOAT);
+				ctx.expression(0).accept(this);
+				ctx.expression(1).accept(this);
+				typeNeeded.pop();
+				mv.visitInsn(FMUL);
+			}
+		} else if (ctx.SLASH() != null) {
 			typeNeeded.push(DijkstraType.FLOAT);
 			ctx.expression(0).accept(this);
 			ctx.expression(1).accept(this);
 			typeNeeded.pop();
-			mv.visitInsn(FMUL);
+			mv.visitInsn(FDIV);
+		} else if (ctx.MOD() != null) {
+			ctx.expression(0).accept(this);
+			ctx.expression(1).accept(this);
+			mv.visitInsn(IREM);
+		} else if (ctx.DIV() != null) {
+			ctx.expression(0).accept(this);
+			ctx.expression(0).accept(this);
+			ctx.expression(1).accept(this);
+			mv.visitInsn(IREM);
+			mv.visitInsn(ISUB);
+			ctx.expression(1).accept(this);
+			mv.visitInsn(IDIV);
 		}
 		cast(types.get(ctx));
 		return null;

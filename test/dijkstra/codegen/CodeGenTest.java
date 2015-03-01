@@ -109,6 +109,30 @@ public class CodeGenTest extends ClassLoader {
 	}
 	
 	@Test
+	public void testDivideInt() throws Exception {
+		runCode("a, b <- 3, 2; c <- a / b; print c;");
+		assertEquals("f=1.5", DijkstraRuntime.getLastMessage());
+	}
+	
+	@Test
+	public void testDivideFloat() throws Exception {
+		runCode("a, b <- 3.0, 2.0; c <- a / b; print c;");
+		assertEquals("f=1.5", DijkstraRuntime.getLastMessage());
+	}
+	
+	@Test
+	public void testMod() throws Exception {
+		runCode("a <- 3*7+5; print a mod 7;");
+		assertEquals("i=5", DijkstraRuntime.getLastMessage());
+	}
+	
+	@Test
+	public void testDiv() throws Exception {
+		runCode("a <- 3*7+5; print a div 7;");
+		assertEquals("i=3", DijkstraRuntime.getLastMessage());
+	}
+	
+	@Test
 	public void testMultFloat() throws Exception {
 		runCode("a, b <- 3.0, 2.0; c <- a * b; print c;");
 		assertEquals("f=6.0", DijkstraRuntime.getLastMessage());
@@ -142,6 +166,14 @@ public class CodeGenTest extends ClassLoader {
 	public void testAddFloat() throws Exception {
 		runCode("a, b <- 3.0, 2.0; c <- a + b; print c;");
 		assertEquals("f=5.0", DijkstraRuntime.getLastMessage());
+	}
+	
+	@Test
+	public void testSubtractFloat() throws Exception {
+		runCode("a, b <- 3.0, 2; c <- a - b; print c;");
+		assertEquals("f=1.0", DijkstraRuntime.getLastMessage());
+		runCode("a, b <- 3.0, 2.0; c <- a - b; print c;");
+		assertEquals("f=1.0", DijkstraRuntime.getLastMessage());
 	}
 	
 	@Test
