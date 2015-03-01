@@ -319,6 +319,30 @@ public class CodeGenTest extends ClassLoader {
 		runCode("a <- 2.0; print -a < (2*4 + -100);");
 		assertEquals("b=false", DijkstraRuntime.getLastMessage());
 	}
+	
+	@Test
+	public void testArrayAccessInt() throws Exception {
+		runCode("int[1] a; a[0] <- 1; print a[0]");
+		assertEquals("i=1", DijkstraRuntime.getLastMessage());
+	}
+	
+	@Test
+	public void testArrayAccessFloat() throws Exception {
+		runCode("float[4] a; a[2] <- 1; print a[2]");
+		assertEquals("f=1.0", DijkstraRuntime.getLastMessage());
+	}
+	
+	@Test
+	public void testArrayAccessCastExpr() throws Exception {
+		runCode("float[5.0-2.0] a; a[4.0-2.0] <- 1; print a[2]");
+		assertEquals("f=1.0", DijkstraRuntime.getLastMessage());
+	}
+	
+	@Test
+	public void testArrayAccessBoolean() throws Exception {
+		runCode("boolean[1] a; a[0] <- false; print a[0]");
+		assertEquals("b=false", DijkstraRuntime.getLastMessage());
+	}
 
 	/** Utility **/
 	private void makeParser(String inputText)

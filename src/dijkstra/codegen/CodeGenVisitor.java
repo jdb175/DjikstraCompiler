@@ -121,6 +121,21 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 					mv.visitVarInsn(ISTORE, curSymbol.getAddress());
 				}
 				typeNeeded.pop();
+			} else {
+				ArrayAccessorContext arr = var.arrayAccessor();
+				Symbol curArray = arrays.get(arr);
+				mv.visitVarInsn(ALOAD, curArray.getAddress());
+				typeNeeded.push(INT);
+				arr.expression().accept(this);
+				typeNeeded.pop();
+				typeNeeded.push(curArray.getType());
+				exprList.expression().accept(this);
+				typeNeeded.pop();
+				if(curArray.getType() == DijkstraType.FLOAT) {
+					mv.visitInsn(FASTORE);
+				} else {
+					mv.visitInsn(IASTORE);
+				}
 			}
 			varList = varList.varList();
 			exprList = exprList.expressionList();
@@ -157,6 +172,27 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 		}
 		return null;
 	}
+	
+	@Override
+	public byte[] visitArrayDeclaration (ArrayDeclarationContext ctx) {
+		IdListContext idlist = ctx.idList();
+		while(idlist != null) {
+			Symbol s = symbols.get(idlist);
+			typeNeeded.push(INT);
+			ctx.expression().accept(this);
+			typeNeeded.pop();
+			if(s.getType() == DijkstraType.FLOAT) {
+				mv.visitIntInsn(NEWARRAY, T_FLOAT);
+			} else {
+				mv.visitIntInsn(NEWARRAY, T_INT);
+			}
+			mv.visitVarInsn(ASTORE, s.getAddress());
+			idlist = idlist.idList();
+		}
+		return null;
+	}
+	
+	/** Expressions **/
 	
 	@Override
 	public byte[] visitUnary(UnaryContext ctx) {
@@ -455,6 +491,23 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 		float f = Float.parseFloat(ctx.getText());
 		mv.visitLdcInsn(f);
 		cast(DijkstraType.FLOAT);
+		return null;
+	}
+	
+	@Override
+	public byte[] visitArrayAccess(ArrayAccessContext ctx) {
+		Symbol s = arrays.get(ctx.arrayAccessor());
+		DijkstraType t = types.get(ctx);
+		mv.visitVarInsn(ALOAD, s.getAddress());
+		typeNeeded.push(INT);
+		ctx.arrayAccessor().expression().accept(this);
+		typeNeeded.pop();
+		if(t == DijkstraType.FLOAT) {
+			mv.visitInsn(FALOAD);
+		} else {
+			mv.visitInsn(IALOAD);
+		}
+		cast(t);
 		return null;
 	}
 	
