@@ -187,6 +187,16 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 	}
 	
 	@Override
+	public byte[] visitIterativeStatement (IterativeStatementContext ctx) {
+		final Label startLabel = new Label();
+		mv.visitLabel(startLabel);
+		guardLabelStack.push(startLabel);
+		visitChildren(ctx);
+		guardLabelStack.pop();
+		return null;
+	}
+	
+	@Override
 	public byte[] visitGuard (GuardContext ctx) {
 		final Label failLabel = new Label();
 		ctx.expression().accept(this);

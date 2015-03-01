@@ -391,6 +391,40 @@ public class CodeGenTest extends ClassLoader {
 				+ "fi\n"
 				+ "print a");
 	}
+	
+	@Test
+	public void basicIterative() throws Exception
+	{
+		runCode("a <- 0\n"
+				+ "do\n"
+				+ "  a < 5 :: a <- a + 1\n"
+				+ "  a < 10 :: a <- a + 4\n"
+				+ "od\n"
+				+ "print a");
+		assertEquals("i=13", DijkstraRuntime.getLastMessage());
+	}
+	
+	@Test
+	public void basicIterativeNone() throws Exception
+	{
+		runCode("a <- 0\n"
+				+ "do\n"
+				+ "  a > 5 :: a <- a + 1\n"
+				+ "od\n"
+				+ "print a");
+		assertEquals("i=0", DijkstraRuntime.getLastMessage());
+	}
+	
+	@Test
+	public void iterativeNested() throws Exception
+	{
+		runCode("a <- 0 b <- 0 c <- 0\n"
+				+ "do\n"
+				+ "  a < 5 :: { a <- a + 1;  do b < a :: { b <- b + 1; c <- c + 2; } od }\n"
+				+ "od\n"
+				+ "print c");
+		assertEquals("i=10", DijkstraRuntime.getLastMessage());
+	}
 
 	/** Utility **/
 	private void makeParser(String inputText)
