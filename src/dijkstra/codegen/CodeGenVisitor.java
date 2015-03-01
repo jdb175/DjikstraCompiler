@@ -159,6 +159,28 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 	}
 	
 	@Override
+	public byte[] visitUnary(UnaryContext ctx) {
+		ctx.expression().accept(this);
+		if(ctx.MINUS() != null) {
+			if(types.get(ctx) == DijkstraType.INT) {
+				mv.visitInsn(INEG);
+			} else {
+				mv.visitInsn(FNEG);
+			}
+		} else {
+			final Label l1 = new Label();
+			final Label l2 = new Label();
+			mv.visitJumpInsn(IFEQ, l1);
+			mv.visitInsn(ICONST_0);		// true -> false
+			mv.visitJumpInsn(GOTO, l2);
+			mv.visitLabel(l1);
+			mv.visitInsn(ICONST_1);		// false -> true
+			mv.visitLabel(l2);
+		}
+		return null;
+	}
+	
+	@Override
 	public byte[] visitIdexp(IdexpContext ctx) {
 		Symbol symbol = symbols.get(ctx);
 		if(symbol.getType() == DijkstraType.FLOAT) {

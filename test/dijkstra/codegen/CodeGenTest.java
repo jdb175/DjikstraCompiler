@@ -83,6 +83,18 @@ public class CodeGenTest extends ClassLoader {
 		runCode("float b; input b; print b;");
 		assertEquals("f=1.0", DijkstraRuntime.getLastMessage());
 	}
+	
+	@Test
+	public void testUnaryMinus() throws Exception {
+		runCode("int c; c <- - 1; print c;");
+		assertEquals("i=-1", DijkstraRuntime.getLastMessage());
+	}
+	
+	@Test
+	public void testUnaryNot() throws Exception {
+		runCode("boolean c; c <- ~true; print c;");
+		assertEquals("b=false", DijkstraRuntime.getLastMessage());
+	}
 
 	/** Utiity **/
 	private void makeParser(String inputText)
