@@ -201,6 +201,25 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 	}
 	
 	@Override
+	public byte[] visitAdd(AddContext ctx) {
+		if(types.get(ctx) == DijkstraType.INT) {
+			typeNeeded.push(DijkstraType.INT);
+			ctx.expression(0).accept(this);
+			ctx.expression(1).accept(this);
+			typeNeeded.pop();
+			mv.visitInsn(IADD);
+		} else {
+			typeNeeded.push(DijkstraType.FLOAT);
+			ctx.expression(0).accept(this);
+			ctx.expression(1).accept(this);
+			typeNeeded.pop();
+			mv.visitInsn(FADD);
+		}
+		cast(types.get(ctx));
+		return null;
+	}
+	
+	@Override
 	public byte[] visitCompound(CompoundContext ctx) {
 		return ctx.expression().accept(this);
 	}

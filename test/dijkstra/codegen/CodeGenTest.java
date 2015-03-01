@@ -119,6 +119,24 @@ public class CodeGenTest extends ClassLoader {
 		runCode("a, b <- 3, 2.0; c <- a * b * (3 * -2); print c;");
 		assertEquals("f=-36.0", DijkstraRuntime.getLastMessage());
 	}
+	
+	@Test
+	public void testAddInt() throws Exception {
+		runCode("a, b <- 3, 2; c <- a + b; print c;");
+		assertEquals("i=5", DijkstraRuntime.getLastMessage());
+	}
+	
+	@Test
+	public void testAddFloat() throws Exception {
+		runCode("a, b <- 3.0, 2.0; c <- a + b; print c;");
+		assertEquals("f=5.0", DijkstraRuntime.getLastMessage());
+	}
+	
+	@Test
+	public void testAddMix() throws Exception {
+		runCode("a, b <- 3, 2.0; c <- a + (b + 3); print c;");
+		assertEquals("f=8.0", DijkstraRuntime.getLastMessage());
+	}
 
 	/** Utiity **/
 	private void makeParser(String inputText)
