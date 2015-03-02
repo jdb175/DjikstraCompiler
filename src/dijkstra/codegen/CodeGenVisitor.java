@@ -247,6 +247,51 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 	}
 	
 	@Override
+	public byte[] visitFunctionDeclaration(FunctionDeclarationContext ctx) {
+		oldmv = mv;
+		JVMInfo.enterScope();
+		MethodSymbol fun = (MethodSymbol) functions.get(ctx);
+		mv = cw.visitMethod(ACC_PUBLIC + ACC_STATIC, fun.getName(), fun.getSignature(), null, null); 
+		mv.visitCode();
+		visitChildren(ctx);
+		if(fun.getType() == DijkstraType.FLOAT) {
+			mv.visitInsn(FRETURN);
+		} else {
+			mv.visitInsn(IRETURN);
+
+		}
+		mv.visitMaxs(0, 0);
+		mv.visitEnd();
+		mv = oldmv;
+		JVMInfo.exitScope();
+		return null;
+	}
+	
+	@Override
+	public byte[] visitFunctionCall(FunctionCallContext ctx) {
+		MethodSymbol fun = (MethodSymbol) functions.get(ctx);
+		//put arguments
+		ArgListContext params = ctx.argList();
+		Stack<ExpressionContext> args = new Stack<ExpressionContext>();
+		while(params != null) {
+			args.push(params.expression());
+			params = params.argList();
+		}
+		int i = 0;
+		mv.visitVarInsn(ALOAD, 0);
+		while(!args.isEmpty()) {
+			typeNeeded.push(fun.getParameter(i));
+			args.pop().accept(this);
+			typeNeeded.pop();
+			++i;
+		}
+		//call
+		System.out.println(fun.getSignature());
+		mv.visitMethodInsn(INVOKESTATIC, classNameQualified, fun.getName(), fun.getSignature(), false);
+		return null;
+	}
+	
+	@Override
 	public byte[] visitProcedureCall(ProcedureCallContext ctx) {
 		MethodSymbol proc = (MethodSymbol) symbols.get(ctx);
 		//put arguments

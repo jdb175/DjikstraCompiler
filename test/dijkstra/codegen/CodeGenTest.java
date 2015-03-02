@@ -445,6 +445,27 @@ public class CodeGenTest extends ClassLoader {
 		runCode("proc foo(int a, int b) { print a - b; } foo(10, 20);");
 		assertEquals("i=-10", DijkstraRuntime.getLastMessage());
 	}
+	
+	@Test
+	public void basicFunctionCall() throws Exception
+	{
+		runCode("fun foo() : int { return 30; } print 15; print foo();");
+		assertEquals("i=30", DijkstraRuntime.getLastMessage());
+	}
+	
+	@Test
+	public void basicFunctionCallArgs() throws Exception
+	{
+		runCode("fun foo(int a, int b) : int { return a - b; } print 15; print foo(10, 20);");
+		assertEquals("i=-10", DijkstraRuntime.getLastMessage());
+	}
+	
+	/*@Test
+	public void procedureCallAccessLexicalScope() throws Exception
+	{
+		runCode("a <- 10 proc foo(int b) { print a - b; } foo(20);");
+		assertEquals("i=-10", DijkstraRuntime.getLastMessage());
+	}*/
 
 	/** Utility **/
 	private void makeParser(String inputText)
