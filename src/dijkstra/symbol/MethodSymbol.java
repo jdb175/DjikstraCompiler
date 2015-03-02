@@ -39,5 +39,38 @@ public class MethodSymbol extends Symbol {
 	public int getParameterListLength() {
 		return parameterList.size();
 	}
+	
+	
+	public String getName() {
+		if(this.getType() == DijkstraType.PROCEDURE) {
+			return "p"+this.getId();
+		} else {
+			return "f"+this.getId();
+		}
+	}
+	
+	public String getSignature() {
+		StringBuilder str = new StringBuilder();
+		str.append("(");
+		for(int i = 0; i < parameterList.size(); i++) {
+			str.append(convertType(parameterList.get(i)));
+		}
+		str.append(")");
+		str.append(convertType(this.getType()));
+		return str.toString();
+	}
+	
+	public char convertType(DijkstraType type) {
+		switch (type) {
+			case FLOAT:
+				return 'F';
+			case BOOLEAN:
+				return 'Z';
+			case INT:
+				return 'I';
+			default:
+				return 'V';
+		}
+	}
 
 }

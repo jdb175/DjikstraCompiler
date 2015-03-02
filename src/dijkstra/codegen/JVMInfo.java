@@ -18,9 +18,21 @@ package dijkstra.codegen;
 public class JVMInfo
 {
 	private static int nextAddress = 1;
+	private static int oldAddress = 1;
 	
 	public static int getNextAddress()
 	{
 		return nextAddress++;
+	}
+	
+	public static void enterScope()
+	{
+		oldAddress = nextAddress;
+		nextAddress = 0;
+	}
+	
+	public static void exitScope()
+	{
+		nextAddress = oldAddress;
 	}
 }

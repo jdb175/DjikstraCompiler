@@ -262,7 +262,7 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 		if(proc == null) {
 			throw new DijkstraSymbolException("No procedure with name " + ctx.ID().getText() + " has been defined");
 		}
-		functions.put(ctx, proc);
+		symbols.put(ctx, proc);
 		if(ctx.argList() != null) {
 			ctx.argList().accept(this);
 		}

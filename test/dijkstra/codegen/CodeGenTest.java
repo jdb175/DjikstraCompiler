@@ -49,6 +49,12 @@ public class CodeGenTest extends ClassLoader {
 		assertEquals("i=1", DijkstraRuntime.getLastMessage());
 	}
 	
+	/*@Test
+	public void simultaneousAssign() throws Exception {
+		runCode("a, b <- 1, 2; a, b <- b, a; print a;");
+		assertEquals("i=2", DijkstraRuntime.getLastMessage());
+	}*/
+	
 	@Test
 	public void testAssignI2F() throws Exception {
 		runCode("float a; a <- 1; print a;");
@@ -424,6 +430,20 @@ public class CodeGenTest extends ClassLoader {
 				+ "od\n"
 				+ "print c");
 		assertEquals("i=10", DijkstraRuntime.getLastMessage());
+	}
+	
+	@Test
+	public void basicProcedureCall() throws Exception
+	{
+		runCode("proc foo() { print 30; } print 15; foo();");
+		assertEquals("i=30", DijkstraRuntime.getLastMessage());
+	}
+	
+	@Test
+	public void basicProcedureCallArgs() throws Exception
+	{
+		runCode("proc foo(int a, int b) { print a - b; } foo(10, 20);");
+		assertEquals("i=-10", DijkstraRuntime.getLastMessage());
 	}
 
 	/** Utility **/

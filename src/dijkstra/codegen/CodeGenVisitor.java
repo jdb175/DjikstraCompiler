@@ -5,6 +5,7 @@ import static org.objectweb.asm.Opcodes.*;
 
 import java.util.Stack;
 
+import dijkstra.symbol.MethodSymbol;
 import dijkstra.symbol.Symbol;
 import dijkstra.utility.DijkstraType;
 
@@ -26,9 +27,11 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 	public ParseTreeProperty<DijkstraType> types = new ParseTreeProperty<DijkstraType>();
 	private ClassWriter cw = null;
 	private MethodVisitor mv = null;
+	private MethodVisitor oldmv = null;
 	
 	private final String DEFAULT_PACKAGE = "djkcode";
 	private String classPackage;
+	private String classNameQualified;
 	//private boolean needValue;		// used to indicate whether we need an ID value or address
 	final private Stack<Label> guardLabelStack;
 	final private Stack<DijkstraType> typeNeeded;
@@ -61,7 +64,8 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 	{
 		// prolog
 		cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES); 
-		cw.visit(V1_8, ACC_PUBLIC + ACC_STATIC, classPackage + "/" + program.ID().getText(), null, 
+		classNameQualified = classPackage + "/" + program.ID().getText();
+		cw.visit(V1_8, ACC_PUBLIC + ACC_STATIC, classNameQualified, null, 
 				"java/lang/Object", null);
 		mv = cw.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
 		mv.visitCode();
@@ -115,12 +119,12 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 			if(curSymbol != null) {
 				typeNeeded.push(curSymbol.getType());
 				exprList.expression().accept(this);	// TOS = expression value
+				typeNeeded.pop();
 				if(curSymbol.getType() == DijkstraType.FLOAT) {
 					mv.visitVarInsn(FSTORE, curSymbol.getAddress());
 				} else {
 					mv.visitVarInsn(ISTORE, curSymbol.getAddress());
 				}
-				typeNeeded.pop();
 			} else {
 				ArrayAccessorContext arr = var.arrayAccessor();
 				Symbol curArray = arrays.get(arr);
@@ -223,6 +227,46 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 			mv.visitVarInsn(ASTORE, s.getAddress());
 			idlist = idlist.idList();
 		}
+		return null;
+	}
+	
+	@Override
+	public byte[] visitProcedureDeclaration(ProcedureDeclarationContext ctx) {
+		oldmv = mv;
+		JVMInfo.enterScope();
+		MethodSymbol proc = (MethodSymbol) symbols.get(ctx);
+		mv = cw.visitMethod(ACC_PUBLIC + ACC_STATIC, proc.getName(), proc.getSignature(), null, null); 
+		mv.visitCode();
+		visitChildren(ctx);
+		mv.visitInsn(RETURN);
+		mv.visitMaxs(0, 0);
+		mv.visitEnd();
+		mv = oldmv;
+		JVMInfo.exitScope();
+		return null;
+	}
+	
+	@Override
+	public byte[] visitProcedureCall(ProcedureCallContext ctx) {
+		MethodSymbol proc = (MethodSymbol) symbols.get(ctx);
+		//put arguments
+		ArgListContext params = ctx.argList();
+		Stack<ExpressionContext> args = new Stack<ExpressionContext>();
+		while(params != null) {
+			args.push(params.expression());
+			params = params.argList();
+		}
+		int i = 0;
+		mv.visitVarInsn(ALOAD, 0);
+		while(!args.isEmpty()) {
+			typeNeeded.push(proc.getParameter(i));
+			args.pop().accept(this);
+			typeNeeded.pop();
+			++i;
+		}
+		//call
+		System.out.println(proc.getSignature());
+		mv.visitMethodInsn(INVOKESTATIC, classNameQualified, proc.getName(), proc.getSignature(), false);
 		return null;
 	}
 	

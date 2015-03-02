@@ -252,13 +252,9 @@ public class DjikstraTypeResolutionVisitor extends DijkstraBaseVisitor<DijkstraT
 	
 	@Override
 	public DijkstraType visitProcedureCall(@NotNull DijkstraParser.ProcedureCallContext ctx) {
-		DijkstraType t = functions.get(ctx).getType();
-		if(t != PROCEDURE) {
-			throw new DijkstraSymbolException("Attempted to call function " + ctx.ID().getText() + " as a procedure!");
-		}
 		//iterate over and check parameters
 		ArgListContext args = ctx.argList();
-		MethodSymbol method = (MethodSymbol) functions.get(ctx);
+		MethodSymbol method = (MethodSymbol) symbols.get(ctx);
 		int i = 0;
 		while(args != null) {
 			args.expression().accept(this);
@@ -266,8 +262,7 @@ public class DjikstraTypeResolutionVisitor extends DijkstraBaseVisitor<DijkstraT
 			++i;
 			args = args.argList();
 		}
-		types.put(ctx, t);
-		return t;
+		return null;
 	}
 	
 	@Override
