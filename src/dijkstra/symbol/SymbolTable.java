@@ -23,7 +23,8 @@ public class SymbolTable
 {
 	private final SymbolTable parent;
 	private final Map<String, Symbol> symbols;
-	private final Map<String, MethodSymbol> functionsAndProcedures;
+	private final Map<String, MethodSymbol> functions;
+	private final Map<String, MethodSymbol> procedures;
 	private final Map<String, Symbol> arrays;
 	
 	/**
@@ -35,7 +36,8 @@ public class SymbolTable
 	{
 		this.parent = parent;
 		symbols = new HashMap<String, Symbol>();
-		functionsAndProcedures = new HashMap<String, MethodSymbol>();
+		functions = new HashMap<String, MethodSymbol>();
+		procedures = new HashMap<String, MethodSymbol>();
 		arrays = new HashMap<String, Symbol>();
 	}
 	
@@ -61,9 +63,25 @@ public class SymbolTable
 	 * @return the symbol that was added
 	 * @throws DijkstraSymbolException if the symbol already exists in this table
 	 */
-	public MethodSymbol addMethod(MethodSymbol symbol) 
+	public MethodSymbol addProcedure(MethodSymbol symbol) 
 	{
-		final MethodSymbol s = functionsAndProcedures.put(symbol.getId(), symbol);
+		final MethodSymbol s = procedures.put(symbol.getId(), symbol);
+		if (s != null) {	// Symbol was already in the table
+			throw new DijkstraSymbolException(
+					"Attempting to add a duplicate symbol to a symbol table" + s.getId());
+		}
+		return symbol;
+	}
+	
+	/**
+	 * Add the specified Symbol to the current function table.
+	 * @param symbol the symbol to add to the table
+	 * @return the symbol that was added
+	 * @throws DijkstraSymbolException if the symbol already exists in this table
+	 */
+	public MethodSymbol addFunction(MethodSymbol symbol) 
+	{
+		final MethodSymbol s = functions.put(symbol.getId(), symbol);
 		if (s != null) {	// Symbol was already in the table
 			throw new DijkstraSymbolException(
 					"Attempting to add a duplicate symbol to a symbol table" + s.getId());
@@ -116,12 +134,27 @@ public class SymbolTable
 	 * @param id the desired symbol's ID
 	 * @return the symbol referenced or null if it does not exist.
 	 */
-	public MethodSymbol getMethod(String id)
+	public MethodSymbol getFunction(String id)
 	{
-		MethodSymbol symbol = functionsAndProcedures.get(id);
+		MethodSymbol symbol = functions.get(id);
 		SymbolTable st = this;
 		if (symbol == null && st.parent != null) {
-			symbol = st.parent.getMethod(id);
+			symbol = st.parent.getFunction(id);
+		}
+		return symbol;
+	}
+	
+	/**
+	 * Get the procedure symbol with the specified key in the current scope.
+	 * @param id the desired symbol's ID
+	 * @return the symbol referenced or null if it does not exist.
+	 */
+	public MethodSymbol getProcedure(String id)
+	{
+		MethodSymbol symbol = procedures.get(id);
+		SymbolTable st = this;
+		if (symbol == null && st.parent != null) {
+			symbol = st.parent.getProcedure(id);
 		}
 		return symbol;
 	}

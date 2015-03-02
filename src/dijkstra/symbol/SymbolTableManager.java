@@ -103,9 +103,24 @@ public class SymbolTableManager
 	 * @see SymbolTable#add(Symbol)
 	 * @see Symbol#Symbol(String, dijkstra.utility.DijkstraType)
 	 */
-	public MethodSymbol addMethod(String id, DijkstraType symbolType)
+	public MethodSymbol addFunction(String id, DijkstraType symbolType)
 	{
-		MethodSymbol symbol = currentSymbolTable.addMethod(new MethodSymbol(id, symbolType));
+		MethodSymbol symbol = currentSymbolTable.addFunction(new MethodSymbol(id, symbolType));
+		return symbol;
+	}
+	
+	/**
+	 * Add a symbol to the current symbol function table with the type specified.
+	 * @param id the symbol name 
+	 * @param symbolType the symbol's type
+	 * @return the added symbol
+	 * @throws DijkstraSymbolException if the symbol already exists in this table
+	 * @see SymbolTable#add(Symbol)
+	 * @see Symbol#Symbol(String, dijkstra.utility.DijkstraType)
+	 */
+	public MethodSymbol addProcedure(String id, DijkstraType symbolType)
+	{
+		MethodSymbol symbol = currentSymbolTable.addProcedure(new MethodSymbol(id, symbolType));
 		return symbol;
 	}
 
@@ -156,9 +171,20 @@ public class SymbolTableManager
 	 * @return the symbol referenced or null if it does not exist.
 	 * @see SymbolTable#getSymbol(String)
 	 */
-	public MethodSymbol getMethod(String id)
+	public MethodSymbol getFunction(String id)
 	{
-		return currentSymbolTable.getMethod(id);
+		return currentSymbolTable.getFunction(id);
+	}
+	
+	/**
+	 * Get the function symbol with the specified key in the current scope.
+	 * @param id the desired symbol's ID
+	 * @return the symbol referenced or null if it does not exist.
+	 * @see SymbolTable#getSymbol(String)
+	 */
+	public MethodSymbol getProcedure(String id)
+	{
+		return currentSymbolTable.getProcedure(id);
 	}
 	
 	/**

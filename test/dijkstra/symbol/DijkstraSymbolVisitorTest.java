@@ -299,12 +299,6 @@ public class DijkstraSymbolVisitorTest
 		assertNull(s);
 	}
 	
-	@Test(expected=DijkstraSymbolException.class)
-	public void functionAndProcSameName()
-	{
-		doSymbolTable("fun foo () : int { int a } proc foo () { int a }");
-	}
-	
 	@Test
 	public void changeScopeAtFunctionDecl()
 	{
@@ -314,7 +308,7 @@ public class DijkstraSymbolVisitorTest
 		assertEquals("b", s.getId());
 		assertEquals(INT, s.getType());
 		
-		s = stm.getMethod("foo");
+		s = stm.getFunction("foo");
 		assertNotNull(s);
 		assertEquals("foo", s.getId());
 		assertEquals(INT, s.getType());
@@ -336,7 +330,7 @@ public class DijkstraSymbolVisitorTest
 		assertEquals("b", s.getId());
 		assertEquals(INT, s.getType());
 		
-		s = stm.getMethod("foo");
+		s = stm.getFunction("foo");
 		assertNotNull(s);
 		assertEquals("foo", s.getId());
 		assertEquals(INT, s.getType());
@@ -363,7 +357,7 @@ public class DijkstraSymbolVisitorTest
 		assertEquals("b", s.getId());
 		assertEquals(INT, s.getType());
 		
-		s = stm.getMethod("foo");
+		s = stm.getProcedure("foo");
 		assertNotNull(s);
 		assertEquals("foo", s.getId());
 		assertEquals(PROCEDURE, s.getType());
@@ -390,7 +384,7 @@ public class DijkstraSymbolVisitorTest
 		assertEquals("a", s.getId());
 		assertEquals(INT, s.getType());
 		
-		s = stm.getMethod("foo");
+		s = stm.getProcedure("foo");
 		assertNotNull(s);
 		assertEquals("foo", s.getId());
 		assertEquals(PROCEDURE, s.getType());
@@ -423,7 +417,7 @@ public class DijkstraSymbolVisitorTest
 	public void recursiveFunction()
 	{
 		doSymbolTable("fun fib(n): int { if n <= 2 :: return n n > 1 :: return fib(n - 2) + fib(n - 1) fi }");
-		Symbol s = stm.getMethod("fib");
+		Symbol s = stm.getFunction("fib");
 		assertNotNull(s);
 		assertEquals("fib", s.getId());
 		assertEquals(INT, s.getType());
@@ -443,7 +437,7 @@ public class DijkstraSymbolVisitorTest
 	public void functionAndVar()
 	{
 		doSymbolTable("x <- true; fun x(n): int { return 2 }");
-		Symbol s = stm.getMethod("x");
+		Symbol s = stm.getFunction("x");
 		assertNotNull(s);
 		assertEquals("x", s.getId());
 		assertEquals(INT, s.getType());

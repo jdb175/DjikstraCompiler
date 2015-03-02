@@ -127,7 +127,7 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 	/* Scope changing declarations */
 	@Override
 	public DijkstraType visitProcedureDeclaration(@NotNull DijkstraParser.ProcedureDeclarationContext ctx) {
-		MethodSymbol symbol = stm.addMethod(ctx.ID().getText(), PROCEDURE);
+		MethodSymbol symbol = stm.addProcedure(ctx.ID().getText(), PROCEDURE);
 		symbols.put(ctx, symbol);
 		stm.enterScope();
 		//Handle parameters
@@ -147,7 +147,7 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 	@Override
 	public DijkstraType visitFunctionDeclaration(@NotNull DijkstraParser.FunctionDeclarationContext ctx) {
 		DijkstraType t = ctx.type().accept(this);
-		MethodSymbol symbol = stm.addMethod(ctx.ID().getText(), t);
+		MethodSymbol symbol = stm.addFunction(ctx.ID().getText(), t);
 		functions.put(ctx, symbol);
 		stm.enterScope();
 		//Handle parameters
@@ -244,7 +244,7 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 	
 	@Override
 	public DijkstraType visitFunctionCall(@NotNull DijkstraParser.FunctionCallContext ctx) {
-		Symbol fun = stm.getMethod(ctx.ID().getText());
+		Symbol fun = stm.getFunction(ctx.ID().getText());
 		if(fun == null) {
 			throw new DijkstraSymbolException("No function with name " + ctx.ID().getText() + " has been defined");
 		}
@@ -258,7 +258,7 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 	
 	@Override
 	public DijkstraType visitProcedureCall(@NotNull DijkstraParser.ProcedureCallContext ctx) {
-		Symbol proc = stm.getMethod(ctx.ID().getText());
+		Symbol proc = stm.getProcedure(ctx.ID().getText());
 		if(proc == null) {
 			throw new DijkstraSymbolException("No procedure with name " + ctx.ID().getText() + " has been defined");
 		}
