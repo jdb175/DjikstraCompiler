@@ -20,12 +20,12 @@ public class DjikstraTypeFinalizerVisitor extends DijkstraBaseVisitor<DijkstraTy
 	public ParseTreeProperty<Symbol> arrays = new ParseTreeProperty<Symbol>();
 	public ParseTreeProperty<DijkstraType> types = new ParseTreeProperty<DijkstraType>();
 	
-	public DjikstraTypeFinalizerVisitor(DjikstraTypeResolutionVisitor oldVisitor) {
+	public DjikstraTypeFinalizerVisitor(DjikstraTypeResolutionVisitor resolver) {
 		super();
-		symbols = oldVisitor.symbols;
-		functions = oldVisitor.functions;
-		arrays = oldVisitor.arrays;
-		types = oldVisitor.types;
+		symbols = resolver.symbols;
+		functions = resolver.functions;
+		arrays = resolver.arrays;
+		types = resolver.types;
 	}
 	
 	@Override

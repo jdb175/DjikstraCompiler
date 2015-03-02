@@ -14,6 +14,7 @@ import dijkstra.symbol.DijkstraSymbolVisitor;
 import dijkstra.symbol.SymbolTableManager;
 import dijkstra.utility.DijkstraException;
 import dijkstra.utility.DijkstraFactory;
+import djikstra.semantic.DijkstraTypeCheckVisitor;
 import djikstra.semantic.DjikstraTypeFinalizerVisitor;
 import djikstra.semantic.DjikstraTypeResolutionVisitor;
 
@@ -341,12 +342,6 @@ public class CodeGenTest extends ClassLoader {
 	}
 	
 	@Test
-	public void testArrayAccessCastExpr() throws Exception {
-		runCode("float[5.0-2.0] a; a[4.0-2.0] <- 1; print a[2]");
-		assertEquals("f=1.0", DijkstraRuntime.getLastMessage());
-	}
-	
-	@Test
 	public void testArrayAccessBoolean() throws Exception {
 		runCode("boolean[1] a; a[0] <- false; print a[0]");
 		assertEquals("b=false", DijkstraRuntime.getLastMessage());
@@ -454,6 +449,13 @@ public class CodeGenTest extends ClassLoader {
 	}
 	
 	@Test
+	public void recursiveFunction() throws Exception
+	{
+		runCode("fun ret5(int a) : int { if a >= 2 :: return a; a < 2 :: return ret5(a+1); fi } print 15; print ret5(0);");
+		assertEquals("i=2", DijkstraRuntime.getLastMessage());
+	}
+	
+	@Test
 	public void basicFunctionCallArgs() throws Exception
 	{
 		runCode("fun foo(int a, int b) : int { return a - b; } print 15; print foo(10, 20);");
@@ -473,13 +475,6 @@ public class CodeGenTest extends ClassLoader {
 		runCode("proc foo() { print true } fun foo() : boolean { return false } print foo();");
 		assertEquals("b=false", DijkstraRuntime.getLastMessage());
 	}	
-	
-	/*@Test
-	public void basicFunctionCallReturnCast() throws Exception
-	{
-		runCode("fun foo(int a, int b) : int { float c <- a - b; return c; } print 15; print foo(10.0, 20.0);");
-		assertEquals("i=-10", DijkstraRuntime.getLastMessage());
-	}*/
 	
 	/*@Test
 	public void procedureCallAccessLexicalScope() throws Exception
@@ -515,6 +510,8 @@ public class CodeGenTest extends ClassLoader {
 		}
 		DjikstraTypeFinalizerVisitor finalizer = new DjikstraTypeFinalizerVisitor(resolver);
 		tree.accept(finalizer);
+		DijkstraTypeCheckVisitor checker = new DijkstraTypeCheckVisitor(finalizer);
+		tree.accept(checker);
 		CodeGenVisitor generator = new CodeGenVisitor(finalizer);
 		code = tree.accept(generator);
 		return generator;

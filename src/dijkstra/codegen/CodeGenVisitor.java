@@ -286,7 +286,6 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 			++i;
 		}
 		//call
-		System.out.println(fun.getSignature());
 		mv.visitMethodInsn(INVOKESTATIC, classNameQualified, fun.getName(), fun.getSignature(), false);
 		return null;
 	}

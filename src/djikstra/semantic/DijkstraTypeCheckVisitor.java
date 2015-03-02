@@ -28,12 +28,12 @@ public class DijkstraTypeCheckVisitor extends DijkstraBaseVisitor<DijkstraType> 
 	public ParseTreeProperty<DijkstraType> types = new ParseTreeProperty<DijkstraType>();
 	
 	
-	public DijkstraTypeCheckVisitor(DjikstraTypeResolutionVisitor oldVisitor) {
+	public DijkstraTypeCheckVisitor(DjikstraTypeFinalizerVisitor finalizer) {
 		super();
-		symbols = oldVisitor.symbols;
-		functions = oldVisitor.functions;
-		arrays = oldVisitor.arrays;
-		types = oldVisitor.types;
+		symbols = finalizer.symbols;
+		functions = finalizer.functions;
+		arrays = finalizer.arrays;
+		types = finalizer.types;
 	}
 	
 	@Override
@@ -66,6 +66,7 @@ public class DijkstraTypeCheckVisitor extends DijkstraBaseVisitor<DijkstraType> 
 				throw new DijkstraSemanticException("Cannot use div or mod with non-integer operands");
 			}
 		}
+		visitChildren(ctx);
 		return null;
 	}
 	
@@ -76,6 +77,7 @@ public class DijkstraTypeCheckVisitor extends DijkstraBaseVisitor<DijkstraType> 
 		if(first != second) {
 			throw new DijkstraSemanticException("'=' and '~=' can only be used with operands of the same type");
 		}
+		visitChildren(ctx);
 		return null;
 	}
 	
@@ -85,6 +87,7 @@ public class DijkstraTypeCheckVisitor extends DijkstraBaseVisitor<DijkstraType> 
 		if(aType != INT) {
 			throw new DijkstraSemanticException("Arrays can only be accessed with integer types!");
 		}
+		visitChildren(ctx);
 		return null;
 	}
 }

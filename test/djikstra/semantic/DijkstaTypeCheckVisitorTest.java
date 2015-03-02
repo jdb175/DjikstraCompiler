@@ -467,7 +467,7 @@ public class DijkstaTypeCheckVisitorTest {
 		}
 		DjikstraTypeFinalizerVisitor finalizer = new DjikstraTypeFinalizerVisitor(resolver);
 		tree.accept(finalizer);
-		DijkstraTypeCheckVisitor checker = new DijkstraTypeCheckVisitor(resolver);
+		DijkstraTypeCheckVisitor checker = new DijkstraTypeCheckVisitor(finalizer);
 		tree.accept(checker);
 		return checker;
 	}
