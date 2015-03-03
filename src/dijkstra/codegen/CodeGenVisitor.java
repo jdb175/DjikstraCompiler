@@ -130,7 +130,8 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 			} else {
 				ArrayAccessorContext arr = var.arrayAccessor();
 				Symbol curArray = arrays.get(arr);
-				mv.visitVarInsn(ALOAD, curArray.getAddress());
+				//mv.visitVarInsn(ALOAD, curArray.getAddress());
+				getArray(curArray);
 				typeNeeded.push(INT);
 				arr.expression().accept(this);
 				typeNeeded.pop();
@@ -229,7 +230,7 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 			} else {
 				mv.visitIntInsn(NEWARRAY, T_INT);
 			}
-			mv.visitVarInsn(ASTORE, s.getAddress());
+			createArray(s);
 			idlist = idlist.idList();
 		}
 		return null;
@@ -627,7 +628,8 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 	public byte[] visitArrayAccess(ArrayAccessContext ctx) {
 		Symbol s = arrays.get(ctx.arrayAccessor());
 		DijkstraType t = types.get(ctx);
-		mv.visitVarInsn(ALOAD, s.getAddress());
+		//mv.visitVarInsn(ALOAD, s.getAddress());
+		getArray(s);
 		typeNeeded.push(INT);
 		ctx.arrayAccessor().expression().accept(this);
 		typeNeeded.pop();
@@ -649,6 +651,27 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 		}
 	}
 	
+	
+	public void getArray(Symbol s) {
+		if(s.isLocal()) {
+			//use locals if in method
+			mv.visitVarInsn(ALOAD, s.getAddress());
+		} else {
+			mv.visitFieldInsn(GETSTATIC, classNameQualified, s.getFieldName(), "["+s.getTypeID());
+		}
+	}
+	
+	public void createArray(Symbol s) {
+		if(s.isLocal()) {
+			mv.visitVarInsn(ASTORE, s.getAddress());
+		} else {
+			FieldVisitor fv = cw.visitField(ACC_PUBLIC + ACC_STATIC, s.getFieldName(), "["+s.getTypeID(), null, null);
+			fv.visitEnd();
+			s.isField(true);
+			mv.visitFieldInsn(PUTSTATIC, classNameQualified, s.getFieldName(), "["+s.getTypeID());
+		}
+	}
+	
 	public void getSymbol(Symbol s) {
 		if(s.isLocal()) {
 			//use locals if in method
@@ -666,6 +689,7 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 			mv.visitFieldInsn(GETSTATIC, classNameQualified, s.getFieldName(), s.getTypeID());
 		}
 	}
+
 	
 	public void putSymbol(Symbol s) {
 		if(s.isLocal()) {

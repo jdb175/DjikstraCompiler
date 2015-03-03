@@ -1,11 +1,13 @@
 package dijkstra.fun;
 
 public class funnin {
-	int[] a = new int[2];
+	public static boolean[] a;
 	public static int b;
 	
-	public int fun () {	
-		return b;
+	public int fun () {
+		a = new boolean[2];
+		a[0] = true;
+		return 1;
 	}
 	
 	public void foo () {

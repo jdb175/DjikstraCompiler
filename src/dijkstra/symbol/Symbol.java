@@ -221,7 +221,6 @@ public class Symbol
 			case FLOAT:
 				return "F";
 			case BOOLEAN:
-				return "Z";
 			case INT:
 				return "I";
 			default:
