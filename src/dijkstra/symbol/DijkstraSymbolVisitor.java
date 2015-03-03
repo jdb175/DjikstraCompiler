@@ -130,6 +130,7 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 		MethodSymbol symbol = stm.addProcedure(ctx.ID().getText(), PROCEDURE);
 		symbols.put(ctx, symbol);
 		stm.enterScope();
+		stm.inMethod = true;
 		//Handle parameters
 		ParameterListContext param = ctx.parameterList();
 		while(param != null) {
@@ -139,6 +140,7 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 		}
 		//Visit body
 		ctx.compoundStatement().accept(this);
+		stm.inMethod = false;
 		stm.exitScope();
 		return null;
 	}
@@ -150,6 +152,7 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 		MethodSymbol symbol = stm.addFunction(ctx.ID().getText(), t);
 		functions.put(ctx, symbol);
 		stm.enterScope();
+		stm.inMethod = true;
 		//Handle parameters
 		ParameterListContext param = ctx.parameterList();
 		while(param != null) {
@@ -159,6 +162,7 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 		}
 		//Visit body
 		ctx.compoundStatement().accept(this);
+		stm.inMethod = false;
 		stm.exitScope();
 		return null;
 	}

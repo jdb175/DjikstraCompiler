@@ -28,6 +28,7 @@ public class Symbol
 	private int address;
 	private String fieldName;
 	private boolean isField;
+	private boolean isLocal;
 	public static final int NO_ADDRESS = Integer.MIN_VALUE	;
 	private static int curFieldNum = 0;
 
@@ -36,9 +37,9 @@ public class Symbol
 	 * Constructor that creates the Symbol with the name, and an UNDEFINED type.
 	 * @param id the symbol name
 	 */
-	public Symbol(String id)
+	public Symbol(String id, boolean isLocal)
 	{
-		this(id, UNDEFINED);
+		this(id, UNDEFINED, isLocal);
 	}
 	
 	/**
@@ -46,7 +47,7 @@ public class Symbol
 	 * @param id the symbol name
 	 * @param type the type assigned to the symbol
 	 */
-	public Symbol(String id, DijkstraType type)
+	public Symbol(String id, DijkstraType type, boolean isLocal)
 	{
 		if(type == null) {
 			type = UNDEFINED;
@@ -57,6 +58,7 @@ public class Symbol
 		this.type = type;
 		this.value = null;
 		this.fieldName = null;
+		this.isLocal = isLocal;
 	}
 
 	/**
@@ -248,5 +250,9 @@ public class Symbol
 
 	public void isField(boolean b) {
 		this.isField = b;
+	}
+
+	public boolean isLocal() {
+		return isLocal;
 	}
 }

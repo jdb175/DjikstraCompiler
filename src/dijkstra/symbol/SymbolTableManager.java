@@ -25,6 +25,7 @@ public class SymbolTableManager
 	private SymbolTable currentSymbolTable;
 	private final ArrayList<SymbolTable> tables;
 	public final Map<Integer, Symbol> symbols;
+	public boolean inMethod = false;
 	
 	/**
 	 * Constructor that sets up the initial (global) symbol table.
@@ -90,7 +91,7 @@ public class SymbolTableManager
 	 */
 	public Symbol add(String id)
 	{
-		Symbol symbol = currentSymbolTable.add(new Symbol(id));
+		Symbol symbol = currentSymbolTable.add(new Symbol(id, inMethod));
 		return symbol;
 	}
 	
@@ -105,7 +106,7 @@ public class SymbolTableManager
 	 */
 	public MethodSymbol addFunction(String id, DijkstraType symbolType)
 	{
-		MethodSymbol symbol = currentSymbolTable.addFunction(new MethodSymbol(id, symbolType));
+		MethodSymbol symbol = currentSymbolTable.addFunction(new MethodSymbol(id, symbolType, inMethod));
 		return symbol;
 	}
 	
@@ -120,7 +121,7 @@ public class SymbolTableManager
 	 */
 	public MethodSymbol addProcedure(String id, DijkstraType symbolType)
 	{
-		MethodSymbol symbol = currentSymbolTable.addProcedure(new MethodSymbol(id, symbolType));
+		MethodSymbol symbol = currentSymbolTable.addProcedure(new MethodSymbol(id, symbolType, inMethod));
 		return symbol;
 	}
 
@@ -135,7 +136,7 @@ public class SymbolTableManager
 	 */
 	public Symbol addArray(String id, DijkstraType symbolType)
 	{
-		Symbol symbol = currentSymbolTable.addArray(new Symbol(id, symbolType));
+		Symbol symbol = currentSymbolTable.addArray(new Symbol(id, symbolType, inMethod));
 		return symbol;
 	}
 	
@@ -150,7 +151,7 @@ public class SymbolTableManager
 	 */
 	public Symbol add(String id, DijkstraType symbolType)
 	{
-		Symbol symbol = currentSymbolTable.add(new Symbol(id, symbolType));
+		Symbol symbol = currentSymbolTable.add(new Symbol(id, symbolType, inMethod));
 		return symbol;
 	}
 	

@@ -12,8 +12,8 @@ import dijkstra.utility.DijkstraType;
 public class MethodSymbol extends Symbol {
 	List<DijkstraType> parameterList;
 
-	public MethodSymbol(String id, DijkstraType type) {
-		super(id, type);
+	public MethodSymbol(String id, DijkstraType type, boolean isLocal) {
+		super(id, type, isLocal);
 		this.parameterList = new ArrayList<DijkstraType>();
 	}
 	

@@ -476,12 +476,12 @@ public class CodeGenTest extends ClassLoader {
 		assertEquals("b=false", DijkstraRuntime.getLastMessage());
 	}	
 	
-	/*@Test
+	@Test
 	public void procedureCallAccessLexicalScope() throws Exception
 	{
 		runCode("a <- 10 proc foo(int b) { print a - b; } foo(20);");
 		assertEquals("i=-10", DijkstraRuntime.getLastMessage());
-	}*/
+	}
 
 	/** Utility **/
 	private void makeParser(String inputText)

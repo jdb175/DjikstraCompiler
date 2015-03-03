@@ -650,7 +650,7 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 	}
 	
 	public void getSymbol(Symbol s) {
-		if(oldmv != null) {
+		if(s.isLocal()) {
 			//use locals if in method
 			if(s.getType() == DijkstraType.FLOAT) {
 				mv.visitVarInsn(FLOAD, s.getAddress());
@@ -668,7 +668,7 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 	}
 	
 	public void putSymbol(Symbol s) {
-		if(oldmv != null) {
+		if(s.isLocal()) {
 			//use locals if in method
 			if(s.getType() == DijkstraType.FLOAT) {
 				mv.visitVarInsn(FSTORE, s.getAddress());

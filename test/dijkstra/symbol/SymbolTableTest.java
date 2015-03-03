@@ -22,9 +22,9 @@ import static dijkstra.utility.DijkstraType.*;
 public class SymbolTableTest
 {
 	private SymbolTable st, st1;
-	private Symbol a = new Symbol("a"),
-			b = new Symbol("b"),
-			c = new Symbol("c");
+	private Symbol a = new Symbol("a", true),
+			b = new Symbol("b", true),
+			c = new Symbol("c", true);
 	@Before
 	public void setup()
 	{
@@ -57,7 +57,7 @@ public class SymbolTableTest
 	public void shadowSymbol()
 	{
 		st.add(a);
-		final Symbol symbol = new Symbol("a");
+		final Symbol symbol = new Symbol("a", true);
 		st1.add(symbol);
 		final Symbol symbol1 = st1.getSymbol("a");
 		assertEquals(a, symbol1);
@@ -77,6 +77,6 @@ public class SymbolTableTest
 	public void addDuplicateSymbol()
 	{
 		st.add(a);
-		st.add(new Symbol("a"));
+		st.add(new Symbol("a", true));
 	}
 }
