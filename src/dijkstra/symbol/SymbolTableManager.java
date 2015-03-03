@@ -25,8 +25,8 @@ public class SymbolTableManager
 	private SymbolTable currentSymbolTable;
 	private final ArrayList<SymbolTable> tables;
 	public final Map<Integer, Symbol> symbols;
-	public boolean inMethod = false;
-	
+	private boolean inMethod = false;
+
 	/**
 	 * Constructor that sets up the initial (global) symbol table.
 	 */
@@ -215,6 +215,14 @@ public class SymbolTableManager
 	public SymbolTable getSymbolTable(int i)
 	{
 		return tables.get(i);
+	}
+	
+	/**
+	 * Sets the
+	 * @param inMethod
+	 */
+	public void setInMethod(boolean inMethod) {
+		this.inMethod = inMethod;
 	}
 	
 	public void reset()

@@ -27,7 +27,7 @@ public class Symbol
 	private String value;
 	private int address;
 	private String fieldName;
-	private boolean isField;
+	private boolean isFieldInitialized;
 	private boolean isLocal;
 	public static final int NO_ADDRESS = Integer.MIN_VALUE	;
 	private static int curFieldNum = 0;
@@ -54,7 +54,7 @@ public class Symbol
 		}
 		this.address = NO_ADDRESS;
 		this.id = id;
-		this.isField = false;
+		this.isFieldInitialized = false;
 		this.type = type;
 		this.value = null;
 		this.fieldName = null;
@@ -216,6 +216,12 @@ public class Symbol
 		return type != old;
 	}
 	
+	/**
+	 * Returns the equivalent type indicator for given type. Booleans are treated
+	 * as integers
+	 * @param type type to convert
+	 * @return JVM indicator of type
+	 */
 	public String convertType(DijkstraType type) {
 		switch (type) {
 			case FLOAT:
@@ -228,14 +234,24 @@ public class Symbol
 		}
 	}
 	
+	/**
+	 * Gets a unique name for this field
+	 * @return
+	 */
 	private static String getNewFieldName() {
 		return String.valueOf(++curFieldNum);
 	}
 	
-	public boolean isField() {
-		return isField;
+	/**
+	 * @return whether this symbol has been initialized as a field
+	 */
+	public boolean fieldInitialized() {
+		return isFieldInitialized;
 	}
 	
+	/**
+	 * @return get the field name of this symbol
+	 */
 	public String getFieldName() {
 		if(fieldName == null) {
 			fieldName = getNewFieldName();
@@ -243,14 +259,24 @@ public class Symbol
 		return fieldName;
 	}
 
+	/**
+	 * @return the JVM type identifier for this symbol
+	 */
 	public String getTypeID() {
 		return convertType(this.type);
 	}
 
-	public void isField(boolean b) {
-		this.isField = b;
+	/**
+	 * Sets the field initialized value of this symbol
+	 * @param b
+	 */
+	public void setFieldInitialized(boolean b) {
+		this.isFieldInitialized = b;
 	}
 
+	/**
+	 * @return whether this symbol is a local variable
+	 */
 	public boolean isLocal() {
 		return isLocal;
 	}

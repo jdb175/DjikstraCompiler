@@ -674,7 +674,7 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 		} else {
 			FieldVisitor fv = cw.visitField(ACC_PUBLIC + ACC_STATIC, s.getFieldName(), "["+s.getTypeID(), null, null);
 			fv.visitEnd();
-			s.isField(true);
+			s.setFieldInitialized(true);
 			mv.visitFieldInsn(PUTSTATIC, classNameQualified, s.getFieldName(), "["+s.getTypeID());
 		}
 	}
@@ -688,10 +688,10 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 				mv.visitVarInsn(ILOAD, s.getAddress());
 			}
 		} else {
-			if(!s.isField()){
+			if(!s.fieldInitialized()){
 				FieldVisitor fv = cw.visitField(ACC_PUBLIC + ACC_STATIC, s.getFieldName(), s.getTypeID(), null, null);
 				fv.visitEnd();
-				s.isField(true);
+				s.setFieldInitialized(true);
 			}
 			mv.visitFieldInsn(GETSTATIC, classNameQualified, s.getFieldName(), s.getTypeID());
 		}
@@ -707,10 +707,10 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 				mv.visitVarInsn(ISTORE, s.getAddress());
 			}
 		} else {
-			if(!s.isField()){
+			if(!s.fieldInitialized()){
 				FieldVisitor fv = cw.visitField(ACC_PUBLIC + ACC_STATIC, s.getFieldName(), s.getTypeID(), null, null);
 				fv.visitEnd();
-				s.isField(true);
+				s.setFieldInitialized(true);
 			}
 			mv.visitFieldInsn(PUTSTATIC, classNameQualified, s.getFieldName(), s.getTypeID());
 		}
