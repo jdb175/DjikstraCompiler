@@ -50,11 +50,23 @@ public class CodeGenTest extends ClassLoader {
 		assertEquals("i=1", DijkstraRuntime.getLastMessage());
 	}
 	
-	/*@Test
+	@Test
 	public void simultaneousAssign() throws Exception {
 		runCode("a, b <- 1, 2; a, b <- b, a; print a;");
 		assertEquals("i=2", DijkstraRuntime.getLastMessage());
-	}*/
+	}
+	
+	@Test
+	public void simultaneousAssignArrays() throws Exception {
+		runCode("int[1] a; int[1] b; a[0] <- 1; b[0] <- 2; a[0], b[0] <- b[0], a[0]; print a[0];");
+		assertEquals("i=2", DijkstraRuntime.getLastMessage());
+	}
+	
+	@Test
+	public void simultaneousAssignMix() throws Exception {
+		runCode("int[1] a; a[0] <- 1; b <- 2; a[0], b <- b, a[0]; print a[0];");
+		assertEquals("i=2", DijkstraRuntime.getLastMessage());
+	}
 	
 	@Test
 	public void testAssignI2F() throws Exception {
@@ -445,6 +457,13 @@ public class CodeGenTest extends ClassLoader {
 	public void basicFunctionCall() throws Exception
 	{
 		runCode("fun foo() : int { return 30; } print 15; print foo();");
+		assertEquals("i=30", DijkstraRuntime.getLastMessage());
+	}
+	
+	@Test
+	public void basicFunctionCallArray() throws Exception
+	{
+		runCode("fun foo() : int { int[1] b; b[0] <- 30; return b[0]; } print 15; print foo();");
 		assertEquals("i=30", DijkstraRuntime.getLastMessage());
 	}
 	

@@ -114,23 +114,20 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 		//iterate over var list and expressionList
 		VarListContext varList = ctx.varList();
 		ExpressionListContext exprList = ctx.expressionList();
+		Stack<Symbol> assignees = new Stack<Symbol>();
+		Stack<Boolean> isArrays = new Stack<Boolean>();
 		while(varList != null) {				
 			VarContext var = varList.var();
 			Symbol curSymbol = symbols.get(var);
 			if(curSymbol != null) {
 				typeNeeded.push(curSymbol.getType());
-				exprList.expression().accept(this);	// TOS = expression value
+				exprList.expression().accept(this);
 				typeNeeded.pop();
-				/*if(curSymbol.getType() == DijkstraType.FLOAT) {
-					mv.visitVarInsn(FSTORE, curSymbol.getAddress());
-				} else {
-					mv.visitVarInsn(ISTORE, curSymbol.getAddress());
-				}*/
-				putSymbol(curSymbol);
+				assignees.push(curSymbol);
+				isArrays.push(false);
 			} else {
 				ArrayAccessorContext arr = var.arrayAccessor();
 				Symbol curArray = arrays.get(arr);
-				//mv.visitVarInsn(ALOAD, curArray.getAddress());
 				getArray(curArray);
 				typeNeeded.push(INT);
 				arr.expression().accept(this);
@@ -138,14 +135,24 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 				typeNeeded.push(curArray.getType());
 				exprList.expression().accept(this);
 				typeNeeded.pop();
-				if(curArray.getType() == DijkstraType.FLOAT) {
+				assignees.push(curArray);
+				isArrays.push(true);
+			}
+			varList = varList.varList();
+			exprList = exprList.expressionList();
+		}
+		while(!assignees.isEmpty()) {
+			Symbol cur = assignees.pop();
+			Boolean isArray = isArrays.pop();
+			if(isArray) {
+				if(cur.getType() == DijkstraType.FLOAT) {
 					mv.visitInsn(FASTORE);
 				} else {
 					mv.visitInsn(IASTORE);
 				}
+			} else {
+				putSymbol(cur);
 			}
-			varList = varList.varList();
-			exprList = exprList.expressionList();
 		}
 				
 		return null;
