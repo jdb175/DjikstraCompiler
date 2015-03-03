@@ -2,10 +2,10 @@ package dijkstra.fun;
 
 public class funnin {
 	int[] a = new int[2];
-	int b;
+	public static int b;
 	
 	public int fun () {	
-		return 1;
+		return b;
 	}
 	
 	public void foo () {

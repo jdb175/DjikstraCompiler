@@ -59,18 +59,4 @@ public class MethodSymbol extends Symbol {
 		str.append(convertType(this.getType()));
 		return str.toString();
 	}
-	
-	public char convertType(DijkstraType type) {
-		switch (type) {
-			case FLOAT:
-				return 'F';
-			case BOOLEAN:
-				return 'Z';
-			case INT:
-				return 'I';
-			default:
-				return 'V';
-		}
-	}
-
 }

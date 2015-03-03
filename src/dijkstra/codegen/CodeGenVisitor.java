@@ -12,6 +12,7 @@ import dijkstra.utility.DijkstraType;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 
@@ -120,11 +121,12 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 				typeNeeded.push(curSymbol.getType());
 				exprList.expression().accept(this);	// TOS = expression value
 				typeNeeded.pop();
-				if(curSymbol.getType() == DijkstraType.FLOAT) {
+				/*if(curSymbol.getType() == DijkstraType.FLOAT) {
 					mv.visitVarInsn(FSTORE, curSymbol.getAddress());
 				} else {
 					mv.visitVarInsn(ISTORE, curSymbol.getAddress());
-				}
+				}*/
+				putSymbol(curSymbol);
 			} else {
 				ArrayAccessorContext arr = var.arrayAccessor();
 				Symbol curArray = arrays.get(arr);
@@ -163,15 +165,18 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 			if (s.getType() == INT) {
 				mv.visitMethodInsn(INVOKESTATIC, "dijkstra/runtime/DijkstraRuntime", "inputInt", 
 						"(Ljava/lang/String;)I", false);
-				mv.visitVarInsn(ISTORE, s.getAddress());
+				//mv.visitVarInsn(ISTORE, s.getAddress());
+				putSymbol(s);
 			} else if (s.getType() == DijkstraType.FLOAT) {
 				mv.visitMethodInsn(INVOKESTATIC, "dijkstra/runtime/DijkstraRuntime", "inputFloat", 
 						"(Ljava/lang/String;)F", false);
-				mv.visitVarInsn(FSTORE, s.getAddress());
+				//mv.visitVarInsn(FSTORE, s.getAddress());
+				putSymbol(s);
 			} else {
 				mv.visitMethodInsn(INVOKESTATIC, "dijkstra/runtime/DijkstraRuntime", "inputBoolean", 
 						"(Ljava/lang/String;)Z", false);
-				mv.visitVarInsn(ISTORE, s.getAddress());
+				//mv.visitVarInsn(ISTORE, s.getAddress());
+				putSymbol(s);
 			}
 		}
 		return null;
@@ -242,6 +247,7 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 		mv.visitMaxs(0, 0);
 		mv.visitEnd();
 		mv = oldmv;
+		oldmv = null;
 		JVMInfo.exitScope();
 		return null;
 	}
@@ -263,6 +269,7 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 		mv.visitMaxs(0, 0);
 		mv.visitEnd();
 		mv = oldmv;
+		oldmv = null;
 		JVMInfo.exitScope();
 		return null;
 	}
@@ -309,7 +316,6 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 			++i;
 		}
 		//call
-		System.out.println(proc.getSignature());
 		mv.visitMethodInsn(INVOKESTATIC, classNameQualified, proc.getName(), proc.getSignature(), false);
 		return null;
 	}
@@ -581,11 +587,12 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 	@Override
 	public byte[] visitIdexp(IdexpContext ctx) {
 		Symbol symbol = symbols.get(ctx);
-		if(symbol.getType() == DijkstraType.FLOAT) {
+		/*if(symbol.getType() == DijkstraType.FLOAT) {
 			mv.visitVarInsn(FLOAD, symbol.getAddress());
 		} else {
 			mv.visitVarInsn(ILOAD, symbol.getAddress());
-		}
+		}*/
+		getSymbol(symbol);
 		cast(symbol.getType());
 		return null;
 	}
@@ -639,6 +646,42 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 			mv.visitInsn(I2F);
 		} else if (from == DijkstraType.FLOAT && to == DijkstraType.INT){
 			mv.visitInsn(F2I);
+		}
+	}
+	
+	public void getSymbol(Symbol s) {
+		if(oldmv != null) {
+			//use locals if in method
+			if(s.getType() == DijkstraType.FLOAT) {
+				mv.visitVarInsn(FLOAD, s.getAddress());
+			} else {
+				mv.visitVarInsn(ILOAD, s.getAddress());
+			}
+		} else {
+			if(!s.isField()){
+				FieldVisitor fv = cw.visitField(ACC_PUBLIC + ACC_STATIC, s.getFieldName(), s.getTypeID(), null, null);
+				fv.visitEnd();
+				s.isField(true);
+			}
+			mv.visitFieldInsn(GETSTATIC, classNameQualified, s.getFieldName(), s.getTypeID());
+		}
+	}
+	
+	public void putSymbol(Symbol s) {
+		if(oldmv != null) {
+			//use locals if in method
+			if(s.getType() == DijkstraType.FLOAT) {
+				mv.visitVarInsn(FSTORE, s.getAddress());
+			} else {
+				mv.visitVarInsn(ISTORE, s.getAddress());
+			}
+		} else {
+			if(!s.isField()){
+				FieldVisitor fv = cw.visitField(ACC_PUBLIC + ACC_STATIC, s.getFieldName(), s.getTypeID(), null, null);
+				fv.visitEnd();
+				s.isField(true);
+			}
+			mv.visitFieldInsn(PUTSTATIC, classNameQualified, s.getFieldName(), s.getTypeID());
 		}
 	}
 }

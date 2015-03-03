@@ -26,7 +26,10 @@ public class Symbol
 	private DijkstraType type;
 	private String value;
 	private int address;
+	private String fieldName;
+	private boolean isField;
 	public static final int NO_ADDRESS = Integer.MIN_VALUE	;
+	private static int curFieldNum = 0;
 
 	
 	/**
@@ -50,8 +53,10 @@ public class Symbol
 		}
 		this.address = NO_ADDRESS;
 		this.id = id;
+		this.isField = false;
 		this.type = type;
 		this.value = null;
+		this.fieldName = null;
 	}
 
 	/**
@@ -207,5 +212,41 @@ public class Symbol
 			}
 		} 
 		return type != old;
+	}
+	
+	public String convertType(DijkstraType type) {
+		switch (type) {
+			case FLOAT:
+				return "F";
+			case BOOLEAN:
+				return "Z";
+			case INT:
+				return "I";
+			default:
+				return "V";
+		}
+	}
+	
+	private static String getNewFieldName() {
+		return String.valueOf(++curFieldNum);
+	}
+	
+	public boolean isField() {
+		return isField;
+	}
+	
+	public String getFieldName() {
+		if(fieldName == null) {
+			fieldName = getNewFieldName();
+		}
+		return fieldName;
+	}
+
+	public String getTypeID() {
+		return convertType(this.type);
+	}
+
+	public void isField(boolean b) {
+		this.isField = b;
 	}
 }
