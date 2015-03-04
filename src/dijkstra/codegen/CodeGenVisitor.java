@@ -251,11 +251,11 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 		mv = cw.visitMethod(ACC_PUBLIC + ACC_STATIC, proc.getName(), proc.getSignature(), null, null); 
 		mv.visitCode();
 		visitChildren(ctx);
+		//In case of fallthrough in control, just to compile
 		mv.visitInsn(RETURN);
 		mv.visitMaxs(0, 0);
 		mv.visitEnd();
 		mv = oldmv;
-		oldmv = null;
 		JVMInfo.exitScope();
 		return null;
 	}
@@ -268,17 +268,27 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 		mv = cw.visitMethod(ACC_PUBLIC + ACC_STATIC, fun.getName(), fun.getSignature(), null, null); 
 		mv.visitCode();
 		visitChildren(ctx);
-		if(fun.getType() == DijkstraType.FLOAT) {
-			mv.visitInsn(FRETURN);
-		} else {
-			mv.visitInsn(IRETURN);
-
-		}
+		//In case of fallthrough in control, just to compile
+		mv.visitIntInsn(BIPUSH, ctx.getStart().getLine());
+		mv.visitMethodInsn(INVOKESTATIC, "dijkstra/runtime/DijkstraRuntime", 
+				"abortNoFunctionReturn", "(I)V", false);
+		mv.visitInsn(ICONST_1);
+		mv.visitInsn(IRETURN);
 		mv.visitMaxs(0, 0);
 		mv.visitEnd();
 		mv = oldmv;
-		oldmv = null;
 		JVMInfo.exitScope();
+		return null;
+	}
+	
+	@Override
+	public byte[] visitReturnStatement(ReturnStatementContext ctx) {
+		ctx.expression().accept(this);
+		if(types.get(ctx) == DijkstraType.FLOAT) {
+			mv.visitInsn(FRETURN);
+		} else {
+			mv.visitInsn(IRETURN);
+		}
 		return null;
 	}
 	
@@ -293,7 +303,6 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 			params = params.argList();
 		}
 		int i = 0;
-		mv.visitVarInsn(ALOAD, 0);
 		while(!args.isEmpty()) {
 			typeNeeded.push(fun.getParameter(i));
 			args.pop().accept(this);
@@ -316,7 +325,6 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 			params = params.argList();
 		}
 		int i = 0;
-		mv.visitVarInsn(ALOAD, 0);
 		while(!args.isEmpty()) {
 			typeNeeded.push(proc.getParameter(i));
 			args.pop().accept(this);
@@ -595,11 +603,6 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 	@Override
 	public byte[] visitIdexp(IdexpContext ctx) {
 		Symbol symbol = symbols.get(ctx);
-		/*if(symbol.getType() == DijkstraType.FLOAT) {
-			mv.visitVarInsn(FLOAD, symbol.getAddress());
-		} else {
-			mv.visitVarInsn(ILOAD, symbol.getAddress());
-		}*/
 		getSymbol(symbol);
 		cast(symbol.getType());
 		return null;

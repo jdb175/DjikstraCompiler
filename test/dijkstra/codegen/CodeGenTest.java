@@ -467,12 +467,19 @@ public class CodeGenTest extends ClassLoader {
 		assertEquals("i=30", DijkstraRuntime.getLastMessage());
 	}
 	
-	/*@Test
-	pblic void recursiveFunction() throws Exception
+	@Test
+	public void recursiveFunction() throws Exception
 	{
-		runCode("fun ret5(int a) : int { if a >= 2 :: return a; a < 2 :: return ret5(a+1); fi } print 15; print ret5(0);");
-		assertEquals("i=2", DijkstraRuntime.getLastMessage());
-	}*/
+		runCode("fun ret5(int a) : int { if a >= 5 :: return a; a < 5 :: return ret5(5); fi } print 15; print ret5(0);");
+		assertEquals("i=5", DijkstraRuntime.getLastMessage());
+	}
+	
+	@Test(expected=InvocationTargetException.class)
+	public void functionNoReturn() throws Exception
+	{
+		runCode("fun noRet(int a) : int { print a; } a <- noRet(2);");
+		assertEquals("i=5", DijkstraRuntime.getLastMessage());
+	}
 	
 	@Test
 	public void basicFunctionCallArgs() throws Exception
@@ -501,6 +508,14 @@ public class CodeGenTest extends ClassLoader {
 		runCode("a <- 10 proc foo(int b) { print a - b; } foo(20);");
 		assertEquals("i=-10", DijkstraRuntime.getLastMessage());
 	}
+	
+	@Test
+	public void procedureCallAccessLexicalScopeArray() throws Exception
+	{
+		runCode("int[1] a; a[0] <- 10 proc foo(int b) { print a[0] - b; } foo(20);");
+		assertEquals("i=-10", DijkstraRuntime.getLastMessage());
+	}
+
 
 	/** Utility **/
 	private void makeParser(String inputText)

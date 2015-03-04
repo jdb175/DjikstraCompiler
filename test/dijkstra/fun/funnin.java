@@ -4,13 +4,15 @@ public class funnin {
 	public static boolean[] a;
 	public static int b;
 	
-	public int fun () {
-		a = new boolean[2];
-		a[0] = true;
-		return 1;
+	public static int fun (int a) {
+		if(a < 5) {
+			return fun(a+1);
+		} else {
+			return a;
+		}
 	}
 	
-	public void foo () {
-		fun();
+	public int fun2 () {
+		return fun(3);
 	}
 }

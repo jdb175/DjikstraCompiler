@@ -53,6 +53,7 @@ public class DijkstraTypeCheckVisitor extends DijkstraBaseVisitor<DijkstraType> 
 		if(t != types.get(ctx.expression())) {
 			throw new DijkstraSemanticException("Invalid return type, must be " + t);
 		}
+		types.put(ctx, t);
 		ctx.expression().accept(this);
 		return t;
 	}

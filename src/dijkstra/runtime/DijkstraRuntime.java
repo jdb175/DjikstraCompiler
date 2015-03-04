@@ -126,6 +126,13 @@ public class DijkstraRuntime
 		System.err.println(msg);
 		throw new DijkstraException(msg);
 	}
+	
+	public static void abortNoFunctionReturn(int lineNo)
+	{
+		String msg = "No return statement in function at (line " + lineNo + ")";
+		System.err.println(msg);
+		throw new DijkstraException(msg);
+	}
 
 	/**
 	 * @return the lastMessage
