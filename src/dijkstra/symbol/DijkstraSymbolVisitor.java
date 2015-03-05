@@ -6,8 +6,8 @@ import org.antlr.v4.runtime.tree.ParseTreeProperty;
 import dijkstra.lexparse.DijkstraBaseVisitor;
 import dijkstra.lexparse.DijkstraParser;
 import dijkstra.lexparse.DijkstraParser.*;
+import dijkstra.semantic.DijkstraSemanticException;
 import dijkstra.utility.DijkstraType;
-import djikstra.semantic.DijkstraSemanticException;
 import static dijkstra.utility.DijkstraType.*;
 
 public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {

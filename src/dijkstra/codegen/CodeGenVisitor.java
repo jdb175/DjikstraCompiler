@@ -5,6 +5,7 @@ import static org.objectweb.asm.Opcodes.*;
 
 import java.util.Stack;
 
+import dijkstra.semantic.DjikstraTypeFinalizerVisitor;
 import dijkstra.symbol.MethodSymbol;
 import dijkstra.symbol.Symbol;
 import dijkstra.utility.DijkstraType;
@@ -19,7 +20,6 @@ import org.objectweb.asm.MethodVisitor;
 import dijkstra.lexparse.DijkstraBaseVisitor;
 import dijkstra.lexparse.DijkstraParser;
 import dijkstra.lexparse.DijkstraParser.*;
-import djikstra.semantic.DjikstraTypeFinalizerVisitor;
 
 public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 	public ParseTreeProperty<Symbol> symbols = new ParseTreeProperty<Symbol>();

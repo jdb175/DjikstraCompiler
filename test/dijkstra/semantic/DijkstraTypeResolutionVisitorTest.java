@@ -19,14 +19,14 @@ import org.junit.*;
 
 import dijkstra.lexparse.*;
 import dijkstra.lexparse.DijkstraParser.*;
+import dijkstra.semantic.DijkstraSemanticException;
+import dijkstra.semantic.DjikstraTypeResolutionVisitor;
 import dijkstra.symbol.DijkstraSymbolException;
 import dijkstra.symbol.DijkstraSymbolVisitor;
 import dijkstra.symbol.Symbol;
 import dijkstra.symbol.SymbolTable;
 import dijkstra.symbol.SymbolTableManager;
 import dijkstra.utility.*;
-import djikstra.semantic.DijkstraSemanticException;
-import djikstra.semantic.DjikstraTypeResolutionVisitor;
 import static dijkstra.utility.DijkstraType.*;
 
 /**

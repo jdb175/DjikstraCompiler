@@ -6,11 +6,11 @@ import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import dijkstra.lexparse.DijkstraParser;
+import dijkstra.semantic.DijkstraTypeCheckVisitor;
+import dijkstra.semantic.DjikstraTypeFinalizerVisitor;
+import dijkstra.semantic.DjikstraTypeResolutionVisitor;
 import dijkstra.symbol.DijkstraSymbolVisitor;
 import dijkstra.symbol.SymbolTableManager;
-import djikstra.semantic.DijkstraTypeCheckVisitor;
-import djikstra.semantic.DjikstraTypeFinalizerVisitor;
-import djikstra.semantic.DjikstraTypeResolutionVisitor;
 
 public class TypeCheckRunner {
 	

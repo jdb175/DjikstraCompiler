@@ -19,8 +19,8 @@ import org.junit.*;
 
 import dijkstra.lexparse.*;
 import dijkstra.lexparse.DijkstraParser.*;
+import dijkstra.semantic.DijkstraSemanticException;
 import dijkstra.utility.*;
-import djikstra.semantic.DijkstraSemanticException;
 import static dijkstra.utility.DijkstraType.*;
 
 /**

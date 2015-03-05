@@ -8,14 +8,14 @@ import org.junit.Before;
 import org.junit.Test;
 
 import dijkstra.lexparse.DijkstraParser;
+import dijkstra.semantic.DijkstraSemanticException;
+import dijkstra.semantic.DijkstraTypeCheckVisitor;
+import dijkstra.semantic.DjikstraTypeFinalizerVisitor;
+import dijkstra.semantic.DjikstraTypeResolutionVisitor;
 import dijkstra.symbol.DijkstraSymbolVisitor;
 import dijkstra.symbol.SymbolTableManager;
 import dijkstra.utility.DijkstraFactory;
 import dijkstra.utility.TypeCheckRunner;
-import djikstra.semantic.DijkstraTypeCheckVisitor;
-import djikstra.semantic.DijkstraSemanticException;
-import djikstra.semantic.DjikstraTypeFinalizerVisitor;
-import djikstra.semantic.DjikstraTypeResolutionVisitor;
 
 public class DijkstaTypeCheckVisitorTest {
 	private DijkstraParser parser;

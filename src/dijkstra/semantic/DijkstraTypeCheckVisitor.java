@@ -1,4 +1,4 @@
-package djikstra.semantic;
+package dijkstra.semantic;
 
 import dijkstra.lexparse.DijkstraBaseVisitor;
 

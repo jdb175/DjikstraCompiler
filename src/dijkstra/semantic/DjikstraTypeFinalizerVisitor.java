@@ -1,4 +1,4 @@
-package djikstra.semantic;
+package dijkstra.semantic;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.misc.NotNull;

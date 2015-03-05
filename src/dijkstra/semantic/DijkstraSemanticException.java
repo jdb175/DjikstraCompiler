@@ -9,7 +9,7 @@
  * Used in CS4533/CS544 at Worcester Polytechnic Institute
  *******************************************************************************/
 
-package djikstra.semantic;
+package dijkstra.semantic;
 
 /**
  * This class is used for any exceptions thrown from the Dijkstra type check

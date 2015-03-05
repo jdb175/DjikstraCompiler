@@ -10,13 +10,13 @@ import org.junit.Test;
 
 import dijkstra.lexparse.DijkstraParser;
 import dijkstra.runtime.DijkstraRuntime;
+import dijkstra.semantic.DijkstraTypeCheckVisitor;
+import dijkstra.semantic.DjikstraTypeFinalizerVisitor;
+import dijkstra.semantic.DjikstraTypeResolutionVisitor;
 import dijkstra.symbol.DijkstraSymbolVisitor;
 import dijkstra.symbol.SymbolTableManager;
 import dijkstra.utility.DijkstraException;
 import dijkstra.utility.DijkstraFactory;
-import djikstra.semantic.DijkstraTypeCheckVisitor;
-import djikstra.semantic.DjikstraTypeFinalizerVisitor;
-import djikstra.semantic.DjikstraTypeResolutionVisitor;
 
 public class CodeGenTest extends ClassLoader {
 	private DijkstraParser parser;

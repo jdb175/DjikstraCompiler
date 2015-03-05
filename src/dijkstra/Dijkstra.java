@@ -20,11 +20,11 @@ import org.antlr.v4.runtime.*;
 
 import dijkstra.codegen.CodeGenVisitor;
 import dijkstra.lexparse.DijkstraParser;
+import dijkstra.semantic.DijkstraTypeCheckVisitor;
+import dijkstra.semantic.DjikstraTypeFinalizerVisitor;
+import dijkstra.semantic.DjikstraTypeResolutionVisitor;
 import dijkstra.symbol.DijkstraSymbolVisitor;
 import dijkstra.utility.DijkstraFactory;
-import djikstra.semantic.DijkstraTypeCheckVisitor;
-import djikstra.semantic.DjikstraTypeFinalizerVisitor;
-import djikstra.semantic.DjikstraTypeResolutionVisitor;
 
 /**
  * This is the driver for the Dijkstra compiler.

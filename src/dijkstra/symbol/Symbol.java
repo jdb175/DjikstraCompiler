@@ -12,8 +12,8 @@ package dijkstra.symbol;
 
 import static dijkstra.utility.DijkstraType.*;
 import dijkstra.codegen.JVMInfo;
+import dijkstra.semantic.DijkstraSemanticException;
 import dijkstra.utility.DijkstraType;
-import djikstra.semantic.DijkstraSemanticException;
 
 /**
  * This class defines a Symbol object that gets stored in a symbol table and is
