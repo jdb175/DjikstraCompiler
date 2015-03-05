@@ -36,6 +36,7 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 	//private boolean needValue;		// used to indicate whether we need an ID value or address
 	final private Stack<Label> guardLabelStack;
 	final private Stack<DijkstraType> typeNeeded;
+	private String programName;
 	
 	
 	public CodeGenVisitor(DjikstraTypeFinalizerVisitor oldTree)
@@ -63,6 +64,7 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 	@Override
 	public byte[] visitProgram(ProgramContext program) 
 	{
+		this.programName = program.ID().getText();
 		// prolog
 		cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES); 
 		classNameQualified = classPackage + "/" + program.ID().getText();
@@ -717,5 +719,13 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 			}
 			mv.visitFieldInsn(PUTSTATIC, classNameQualified, s.getFieldName(), s.getTypeID());
 		}
+	}
+
+	public void setClassPackage(String customPackage) {
+		this.classPackage = customPackage;
+	}
+	
+	public String getProgramName() {
+		return this.programName;
 	}
 }
