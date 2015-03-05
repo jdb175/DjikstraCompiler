@@ -35,7 +35,7 @@ public class DjikstraTypeFinalizerVisitor extends DijkstraBaseVisitor<DijkstraTy
 			if(cur.getType() == NUM) {
 				cur.updateType(INT);
 			} else if (cur.getType() == UNDEFINED) {
-				throw new DijkstraSymbolException("Unable to infer type of identifier " + cur.getId());
+				throw new DijkstraSemanticException("Unable to infer type of identifier " + cur.getId());
 			}
 			types.put(arg0, cur.getType());
 		}

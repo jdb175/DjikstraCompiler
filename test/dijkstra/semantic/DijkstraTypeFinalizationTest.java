@@ -45,12 +45,12 @@ public class DijkstraTypeFinalizationTest
 		stm.reset();
 	}
 	
-	@Test(expected=DijkstraSymbolException.class)
+	@Test(expected=DijkstraSemanticException.class)
 	public void basicInput() {
 		doTypeFinalization("input a");
 	}
 	
-	@Test(expected=DijkstraSymbolException.class)
+	@Test(expected=DijkstraSemanticException.class)
 	public void basicInputMulti() {
 		doTypeFinalization("input a, b");
 	}
@@ -68,7 +68,7 @@ public class DijkstraTypeFinalizationTest
 		assertEquals(INT, s.getType());
 	}
 	
-	@Test(expected=DijkstraSymbolException.class)
+	@Test(expected=DijkstraSemanticException.class)
 	public void inferUnsureGuard()
 	{
 		doTypeFinalization("input a, b if a ~= b :: print a; a = b :: print b;  fi");
