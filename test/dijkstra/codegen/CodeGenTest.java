@@ -516,7 +516,6 @@ public class CodeGenTest extends ClassLoader {
 		assertEquals("i=-10", DijkstraRuntime.getLastMessage());
 	}
 
-
 	/** Utility **/
 	private void makeParser(String inputText)
 	{
