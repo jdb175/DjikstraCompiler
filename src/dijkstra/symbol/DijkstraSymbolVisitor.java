@@ -58,6 +58,7 @@ public class DijkstraSymbolVisitor extends DijkstraBaseVisitor<DijkstraType> {
 		TypeContext type = ctx.type();
 		t = type.accept(this);
 		//Now get all of the ids and add them as symbols
+		ctx.expression().accept(this);
 		IdListContext idlist = ctx.idList();
 		while(idlist != null) {
 			String id = idlist.ID().getText();
