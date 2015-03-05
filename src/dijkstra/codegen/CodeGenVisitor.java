@@ -252,7 +252,20 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 		MethodSymbol proc = (MethodSymbol) symbols.get(ctx);
 		mv = cw.visitMethod(ACC_PUBLIC + ACC_STATIC, proc.getName(), proc.getSignature(), null, null); 
 		mv.visitCode();
-		visitChildren(ctx);
+		//We have to visit the parameters in reverse order to get the proper locals
+		if(ctx.parameterList() != null) {
+			Stack<ParameterContext> args = new Stack<ParameterContext>();
+			ParameterListContext params = ctx.parameterList();
+			while(params != null) {
+				args.push(params.parameter());
+				params = params.parameterList();
+			}
+			while(!args.isEmpty()) {
+				Symbol s = symbols.get(args.pop());
+				s.getAddress();
+			}
+		}
+		ctx.compoundStatement().accept(this);
 		//In case of fallthrough in control, just to compile
 		mv.visitInsn(RETURN);
 		mv.visitMaxs(0, 0);
@@ -269,12 +282,25 @@ public class CodeGenVisitor extends DijkstraBaseVisitor<byte[]> {
 		MethodSymbol fun = (MethodSymbol) functions.get(ctx);
 		mv = cw.visitMethod(ACC_PUBLIC + ACC_STATIC, fun.getName(), fun.getSignature(), null, null); 
 		mv.visitCode();
-		visitChildren(ctx);
+		//We have to visit the parameters in reverse order to get the proper locals
+		if(ctx.parameterList() != null) {
+			Stack<ParameterContext> args = new Stack<ParameterContext>();
+			ParameterListContext params = ctx.parameterList();
+			while(params != null) {
+				args.push(params.parameter());
+				params = params.parameterList();
+			}
+			while(!args.isEmpty()) {
+				Symbol s = symbols.get(args.pop());
+				s.getAddress();
+			}
+		}
+		ctx.compoundStatement().accept(this);
 		//In case of fallthrough in control, just to compile
 		mv.visitIntInsn(BIPUSH, ctx.getStart().getLine());
 		mv.visitMethodInsn(INVOKESTATIC, "dijkstra/runtime/DijkstraRuntime", 
 				"abortNoFunctionReturn", "(I)V", false);
-		mv.visitInsn(ICONST_1);
+		mv.visitLdcInsn(-1);
 		mv.visitInsn(IRETURN);
 		mv.visitMaxs(0, 0);
 		mv.visitEnd();
