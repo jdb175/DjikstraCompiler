@@ -156,6 +156,7 @@ public class DjikstraTypeResolutionVisitor extends DijkstraBaseVisitor<DijkstraT
 	@Override
 	public DijkstraType visitGuard(@NotNull DijkstraParser.GuardContext ctx) {
 		updateType(ctx.expression(), BOOLEAN);
+		ctx.expression().accept(this);
 		ctx.statement().accept(this);
 		return BOOLEAN;
 	}
