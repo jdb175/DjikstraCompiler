@@ -142,7 +142,7 @@
  INTEGER : 		DIGIT+ ;
  
  WS :			[ \t\r\n]+ -> skip ;
- COMMENT :		'#' .*? ('\n'|EOF);
+ COMMENT :		'#' .*? ('\n'|EOF) -> skip;
  
  fragment
  LETTER :		[A-Za-z] ;

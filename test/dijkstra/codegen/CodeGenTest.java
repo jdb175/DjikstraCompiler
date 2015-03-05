@@ -512,7 +512,7 @@ public class CodeGenTest extends ClassLoader {
 	@Test
 	public void procedureCallAccessLexicalScopeArray() throws Exception
 	{
-		runCode("int[1] a; a[0] <- 10 proc foo(int b) { print a[0] - b; } foo(20);");
+		runCode("#comment\n int[1] a; a[0] <- 10 proc foo(int b) { print a[0] - b; } foo(20);");
 		assertEquals("i=-10", DijkstraRuntime.getLastMessage());
 	}
 

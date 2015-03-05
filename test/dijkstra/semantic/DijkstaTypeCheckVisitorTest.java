@@ -1,4 +1,4 @@
-package djikstra.semantic;
+package dijkstra.semantic;
 
 import static org.junit.Assert.*;
 
@@ -14,6 +14,7 @@ import dijkstra.utility.DijkstraFactory;
 import dijkstra.utility.TypeCheckRunner;
 import djikstra.semantic.DijkstraTypeCheckVisitor;
 import djikstra.semantic.DijkstraSemanticException;
+import djikstra.semantic.DjikstraTypeFinalizerVisitor;
 import djikstra.semantic.DjikstraTypeResolutionVisitor;
 
 public class DijkstaTypeCheckVisitorTest {

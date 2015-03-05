@@ -9,7 +9,7 @@
  * Used in CS4533/CS544 at Worcester Polytechnic Institute
  *******************************************************************************/
 
-package djikstra.semantic;
+package dijkstra.semantic;
 
 import static org.junit.Assert.*;
 
