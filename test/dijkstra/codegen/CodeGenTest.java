@@ -371,6 +371,18 @@ public class CodeGenTest extends ClassLoader {
 	}
 	
 	@Test
+	public void basicAlternativeOverload() throws Exception
+	{
+		runCode("b <- true a <- 1\n"
+				+ "if\n"
+				+ "  b :: a <- -5\n"
+				+ "  b :: a <- 15\n"
+				+ "fi\n"
+				+ "print a");
+		assertEquals("i=-5", DijkstraRuntime.getLastMessage());
+	}
+	
+	@Test
 	public void secondAlternative() throws Exception
 	{
 		runCode("b <- true a <- 1\n"

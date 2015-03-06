@@ -407,6 +407,12 @@ public class DijkstraTypeResolutionVisitorTest
 		assertEquals(BOOLEAN, s.getType());
 	}
 	
+	@Test
+	public void andOrder() {
+		doSymbolTable("int candidateNumber; a <- (candidateNumber >= 4) & candidateNumber mod 2 = 1");
+		assertTrue(true);
+	}
+	
 /*	@Test(expected=DijkstraSymbolException.class)
 	public void cantCallProcAsFun() {
 		doSymbolTable("proc foo() { print 1 } a <- foo()");	

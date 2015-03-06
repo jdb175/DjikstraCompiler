@@ -74,9 +74,9 @@
  								| expression (STAR | SLASH | MOD | DIV) expression #mult
  								| expression (PLUS | MINUS) expression #add
  								| expression (GT | GTE | LT | LTE) expression #relational
- 								| expression AND expression #and
  								| <assoc=right>expression (EQ | NEQ) expression #equal
  								| expression OR expression #or
+ 							    | expression AND expression #and
  								| INTEGER #integer
  								| INTEGER PERIOD INTEGER #float
  								| TRUE #bool
