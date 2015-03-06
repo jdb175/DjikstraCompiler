@@ -1,0 +1,35 @@
+program fibonacci_arrays
+	# this computes and prints the nth fibonacci number
+	# with n being the input given. It will continue
+	# asking for input as long as a valid positive  
+	# integer is given.
+
+	# any n higher than 46 will be inaccurate due to overflow
+
+	# This example does so using procedures and arrays, creating an array
+	# of all fibonacci numbers up to the given index
+
+	continue <- true;
+
+	proc fibarr(int n) {
+		i <- 2;
+		int[n] values;
+		values[0], values[1] <- 1, 1;
+		do
+			i < n :: {
+				values[i], i <- values[i-1] + values[i-2], i+1;
+			}
+		od
+		print values[n-1];
+	}
+
+	do
+		continue :: { 
+			input n;
+			if
+				n > 2 :: fibarr(n);
+				n > 0 & n <= 2 :: print 1;
+				n <= 0 :: continue <- false;
+			fi
+		}
+	od

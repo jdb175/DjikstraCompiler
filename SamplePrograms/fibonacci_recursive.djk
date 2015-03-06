@@ -1,0 +1,30 @@
+program fibonacci_recursive
+	# this computes and prints the nth fibonacci number
+	# with n being the input given. It will continue
+	# asking for input as long as a valid positive  
+	# integer is given.
+
+	# any n higher than 46 will be inaccurate due to overflow
+
+	# This example so this using recursion.
+
+	continue <- true;
+
+	fun fib(int curval, int lastval, int index) : int {
+		if
+			index <= 0 :: return curval;
+			index > 0 :: return fib(curval+lastval, curval, index-1);
+		fi
+	}
+
+	do
+		continue :: { 
+			input n;
+			if
+				n > 0 :: {
+					print fib (1, 1, n-2);
+				}
+				n <= 0 :: continue <- false;
+			fi
+		}
+	od

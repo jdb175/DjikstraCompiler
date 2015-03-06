@@ -1,0 +1,30 @@
+program fibonacci
+	# this computes and prints the nth fibonacci number
+	# with n being the input given. It will continue
+	# asking for input as long as a valid positive  
+	# integer is given.
+
+	# any n higher than 46 will be inaccurate due to overflow
+
+	# This example does so with iteration.
+
+	continue <- true;
+
+	do
+		continue :: { 
+			input n;
+			if
+				n > 0 :: {
+					flast <- 1;
+					fcur <- 1;
+					do
+						n-2 > 0 :: {
+							fcur, flast, n <- fcur+flast, fcur, n-1;
+						}
+					od
+					print fcur;
+				}
+				n <= 0 :: continue <- false;
+			fi
+		}
+	od
