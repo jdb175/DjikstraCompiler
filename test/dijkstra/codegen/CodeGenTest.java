@@ -454,11 +454,27 @@ public class CodeGenTest extends ClassLoader {
 	}
 	
 	@Test
+	public void basicProcedureCallArgsOtherOrder() throws Exception
+	{
+		runCode("proc foo(int a, int b) { print b - a; print a - b; } foo(10, 20);");
+		assertEquals("i=-10", DijkstraRuntime.getLastMessage());
+	}
+	
+	
+	@Test
 	public void basicFunctionCall() throws Exception
 	{
 		runCode("fun foo() : int { return 30; } print 15; print foo();");
 		assertEquals("i=30", DijkstraRuntime.getLastMessage());
 	}
+	
+	@Test
+	public void basicFunctionCallArgsOtherOrder() throws Exception
+	{
+		runCode("fun foo(int a, int b) : int { print b - a; return a - b; } print foo(10, 20);");
+		assertEquals("i=-10", DijkstraRuntime.getLastMessage());
+	}
+	
 	
 	@Test
 	public void basicFunctionCallArray() throws Exception
